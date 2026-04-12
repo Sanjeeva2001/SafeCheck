@@ -7,13 +7,13 @@ import urlCheckRouter from './routes/urlCheck.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// .env is sitting in src/ so we point dotenv there
 dotenv.config({ path: path.join(__dirname, '../src/.env') })
 
 const app = express()
 const PORT = process.env.PORT || 3000
+const allowedOrigins = ['http://localhost:5173', process.env.FRONTEND_URL].filter(Boolean)
 
-app.use(cors())
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
 // all url-check requests go here
