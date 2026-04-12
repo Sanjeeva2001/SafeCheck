@@ -21,13 +21,10 @@ const sampleQuestion = {
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Section header -->
       <div class="mb-10">
-        <span class="inline-block bg-green-50 text-green-700 text-xs font-medium px-3 py-1 rounded-full mb-3">
-          Feature #3
-        </span>
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Scam Awareness Quiz</h2>
         <p class="text-gray-500 max-w-xl">
           Test yourself with real-world scam scenarios. Learn to spot red flags before scammers can exploit them.
-          Great for all ages — no tech knowledge required.
+          Great for all ages - no tech knowledge required.
         </p>
       </div>
 
@@ -135,17 +132,6 @@ const sampleQuestion = {
             </ul>
           </div>
 
-          <!-- Leaderboard skeleton -->
-          <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
-            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">Leaderboard</p>
-            <div class="space-y-3">
-              <div v-for="i in 3" :key="i" class="flex items-center gap-3">
-                <div class="w-6 h-6 rounded-full bg-gray-200 animate-pulse flex-shrink-0"></div>
-                <div class="h-3 flex-1 bg-gray-200 rounded animate-pulse"></div>
-                <div class="h-3 w-8 bg-gray-200 rounded animate-pulse"></div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
