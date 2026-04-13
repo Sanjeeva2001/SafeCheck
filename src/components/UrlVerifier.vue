@@ -24,6 +24,12 @@ const scoreStyle = {
 
 const vc = computed(() => verdictTheme[result.value?.verdict] ?? verdictTheme.safe)
 
+function verdictText(verdict) {
+  if (verdict === 'unsafe') return 'Unsafe'
+  if (verdict === 'warning') return 'Be careful'
+  return 'Safe'
+}
+
 function scoreLevel(score) {
   if (score >= 70) return 'high'
   if (score >= 40) return 'mid'
@@ -33,7 +39,7 @@ function scoreLevel(score) {
 async function handleSubmit() {
   const input = url.value.trim()
   if (!input) {
-    error.value = 'Please enter a URL to check.'
+    error.value = 'Please enter a website address.'
     return
   }
   error.value = ''
@@ -73,7 +79,7 @@ function reset() {
       </div>
       <h1 class="text-5xl font-bold text-gray-900 text-center mb-3">Is this website safe?</h1>
       <p class="text-gray-500 text-xl text-center mb-10">
-        Paste any website address below. We check it before you visit.
+        Type a website address below and we will check it for common warning signs.
       </p>
 
       <!-- Two-column layout -->
@@ -83,12 +89,12 @@ function reset() {
         <div class="lg:col-span-2 space-y-4">
 
           <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <label class="block text-lg font-medium text-gray-700 mb-3">Website address to check:</label>
+            <label class="block text-lg font-medium text-gray-700 mb-3">Website address</label>
             <input
               v-model="url"
               @keyup.enter="handleSubmit"
               type="text"
-              placeholder="e.g. www.example.com"
+              placeholder="example.com or www.example.com"
               class="w-full border border-gray-200 rounded-xl px-5 py-4 text-lg bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent mb-3"
               :class="error ? 'border-red-300' : ''"
             />
@@ -101,7 +107,7 @@ function reset() {
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
               </svg>
-              {{ loading ? 'Checking...' : 'Check Now' }}
+              {{ loading ? 'Checking...' : 'Check website' }}
             </button>
             <p v-if="error" class="mt-2 text-base text-red-500">{{ error }}</p>
           </div>
@@ -113,8 +119,8 @@ function reset() {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <p class="text-sm font-semibold text-gray-800 mb-1">Free to use</p>
-              <p class="text-sm text-gray-500">No sign-up needed</p>
+              <p class="text-sm font-semibold text-gray-800 mb-1">No account needed</p>
+              <p class="text-sm text-gray-500">You can check a site right away</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-xl p-4 text-center">
               <div class="flex justify-center mb-2">
@@ -123,8 +129,8 @@ function reset() {
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
               </div>
-              <p class="text-sm font-semibold text-gray-800 mb-1">Plain English</p>
-              <p class="text-sm text-gray-500">No tech jargon</p>
+              <p class="text-sm font-semibold text-gray-800 mb-1">Easy to read</p>
+              <p class="text-sm text-gray-500">We use simple words</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-xl p-4 text-center">
               <div class="flex justify-center mb-2">
@@ -134,7 +140,7 @@ function reset() {
                 </svg>
               </div>
               <p class="text-sm font-semibold text-gray-800 mb-1">Private</p>
-              <p class="text-sm text-gray-500">Nothing stored</p>
+              <p class="text-sm text-gray-500">We do not save what you type</p>
             </div>
           </div>
 
@@ -144,7 +150,7 @@ function reset() {
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
             <p class="text-base text-amber-800 leading-relaxed">
-              <strong>Disclaimer:</strong> SafeCheck gives general guidance only. It is not a substitute for professional cybersecurity advice and does not guarantee any result.
+              <strong>Disclaimer:</strong> SafeCheck gives general guidance only. It cannot promise that a website is safe.
             </p>
           </div>
         </div>
@@ -166,10 +172,10 @@ function reset() {
               <div class="flex-1">
                 <p class="font-bold text-xl" :class="vc.title">
                   <span v-if="result.verdict === 'safe'">This website looks safe</span>
-                  <span v-else-if="result.verdict === 'unsafe'">This website looks dangerous</span>
-                  <span v-else>Proceed with caution</span>
+                  <span v-else-if="result.verdict === 'unsafe'">This website may be risky</span>
+                  <span v-else>Please be careful</span>
                 </p>
-                <p class="text-base mt-1" :class="vc.subtitle">{{ result.hostname }}</p>
+                <p class="text-base mt-1" :class="vc.subtitle">Website: {{ result.hostname }}</p>
                 <ul v-if="result.riskFactors.length" class="mt-2 space-y-1">
                   <li v-for="rf in result.riskFactors" :key="rf" class="flex items-start gap-1.5 text-base text-red-700">
                     <span class="mt-0.5">•</span> {{ rf }}
@@ -177,14 +183,14 @@ function reset() {
                 </ul>
               </div>
               <span class="text-sm font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide" :class="vc.badge">
-                {{ result.verdict }}
+                {{ verdictText(result.verdict) }}
               </span>
             </div>
 
             <!-- Trust score -->
             <div class="bg-white rounded-2xl border border-gray-200 p-5">
               <div class="flex items-center justify-between mb-3">
-                <p class="text-base font-semibold text-gray-400 uppercase tracking-wide">Trust Score</p>
+                <p class="text-base font-semibold text-gray-400 uppercase tracking-wide">Safety rating</p>
                 <span class="text-4xl font-bold" :class="scoreStyle[scoreLevel(result.trustScore)].text">
                   {{ result.trustScore }}<span class="text-lg font-medium text-gray-400">/100</span>
                 </span>
@@ -197,10 +203,10 @@ function reset() {
                 />
               </div>
               <p class="text-base text-gray-500 mb-3">
-                <span v-if="result.trustScore >= 85">This site looks highly trustworthy</span>
-                <span v-else-if="result.trustScore >= 70">Generally safe, no major red flags</span>
-                <span v-else-if="result.trustScore >= 40">Some concerns found - proceed carefully</span>
-                <span v-else>Multiple red flags detected - avoid this site</span>
+                <span v-if="result.trustScore >= 85">Very few warning signs were found</span>
+                <span v-else-if="result.trustScore >= 70">Mostly fine, but still read carefully</span>
+                <span v-else-if="result.trustScore >= 40">Some warning signs were found</span>
+                <span v-else>Several warning signs were found</span>
               </p>
               <button
                 @click="showScoreBreakdown = !showScoreBreakdown"
@@ -209,14 +215,14 @@ function reset() {
                 <svg class="w-4 h-4 transition-transform duration-200" :class="showScoreBreakdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                How is this score calculated?
+                How did we decide this?
               </button>
               <div v-if="showScoreBreakdown" class="mt-3 border-t border-gray-100 pt-3">
                 <div class="grid grid-cols-12 text-base font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">
-                  <span class="col-span-5">Category</span>
-                  <span class="col-span-4">What we found</span>
-                  <span class="col-span-2 text-right">Max risk</span>
-                  <span class="col-span-1 text-right">Score</span>
+                  <span class="col-span-5">Check</span>
+                  <span class="col-span-4">What it means</span>
+                  <span class="col-span-2 text-right">Max points</span>
+                  <span class="col-span-1 text-right">Lost</span>
                 </div>
                 <div class="space-y-2">
                   <div
@@ -237,7 +243,7 @@ function reset() {
                   </div>
                 </div>
                 <div class="grid grid-cols-12 text-base font-semibold border-t border-gray-200 mt-2 pt-2 px-1">
-                  <span class="col-span-11 text-gray-700">Final score (100 minus total deductions)</span>
+                  <span class="col-span-11 text-gray-700">Final rating (100 minus total points lost)</span>
                   <span class="col-span-1 text-right" :class="scoreStyle[scoreLevel(result.trustScore)].text">{{ result.trustScore }}</span>
                 </div>
               </div>
@@ -245,7 +251,7 @@ function reset() {
 
             <!-- Check results -->
             <div class="bg-white rounded-2xl border border-gray-200 p-5">
-              <p class="text-base font-semibold text-gray-400 uppercase tracking-wide mb-4">Check results</p>
+              <p class="text-base font-semibold text-gray-400 uppercase tracking-wide mb-4">What we checked</p>
               <div class="space-y-4">
                 <div v-for="check in result.checks" :key="check.label" class="flex items-start gap-3">
                   <StatusIcon :status="check.status" class="mt-0.5" />
@@ -269,7 +275,7 @@ function reset() {
                 d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
             </svg>
             <p class="text-lg font-medium text-gray-400">Your results will appear here</p>
-            <p class="text-base text-gray-300 mt-1">Enter a website address on the left to get started</p>
+            <p class="text-base text-gray-300 mt-1">Type a website address on the left to begin</p>
           </div>
 
         </div>
