@@ -23,7 +23,7 @@ function handleAnalyze() {
       <div class="mb-10">
         <h2 class="text-4xl font-bold text-gray-900 mb-3">T&amp;C Simplifier</h2>
         <p class="text-gray-500 text-lg max-w-xl leading-relaxed">
-          Paste a link or the full text and get a plain-English breakdown of what you are agreeing to —
+          Paste a link or the full text and get a plain-English breakdown of what you are agreeing to -
           data sharing, cancellation terms, and anything else worth knowing before you sign up.
         </p>
       </div>

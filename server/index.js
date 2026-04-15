@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import urlCheckRouter from './routes/urlCheck.js'
+import scamStatsRouter from './routes/scamStats.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -20,7 +21,8 @@ const allowedOrigins = [
 app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
-// all url-check requests go here
+// register more specific route before the generic /api route
+app.use('/api/scam-stats', scamStatsRouter)
 app.use('/api', urlCheckRouter)
 
 // basic health check so you can ping /api/health to confirm server is up

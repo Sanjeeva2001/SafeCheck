@@ -12,3 +12,8 @@ export async function checkUrl(url) {
   const response = await api.post('/check-url', { url })
   return response.data
 }
+
+export async function getOnlineSeniorStats() {
+  const response = await api.get('/scam-stats/online-seniors')
+  return response.data
+}

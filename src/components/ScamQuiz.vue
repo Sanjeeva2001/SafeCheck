@@ -24,7 +24,7 @@ const sampleQuestion = {
         <h2 class="text-4xl font-bold text-gray-900 mb-3">Scam Awareness Quiz</h2>
         <p class="text-gray-500 text-lg max-w-xl leading-relaxed">
           Test yourself with real-world scam scenarios. Learn to spot red flags before scammers can exploit them.
-          Great for all ages — no tech knowledge required.
+          Great for all ages - no tech knowledge required.
         </p>
       </div>
 

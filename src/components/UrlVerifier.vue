@@ -1,14 +1,30 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { checkUrl } from '../services/api.js'
+import { ref, computed, onMounted } from 'vue'
+import { checkUrl, getOnlineSeniorStats } from '../services/api.js'
 import StatusIcon from './StatusIcon.vue'
 
 const showScoreBreakdown = ref(false)
-
 const url = ref('')
 const loading = ref(false)
 const result = ref(null)
 const error = ref('')
+const scamStats = ref(null)
+
+// fetch scam data from our database as soon as the page loads
+onMounted(async () => {
+  try {
+    scamStats.value = await getOnlineSeniorStats()
+  } catch (e) {
+    console.error('Could not load scam stats:', e)
+  }
+})
+
+// used to scale each bar relative to the biggest number
+const maxReports = computed(() =>
+  scamStats.value
+    ? Math.max(...scamStats.value.topScamTypes.map(r => Number(r.total_reports)))
+    : 1
+)
 
 const verdictTheme = {
   safe:    { banner: 'bg-green-50 border-green-200',  icon: 'bg-green-200',  iconColor: 'text-green-700', title: 'text-green-800', subtitle: 'text-green-700', badge: 'bg-green-200 text-green-800' },
@@ -45,7 +61,6 @@ async function handleSubmit() {
   error.value = ''
   result.value = null
   loading.value = true
-
   try {
     const data = await checkUrl(input)
     result.value = data
@@ -268,14 +283,76 @@ function reset() {
             </button>
           </div>
 
-          <!-- Empty state -->
-          <div v-else class="h-full min-h-72 bg-white rounded-2xl border border-dashed border-gray-200 flex flex-col items-center justify-center p-10 text-center">
-            <svg class="w-14 h-14 text-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
-            </svg>
-            <p class="text-lg font-medium text-gray-400">Your results will appear here</p>
-            <p class="text-base text-gray-300 mt-1">Type a website address on the left to begin</p>
+          <!-- stats panel stays visible even after a URL check -->
+          <div class="bg-white rounded-2xl border border-gray-200 p-6" :class="result ? 'mt-4' : ''">
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
+              Real reports from Australia
+            </p>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+              Why checking links matters for people over 65
+            </h3>
+            <p class="text-sm text-gray-500 mb-6 leading-relaxed">
+              These numbers come from real scam reports filed with Scamwatch and the
+              National Anti-Scam Centre - so you can see what is actually happening.
+            </p>
+
+            <!-- data loaded from database -->
+            <div v-if="scamStats">
+              <!-- summary tiles -->
+              <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 rounded-xl p-4">
+                  <p class="text-2xl font-bold text-red-600">
+                    ${{ (Number(scamStats.summary.total_lost) / 1_000_000).toFixed(1) }}M+
+                  </p>
+                  <p class="text-sm text-gray-500 mt-1 leading-snug">
+                    lost by Australians 65+ through online scams
+                  </p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4">
+                  <p class="text-2xl font-bold text-amber-600">
+                    {{ Number(scamStats.summary.total_reports).toLocaleString() }}
+                  </p>
+                  <p class="text-sm text-gray-500 mt-1 leading-snug">
+                    online scam reports from seniors on record
+                  </p>
+                </div>
+              </div>
+
+              <!-- bar chart -->
+              <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+                Most common online scams targeting seniors
+              </p>
+              <div
+                v-for="row in scamStats.topScamTypes"
+                :key="row.scam_type"
+                class="flex items-center gap-3 mb-3"
+              >
+                <span class="text-sm text-gray-500 w-44 text-right shrink-0">
+                  {{ row.scam_type }}
+                </span>
+                <div class="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full rounded-full bg-red-500 transition-all duration-700"
+                    :style="{ width: (Number(row.total_reports) / maxReports * 100) + '%' }"
+                  />
+                </div>
+                <span class="text-sm text-gray-400 w-8 text-right shrink-0">
+                  {{ row.total_reports }}
+                </span>
+              </div>
+
+              <p class="text-xs text-gray-300 mt-4">
+                Source: Scamwatch &amp; NASC - 65+ age group, online contact method only
+              </p>
+            </div>
+
+            <!-- skeleton shown while data is still loading -->
+            <div v-else class="space-y-3">
+              <div v-for="i in 5" :key="i" class="flex gap-3 items-center">
+                <div class="w-44 h-4 bg-gray-100 rounded animate-pulse shrink-0" />
+                <div class="flex-1 h-4 bg-gray-100 rounded animate-pulse" />
+              </div>
+            </div>
           </div>
 
         </div>
