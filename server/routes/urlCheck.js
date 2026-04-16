@@ -1,13 +1,22 @@
 import express from 'express'
+import fs from 'node:fs'
 import { checkGoogleSafeBrowsing } from '../services/safeBrowsing.js'
 import { checkVirusTotal } from '../services/virusTotal.js'
 import { checkUrlhaus } from '../services/urlhaus.js'
 import { checkPhishStats } from '../services/phishStats.js'
 import { checkOtx } from '../services/otx.js'
-import {
+
+const sharedModuleCandidates = [
+  new URL('../../shared/websiteValidation.js', import.meta.url),
+  new URL('../shared/websiteValidation.js', import.meta.url),
+]
+
+const sharedModuleUrl = sharedModuleCandidates.find(candidate => fs.existsSync(candidate)) ?? sharedModuleCandidates[0]
+
+const {
   WEBSITE_INPUT_ERROR,
   parseWebsiteInput,
-} from '../../shared/websiteValidation.js'
+} = await import(sharedModuleUrl)
 
 const router = express.Router()
 
