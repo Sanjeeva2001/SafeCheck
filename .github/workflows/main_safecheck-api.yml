@@ -24,11 +24,17 @@ jobs:
         working-directory: ./server
         run: npm install --production
 
+      - name: Assemble deployment package
+        run: |
+          mkdir -p deploy/shared
+          cp -r server/. deploy/
+          cp -r shared/. deploy/shared/
+
       - name: Upload server folder as artifact
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./server
+          path: ./deploy
 
   deploy:
     runs-on: ubuntu-latest
