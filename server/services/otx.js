@@ -40,7 +40,18 @@ export async function checkOtx(hostname) {
       }
     }
 
-    console.error('[OTX] request failed:', err.message, err.response?.status)
+    const isTimeout = err.code === 'ECONNABORTED' || err.code === 'ERR_CANCELED' || err.message?.includes('timeout')
+    console.error('[OTX] request failed:', err.message, err.response?.status ?? err.code)
+
+    if (isTimeout) {
+      return {
+        error: false,
+        matched: false,
+        pulseCount: 0,
+        reputation: 0,
+        isWhitelisted: false,
+      }
+    }
 
     return {
       error: true,
