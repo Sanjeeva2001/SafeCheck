@@ -16,7 +16,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl border border-gray-200 p-6" :class="props.withTopMargin ? 'mt-4' : ''">
+  <div class="bg-white rounded-2xl border border-green-200 p-6" :class="props.withTopMargin ? 'mt-4' : ''">
     <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
       Real reports from Australia
     </p>

@@ -53,7 +53,12 @@ const features = [
         v-for="f in features"
         :key="f.page"
         @click="emit('navigate', f.page)"
-        class="bg-white border-2 border-gray-200 rounded-2xl p-8 text-left hover:shadow-lg hover:border-green-400 transition-all group focus:outline-none focus:ring-4 focus:ring-green-300"
+        class="bg-white border-2 rounded-2xl p-8 text-left hover:shadow-lg transition-all group focus:outline-none focus:ring-4"
+        :class="{
+          'border-green-300 hover:border-green-500 focus:ring-green-200': f.color === 'green',
+          'border-purple-300 hover:border-purple-500 focus:ring-purple-200': f.color === 'purple',
+          'border-amber-300 hover:border-amber-500 focus:ring-amber-200': f.color === 'amber',
+        }"
       >
         <!-- Icon -->
         <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"

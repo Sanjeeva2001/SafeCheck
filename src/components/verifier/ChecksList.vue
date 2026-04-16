@@ -10,7 +10,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl border border-gray-200 p-5">
+  <div class="bg-white rounded-2xl border border-green-200 p-5">
     <p class="text-base font-semibold text-gray-400 uppercase tracking-wide mb-4">What we checked</p>
     <div class="space-y-4">
       <div v-for="check in props.checks" :key="check.label" class="flex items-start gap-3">

@@ -30,7 +30,7 @@ function handleAnalyze() {
 
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
         <div class="lg:col-span-2">
-          <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <div class="bg-white border border-purple-200 rounded-xl p-6">
             <div class="flex rounded-lg border border-gray-200 p-1 mb-4 bg-gray-50">
               <button
                 @click="inputMode = 'url'"
@@ -88,7 +88,7 @@ function handleAnalyze() {
           </div>
 
           <div v-if="loading || hasResult" class="space-y-4">
-            <div class="bg-white border border-gray-200 rounded-xl p-6">
+            <div class="bg-white border border-purple-200 rounded-xl p-6">
               <div class="flex items-center justify-between mb-4">
                 <p class="text-base font-medium text-gray-400 uppercase tracking-wide">Summary</p>
                 <div class="h-5 w-16 bg-gray-100 rounded-full animate-pulse"></div>
@@ -100,7 +100,7 @@ function handleAnalyze() {
               </div>
             </div>
 
-            <div class="bg-white border border-gray-200 rounded-xl p-6">
+            <div class="bg-white border border-purple-200 rounded-xl p-6">
               <p class="text-base font-medium text-gray-400 uppercase tracking-wide mb-4">Red Flags</p>
               <div class="space-y-3">
                 <div v-for="i in 3" :key="i" class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
@@ -113,11 +113,11 @@ function handleAnalyze() {
               </div>
             </div>
 
-            <div class="bg-white border border-gray-200 rounded-xl p-6">
+            <div class="bg-white border border-purple-200 rounded-xl p-6">
               <p class="text-base font-medium text-gray-400 uppercase tracking-wide mb-4">Key Clauses</p>
               <div class="grid grid-cols-2 gap-3">
                 <div v-for="label in ['Data Collection', 'Cancellation', 'Auto-renewal', 'Data Sharing']" :key="label"
-                  class="p-4 border border-gray-100 rounded-lg">
+                  class="p-4 border border-purple-100 rounded-lg">
                   <p class="text-base text-gray-500 mb-2">{{ label }}</p>
                   <div class="h-3 w-full bg-gray-100 rounded animate-pulse mb-1"></div>
                   <div class="h-3 w-2/3 bg-gray-100 rounded animate-pulse"></div>

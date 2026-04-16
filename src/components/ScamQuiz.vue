@@ -31,9 +31,9 @@ const sampleQuestion = {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Quiz area -->
         <div class="lg:col-span-2">
-          <div v-if="!started" class="bg-gray-50 border border-gray-200 rounded-xl p-10 text-center">
-            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
-              <svg class="w-11 h-11 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-if="!started" class="bg-gray-50 border border-amber-200 rounded-xl p-10 text-center">
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-5">
+              <svg class="w-11 h-11 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
@@ -49,13 +49,13 @@ const sampleQuestion = {
               </span>
             </div>
             <button @click="started = true"
-              class="bg-green-600 text-white text-lg font-semibold px-10 py-4 rounded-xl hover:bg-green-700 transition-colors">
+              class="bg-amber-500 text-white text-lg font-semibold px-10 py-4 rounded-xl hover:bg-amber-600 transition-colors">
               Start Quiz
             </button>
           </div>
 
           <!-- Question skeleton (shown after start) -->
-          <div v-else class="border border-gray-200 rounded-xl overflow-hidden">
+          <div v-else class="border border-amber-200 rounded-xl overflow-hidden">
             <!-- Progress bar -->
             <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
               <div class="flex items-center justify-between mb-2">
@@ -65,7 +65,7 @@ const sampleQuestion = {
                 <span class="text-base text-gray-500">{{ Math.round((sampleQuestion.number / sampleQuestion.total) * 100) }}%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-3">
-                <div class="bg-green-500 h-3 rounded-full transition-all"
+                <div class="bg-amber-500 h-3 rounded-full transition-all"
                   :style="{ width: `${(sampleQuestion.number / sampleQuestion.total) * 100}%` }"></div>
               </div>
             </div>
@@ -73,7 +73,7 @@ const sampleQuestion = {
             <!-- Question -->
             <div class="px-6 py-6">
               <div class="flex items-start gap-3 mb-6">
-                <span class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-700 rounded-full text-base font-semibold flex items-center justify-center">
+                <span class="flex-shrink-0 w-8 h-8 bg-amber-100 text-amber-700 rounded-full text-base font-semibold flex items-center justify-center">
                   {{ sampleQuestion.number }}
                 </span>
                 <p class="text-gray-800 text-lg leading-relaxed">{{ sampleQuestion.text }}</p>
@@ -81,7 +81,7 @@ const sampleQuestion = {
 
               <div class="space-y-3">
                 <button v-for="(option, i) in sampleQuestion.options" :key="i"
-                  class="w-full text-left text-lg border-2 border-gray-200 rounded-xl px-5 py-4 hover:border-green-400 hover:bg-green-50 transition-all text-gray-700">
+                  class="w-full text-left text-lg border-2 border-gray-200 rounded-xl px-5 py-4 hover:border-amber-400 hover:bg-amber-50 transition-all text-gray-700">
                   <span class="font-semibold text-gray-400 mr-2">{{ String.fromCharCode(65 + i) }}.</span>
                   {{ option }}
                 </button>
@@ -100,7 +100,7 @@ const sampleQuestion = {
         <!-- Stats sidebar -->
         <div class="space-y-4">
           <!-- Score placeholder -->
-          <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div class="bg-gray-50 border border-amber-200 rounded-xl p-6">
             <p class="text-base font-medium text-gray-400 uppercase tracking-wide mb-4">Your Score</p>
             <div class="flex items-end gap-2 mb-3">
               <div class="h-12 w-20 bg-gray-200 rounded animate-pulse"></div>
@@ -113,7 +113,7 @@ const sampleQuestion = {
           </div>
 
           <!-- Tips -->
-          <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div class="bg-gray-50 border border-amber-200 rounded-xl p-6">
             <p class="text-base font-medium text-gray-400 uppercase tracking-wide mb-4">Quick Tips</p>
             <ul class="space-y-4">
               <li v-for="tip in [
@@ -122,7 +122,7 @@ const sampleQuestion = {
                 'Verify unexpected prize claims by phone',
                 'If it feels urgent, take a breath first',
               ]" :key="tip" class="flex items-start gap-3">
-                <svg class="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                     clip-rule="evenodd" />

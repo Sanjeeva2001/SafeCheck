@@ -26,7 +26,7 @@ const urlModel = computed({
 
 <template>
   <div class="space-y-4">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-green-200 p-6">
       <label class="block text-lg font-medium text-gray-700 mb-3">Website address</label>
       <input
         v-model="urlModel"
@@ -54,7 +54,7 @@ const urlModel = computed({
     </div>
 
     <div class="grid grid-cols-3 gap-3">
-      <div class="bg-white border border-gray-200 rounded-xl p-4 text-center">
+      <div class="bg-white border border-green-200 rounded-xl p-4 text-center">
         <div class="flex justify-center mb-2">
           <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -63,7 +63,7 @@ const urlModel = computed({
         <p class="text-sm font-semibold text-gray-800 mb-1">No account needed</p>
         <p class="text-sm text-gray-500">You can check a site right away</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-4 text-center">
+      <div class="bg-white border border-green-200 rounded-xl p-4 text-center">
         <div class="flex justify-center mb-2">
           <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -73,7 +73,7 @@ const urlModel = computed({
         <p class="text-sm font-semibold text-gray-800 mb-1">Easy to read</p>
         <p class="text-sm text-gray-500">We use simple words</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-4 text-center">
+      <div class="bg-white border border-green-200 rounded-xl p-4 text-center">
         <div class="flex justify-center mb-2">
           <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

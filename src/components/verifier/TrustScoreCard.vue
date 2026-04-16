@@ -28,7 +28,7 @@ function scoreLevel(score) {
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl border border-gray-200 p-5">
+  <div class="bg-white rounded-2xl border border-green-200 p-5">
     <div class="flex items-center justify-between mb-3">
       <p class="text-base font-semibold text-gray-400 uppercase tracking-wide">Safety rating</p>
       <span class="text-4xl font-bold" :class="scoreStyle[scoreLevel(props.result.trustScore)].text">
