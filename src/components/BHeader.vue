@@ -11,12 +11,6 @@ const links = [
   { label: 'Scam Quiz',      to: '/scam-quiz',      color: 'amber'  },
 ]
 
-// Ticker tape items — each tool gets its own colour to match the rest of the site
-const tickerItems = [
-  { label: '🔗  URL Verifier — check if a website is safe',        color: 'text-green-700'  },
-  { label: '📋  T&C Simplifier — understand the fine print',       color: 'text-purple-700' },
-  { label: '💡  Scam Awareness Quiz — spot scams before they hit', color: 'text-amber-600'  },
-]
 </script>
 
 <template>
@@ -116,21 +110,6 @@ const tickerItems = [
         </div>
       </div>
     </nav>
-
-    <!-- Coloured ticker tape — scrolls through all three tools with their brand colours.
-         Items are duplicated so the loop looks perfectly seamless. -->
-    <div class="overflow-hidden bg-white border-b border-slate-100 py-2.5 select-none">
-      <div class="flex animate-ticker whitespace-nowrap">
-        <template v-for="(item, i) in tickerItems" :key="'a' + i">
-          <span :class="[item.color, 'text-lg font-semibold px-10']">{{ item.label }}</span>
-          <span class="text-slate-300 text-lg px-2">·</span>
-        </template>
-        <template v-for="(item, i) in tickerItems" :key="'b' + i">
-          <span :class="[item.color, 'text-lg font-semibold px-10']">{{ item.label }}</span>
-          <span class="text-slate-300 text-lg px-2">·</span>
-        </template>
-      </div>
-    </div>
 
   </header>
 </template>
