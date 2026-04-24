@@ -1,20 +1,24 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { buildIterationPath, getIterationFromPath } from '../router/iteration'
 
 const menuOpen = ref(false)
+const route = useRoute()
+const iteration = computed(() => getIterationFromPath(route.path))
 
 const links = [
-  { label: 'Home', to: '/' },
-  { label: 'URL Verifier', to: '/url-verifier' },
-  { label: 'T&C Simplifier', to: '/tnc-simplifier' },
-  { label: 'Scam Quiz', to: '/scam-quiz' },
+  { label: 'Home', page: 'home' },
+  { label: 'URL Verifier', page: 'url-verifier' },
+  { label: 'T&C Simplifier', page: 'tnc-simplifier' },
+  { label: 'Scam Quiz', page: 'scam-quiz' },
 ]
 </script>
 
 <template>
   <nav class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur">
     <div class="mx-auto flex h-24 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-      <RouterLink to="/" class="flex items-center gap-4" @click="menuOpen = false">
+      <RouterLink :to="buildIterationPath(iteration, 'home')" class="flex items-center gap-4" @click="menuOpen = false">
         <img src="/logo.png" alt="SafeCheck logo" class="h-14 w-14 rounded-2xl object-contain" />
         <span class="text-xl font-bold tracking-wide text-slate-900">SafeCheck</span>
       </RouterLink>
@@ -22,8 +26,8 @@ const links = [
       <div class="hidden items-center gap-2 md:flex">
         <RouterLink
           v-for="link in links"
-          :key="link.to"
-          :to="link.to"
+          :key="link.page"
+          :to="buildIterationPath(iteration, link.page)"
           class="rounded-full px-6 py-3 text-lg font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
           active-class="bg-slate-900 text-white hover:bg-slate-900 hover:text-white"
           exact-active-class="bg-slate-900 text-white hover:bg-slate-900 hover:text-white"
@@ -54,8 +58,8 @@ const links = [
         <div class="grid gap-2">
           <RouterLink
             v-for="link in links"
-            :key="link.to"
-            :to="link.to"
+            :key="link.page"
+            :to="buildIterationPath(iteration, link.page)"
             class="rounded-xl px-4 py-3 text-base font-medium text-slate-700 transition hover:bg-slate-100"
             active-class="bg-slate-100 text-slate-900"
             exact-active-class="bg-slate-100 text-slate-900"

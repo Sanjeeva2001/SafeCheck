@@ -5,7 +5,7 @@ import BHeader from './components/BHeader.vue'
 import BFooter from './components/BFooter.vue'
 
 const route = useRoute()
-const isHome = computed(() => route.path === '/')
+const isHome = computed(() => route.meta.page === 'home')
 </script>
 
 <template>
