@@ -1,6 +1,6 @@
 # SafeCheck
 
-This template should help get you started developing with Vue 3 in Vite.
+Please read this before you begin. This template should help get you started developing with Vue 3 in Vite.  
 
 ## Recommended IDE Setup
 
