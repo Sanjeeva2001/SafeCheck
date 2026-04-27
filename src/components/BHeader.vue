@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 
 const menuOpen = ref(false)
+const logoSrc = `${import.meta.env.BASE_URL}logo.png`
 
 const links = [
   { label: 'Home',           to: '/'               },
@@ -20,6 +21,7 @@ const links = [
       <div class="flex h-20 items-center justify-between px-6 sm:px-10 lg:px-16">
 
         <!-- Logo + site name -->
+<<<<<<< HEAD
         <RouterLink
           to="/"
           class="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
@@ -27,6 +29,11 @@ const links = [
         >
           <img src="/logo.png" alt="SafeCheck logo" class="h-12 w-12 rounded-xl object-contain bg-white/10 p-1" />
           <span class="text-2xl font-bold tracking-wide text-white">SafeCheck</span>
+=======
+        <RouterLink to="/" class="flex items-center gap-4" @click="menuOpen = false">
+          <img :src="logoSrc" alt="SafeCheck logo" class="h-14 w-14 rounded-2xl object-contain" />
+          <span class="text-2xl font-bold tracking-wide text-slate-900">SafeCheck</span>
+>>>>>>> main
         </RouterLink>
 
         <!-- Desktop nav links -->

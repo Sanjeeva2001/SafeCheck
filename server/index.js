@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({ path: path.join(__dirname, '../src/.env') })
+  dotenv.config({ path: path.join(__dirname, '.env') })
 }
 
 for (const [envName, label] of [
@@ -36,11 +36,21 @@ const allowedOrigins = [
 app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
-// register more specific route before the generic /api route
+
+app.post('/api/auth', (req, res) => {
+  const { password } = req.body
+
+  if (password === process.env.APP_PASSWORD) {
+    res.json({ success: true })
+  } else {
+    res.status(401).json({ success: false })
+  }
+})
+
 app.use('/api/scam-stats', scamStatsRouter)
 app.use('/api', urlCheckRouter)
 
-// health checks for root and API-prefixed probes
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' })
 })

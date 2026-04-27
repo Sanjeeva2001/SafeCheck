@@ -24,7 +24,7 @@ onMounted(async () => {
 })
 
 const maxReports = computed(() =>
-  scamStats.value
+  scamStats.value?.topScamTypes?.length
     ? Math.max(...scamStats.value.topScamTypes.map(r => Number(r.total_reports)))
     : 1
 )

@@ -5,7 +5,6 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -22,7 +21,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      // any request to /api in dev gets forwarded to your express server
+      '/api': 'http://localhost:3000',
+    },
+  },
+  preview: {
+    proxy: {
       '/api': 'http://localhost:3000',
     },
   },
