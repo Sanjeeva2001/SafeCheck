@@ -29,13 +29,12 @@ const features = [
 <template>
 
   <!-- ============================================================
-       HERO — full-bleed navy gradient, no max-width constraint
+       HERO — full-bleed navy gradient
        ============================================================ -->
   <section
     class="relative overflow-hidden"
     style="background: linear-gradient(135deg, var(--navy) 0%, #1d4ed8 100%);"
   >
-    <!-- Subtle grid pattern for depth -->
     <div class="absolute inset-0 opacity-5" aria-hidden="true">
       <svg width="100%" height="100%">
         <defs>
@@ -47,14 +46,12 @@ const features = [
       </svg>
     </div>
 
-    <!-- Content — padding only, no max-width box -->
     <div class="relative px-4 py-16 sm:py-24">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
         <!-- Left: headline + CTAs -->
         <div class="animate-fade-in-up">
 
-          <!-- Trust badge -->
           <div class="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
             <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -67,12 +64,22 @@ const features = [
             <span class="text-white">simply and for free</span>
           </h1>
 
-          <p class="text-xl text-blue-100 leading-relaxed mb-8 max-w-xl">
+          <p class="text-xl text-white leading-relaxed mb-6 max-w-xl" style="opacity: 0.92;">
             SafeCheck helps you check suspicious links, understand confusing Terms &amp; Conditions,
             and learn to spot online scams — all in plain English.
           </p>
 
-          <!-- Primary CTAs -->
+          <!-- Testimonial callout -->
+          <div class="bg-white/10 rounded-2xl px-5 py-4 mb-8 border border-white/15">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 bg-white/20 flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">M</div>
+              <div>
+                <p class="text-white text-lg leading-relaxed italic">"I got a suspicious text about my bank. I pasted the link and SafeCheck told me it was a scam in seconds. It is so easy to use."</p>
+                <p class="text-blue-200 text-base mt-1.5 font-medium">— Margaret, 68, Brisbane</p>
+              </div>
+            </div>
+          </div>
+
           <div class="flex flex-col sm:flex-row gap-4">
             <button
               @click="emit('navigate', 'url-verifier')"
@@ -85,54 +92,104 @@ const features = [
             </button>
             <button
               @click="emit('navigate', 'scam-quiz')"
-              class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xl font-semibold text-white border-2 border-white/30 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-white"
+              class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xl font-semibold text-white border-2 border-white/30 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
             >
               Take the scam quiz
             </button>
           </div>
         </div>
 
-        <!-- Right: illustration — hidden on small screens -->
-        <div class="hidden lg:flex justify-center animate-fade-in-up stagger-2">
+        <!-- Right: warm illustration — visible from md up -->
+        <div class="hidden md:flex justify-center animate-fade-in-up stagger-2">
           <div class="relative">
             <div class="w-80 h-80 rounded-3xl flex items-center justify-center" style="background-color: rgba(255,255,255,0.08);">
-              <svg viewBox="0 0 320 300" class="w-72 h-72" fill="none" xmlns="http://www.w3.org/2000/svg"
-                aria-label="Illustration of an older person checking a website safely on a laptop">
-                <!-- Desk -->
-                <rect x="40" y="220" width="240" height="12" rx="6" fill="rgba(255,255,255,0.15)"/>
-                <!-- Laptop base -->
-                <rect x="80" y="210" width="160" height="14" rx="4" fill="rgba(255,255,255,0.25)"/>
-                <!-- Laptop screen -->
-                <rect x="90" y="100" width="140" height="115" rx="8" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
-                <rect x="98" y="108" width="124" height="95" rx="4" fill="rgba(255,255,255,0.08)"/>
-                <!-- Browser bar -->
-                <rect x="98" y="108" width="124" height="16" rx="4" fill="rgba(255,255,255,0.2)"/>
-                <circle cx="108" cy="116" r="3" fill="rgba(255,100,100,0.6)"/>
-                <circle cx="118" cy="116" r="3" fill="rgba(255,200,50,0.6)"/>
-                <circle cx="128" cy="116" r="3" fill="rgba(50,200,100,0.6)"/>
-                <!-- Green checkmark on screen -->
-                <circle cx="160" cy="148" r="22" fill="rgba(74,222,128,0.2)" stroke="rgba(74,222,128,0.6)" stroke-width="2"/>
-                <path d="M149 148 l8 8 l14-14" stroke="rgba(74,222,128,1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="110" y="178" width="60" height="6" rx="3" fill="rgba(74,222,128,0.5)"/>
-                <rect x="120" y="190" width="40" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
-                <!-- Person head + silver hair -->
-                <circle cx="160" cy="62" r="28" fill="rgba(255,220,180,0.9)"/>
-                <path d="M132 62 Q132 34 160 34 Q188 34 188 62" fill="rgba(180,180,190,0.8)"/>
-                <!-- Glasses -->
-                <rect x="142" y="60" width="14" height="9" rx="4" fill="none" stroke="rgba(80,80,100,0.8)" stroke-width="2"/>
-                <rect x="164" y="60" width="14" height="9" rx="4" fill="none" stroke="rgba(80,80,100,0.8)" stroke-width="2"/>
-                <path d="M156 64 L164 64" stroke="rgba(80,80,100,0.8)" stroke-width="2"/>
-                <!-- Smile -->
-                <path d="M150 74 Q160 82 170 74" stroke="rgba(160,100,60,0.8)" stroke-width="2" stroke-linecap="round" fill="none"/>
-                <!-- Body / shoulders -->
-                <path d="M120 210 Q120 160 140 155 L160 150 L180 155 Q200 160 200 210" fill="rgba(100,130,180,0.5)"/>
-                <!-- Arms -->
-                <path d="M125 175 Q105 185 100 200" stroke="rgba(255,220,180,0.8)" stroke-width="10" stroke-linecap="round" fill="none"/>
-                <path d="M195 175 Q215 185 220 200" stroke="rgba(255,220,180,0.8)" stroke-width="10" stroke-linecap="round" fill="none"/>
-                <!-- Shield badge -->
-                <circle cx="248" cy="68" r="22" fill="rgba(74,222,128,0.25)" stroke="rgba(74,222,128,0.6)" stroke-width="2"/>
-                <path d="M248 56 Q248 56 238 60 L238 68 Q238 76 248 80 Q258 76 258 68 L258 60 Z" fill="rgba(74,222,128,0.5)"/>
-                <path d="M243 68 l3 3 l6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <svg viewBox="0 0 320 310" class="w-72 h-72" fill="none" xmlns="http://www.w3.org/2000/svg"
+                aria-label="Illustration of an older Australian woman checking a link on her phone and seeing it is safe">
+
+                <!-- Warm glow background -->
+                <circle cx="160" cy="155" r="138" fill="rgba(255,255,255,0.04)"/>
+
+                <!-- Body — navy cardigan -->
+                <path d="M90 312 Q88 245 115 228 Q138 215 160 210 Q182 215 205 228 Q232 245 230 312Z"
+                  fill="rgba(100,130,190,0.65)"/>
+                <!-- Cardigan V-neck / collar detail -->
+                <path d="M143 210 L160 205 L177 210 L170 238 L160 244 L150 238Z"
+                  fill="rgba(220,230,248,0.68)"/>
+
+                <!-- Neck -->
+                <rect x="152" y="190" width="16" height="24" rx="7" fill="rgba(252,198,158,0.95)"/>
+
+                <!-- Head (warm peach skin) -->
+                <ellipse cx="160" cy="156" rx="48" ry="52" fill="rgba(252,198,158,0.95)"/>
+
+                <!-- Silver hair — nicely styled short cut -->
+                <path d="M112 146 Q108 102 136 86 Q160 76 184 86 Q212 102 208 146 Q198 120 160 116 Q122 120 112 146Z"
+                  fill="rgba(212,212,222,0.97)"/>
+                <path d="M112 146 Q104 158 106 176 Q113 172 118 162Z" fill="rgba(212,212,222,0.94)"/>
+                <path d="M208 146 Q216 158 214 176 Q207 172 202 162Z" fill="rgba(212,212,222,0.94)"/>
+                <!-- Soft wave texture in hair -->
+                <path d="M122 118 Q132 110 143 110" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M177 110 Q188 110 198 118" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+                <!-- Eyebrows (soft) -->
+                <path d="M136 136 Q144 131 152 133" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M168 133 Q176 131 184 136" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+                <!-- Eyes (warm brown) -->
+                <ellipse cx="144" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
+                <ellipse cx="176" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
+                <circle cx="145.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
+                <circle cx="177.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
+                <!-- Soft crow's feet -->
+                <path d="M185 144 Q190 140 191 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
+                <path d="M135 144 Q130 140 129 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
+
+                <!-- Glasses (rectangular frames) -->
+                <rect x="132" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
+                <rect x="166" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
+                <path d="M154 150 L166 150" stroke="rgba(80,82,106,0.88)" stroke-width="2.2"/>
+                <path d="M132 150 Q122 149 120 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                <path d="M188 150 Q198 149 200 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+                <!-- Nose (subtle) -->
+                <path d="M157 164 Q160 170 163 164" stroke="rgba(200,145,100,0.42)" stroke-width="1.8" fill="none"/>
+
+                <!-- BIG WARM SMILE -->
+                <path d="M141 178 Q160 198 179 178" stroke="rgba(190,110,65,0.78)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+                <circle cx="138" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
+                <circle cx="182" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
+                <!-- Warm cheek blush -->
+                <ellipse cx="130" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
+                <ellipse cx="190" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
+
+                <!-- Right arm holding phone -->
+                <path d="M205 238 Q240 248 254 264" stroke="rgba(252,198,158,0.92)" stroke-width="18" stroke-linecap="round" fill="none"/>
+                <ellipse cx="257" cy="270" rx="14" ry="11" fill="rgba(252,198,158,0.92)"/>
+
+                <!-- Phone -->
+                <rect x="246" y="254" width="38" height="64" rx="8" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
+                <rect x="249" y="258" width="32" height="52" rx="5" fill="rgba(255,255,255,0.09)"/>
+                <!-- Screen content lines -->
+                <rect x="252" y="262" width="26" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+                <rect x="254" y="269" width="20" height="3" rx="1.5" fill="rgba(255,255,255,0.18)"/>
+                <!-- Green checkmark = SAFE result -->
+                <circle cx="265" cy="285" r="13" fill="rgba(74,222,128,0.28)" stroke="rgba(74,222,128,0.75)" stroke-width="1.8"/>
+                <path d="M259 285 l4 4 l9-9" stroke="rgba(74,222,128,1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="256" y="302" width="18" height="4" rx="2" fill="rgba(74,222,128,0.55)"/>
+
+                <!-- Left arm -->
+                <path d="M115 238 Q88 250 76 268" stroke="rgba(252,198,158,0.88)" stroke-width="16" stroke-linecap="round" fill="none"/>
+
+                <!-- Shield badge top right -->
+                <circle cx="264" cy="80" r="26" fill="rgba(74,222,128,0.2)" stroke="rgba(74,222,128,0.55)" stroke-width="1.5"/>
+                <path d="M264 68 Q264 68 254 72 L254 82 Q254 92 264 96 Q274 92 274 82 L274 72 Z" fill="rgba(74,222,128,0.46)"/>
+                <path d="M258 82 l3.5 3.5 l8.5-8.5" stroke="rgba(74,222,128,1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+                <!-- Sparkles -->
+                <circle cx="90" cy="100" r="2.5" fill="rgba(255,255,255,0.25)"/>
+                <circle cx="78" cy="140" r="1.8" fill="rgba(255,255,255,0.18)"/>
+                <circle cx="234" cy="108" r="2" fill="rgba(255,255,255,0.2)"/>
+                <circle cx="235" cy="130" r="3" fill="rgba(74,222,128,0.22)"/>
               </svg>
             </div>
 
@@ -169,13 +226,13 @@ const features = [
   </section>
 
   <!-- ============================================================
-       HOW WE CAN HELP — full-bleed, no max-width wrapper
+       HOW WE CAN HELP
        ============================================================ -->
   <section class="py-16 sm:py-20 px-4" style="background-color: var(--bg);">
 
     <div class="text-center mb-12 animate-fade-in-up">
       <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">How can we help you today?</h2>
-      <p class="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
+      <p class="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
         Three free tools — each designed to be simple, no matter your tech experience.
       </p>
     </div>
@@ -189,7 +246,6 @@ const features = [
         :class="index === 0 ? 'stagger-1' : index === 1 ? 'stagger-2' : 'stagger-3'"
         style="box-shadow: 0 1px 4px rgba(0,0,0,0.06);"
       >
-        <!-- Navy icon -->
         <div
           class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-105 duration-200"
           style="background-color: var(--navy-tint);"
@@ -222,15 +278,13 @@ const features = [
   </section>
 
   <!-- ============================================================
-       WHO IS THIS FOR — full-bleed white, no max-width wrapper
+       WHO IS THIS FOR
        ============================================================ -->
   <section class="py-16 px-4 bg-white">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-      <!-- Illustrated vignettes -->
       <div class="grid grid-cols-2 gap-4 animate-fade-in-up">
 
-        <!-- Large tile: person on phone -->
         <div class="col-span-2 rounded-2xl p-8 flex items-center gap-6" style="background-color: var(--navy-tint); border: 1px solid #bfdbfe;">
           <div class="flex-shrink-0">
             <svg viewBox="0 0 120 120" class="w-24 h-24" fill="none" aria-label="Illustration of a person reading on a phone">
@@ -242,7 +296,6 @@ const features = [
               <circle cx="60" cy="68" r="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
               <path d="M55 68 l3 3 l7-7" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <circle cx="60" cy="92" r="4" fill="#374151" opacity="0.3"/>
-              <!-- Person -->
               <circle cx="22" cy="50" r="14" fill="#fde68a" opacity="0.9"/>
               <path d="M10 50 Q10 36 22 36 Q34 36 34 50" fill="#d1d5db"/>
               <path d="M17 54 Q22 59 27 54" stroke="#92400e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
@@ -258,7 +311,6 @@ const features = [
           </div>
         </div>
 
-        <!-- Laptop tile -->
         <div class="rounded-2xl p-6 flex flex-col items-center text-center" style="background-color: var(--navy-tint); border: 1px solid #bfdbfe;">
           <svg viewBox="0 0 100 80" class="w-20 h-16 mb-3" fill="none" aria-label="Illustration of a person at a laptop">
             <rect x="15" y="30" width="70" height="40" rx="4" fill="#1e3a8a"/>
@@ -273,8 +325,7 @@ const features = [
           <p class="text-sm text-slate-600 mt-1">We translate it for you</p>
         </div>
 
-        <!-- Quiz tile -->
-        <div class="rounded-2xl p-6 flex flex-col items-center text-center" style="background-color: var(--navy); ">
+        <div class="rounded-2xl p-6 flex flex-col items-center text-center" style="background-color: var(--navy);">
           <div class="w-14 h-14 rounded-full mb-3 flex items-center justify-center bg-white/10">
             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -287,7 +338,6 @@ const features = [
 
       </div>
 
-      <!-- Copy column -->
       <div class="animate-fade-in-up stagger-2">
         <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color: var(--navy);">Designed for everyday Australians</p>
         <h2 class="text-4xl font-bold text-slate-900 mb-6 leading-tight">
@@ -329,7 +379,7 @@ const features = [
   </section>
 
   <!-- ============================================================
-       TRUST STATS — full-bleed, no max-width wrapper
+       TRUST STATS
        ============================================================ -->
   <section class="py-12 px-4 border-t border-slate-100" style="background-color: var(--bg);">
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
@@ -340,7 +390,7 @@ const features = [
         { value: '24/7',  label: 'Available any time'        },
       ]" :key="stat.label" class="flex flex-col items-center gap-1">
         <span class="text-4xl font-bold" style="color: var(--navy);">{{ stat.value }}</span>
-        <span class="text-base text-slate-500">{{ stat.label }}</span>
+        <span class="text-base text-slate-600">{{ stat.label }}</span>
       </div>
     </div>
   </section>

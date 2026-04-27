@@ -5,7 +5,6 @@ const props = defineProps({
   verdictLabel: { type: String, required: true },
 })
 
-// Bold colour schemes keyed by verdict — red, amber, green only for risk output
 const boldTheme = {
   safe:    { bg: '#f0fdf4', border: '#16a34a', icon: '#16a34a', iconBg: '#dcfce7', text: '#14532d', badge: '#16a34a' },
   warning: { bg: '#fffbeb', border: '#d97706', icon: '#d97706', iconBg: '#fef3c7', text: '#78350f', badge: '#d97706' },
@@ -13,26 +12,32 @@ const boldTheme = {
 }
 
 const theme = props.result?.verdict ? boldTheme[props.result.verdict] : boldTheme.safe
+
+const borderWidth = props.result?.verdict === 'unsafe' ? 'border-4' : 'border-4'
 </script>
 
 <template>
-  <!-- Full-width verdict — designed to be the FIRST thing eyes land on after submitting -->
   <div
-    class="rounded-2xl border-4 p-6 animate-slide-in-right"
+    class="rounded-2xl p-6 animate-slide-in-right"
+    :class="borderWidth"
     :style="{
       background: theme.bg,
       borderColor: theme.border,
     }"
   >
 
-    <!-- Top row: icon + verdict label pill -->
+    <!-- Icon + verdict badge row -->
     <div class="flex items-center justify-between mb-4">
-      <!-- Large icon -->
       <div
-        class="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
+        class="rounded-full flex items-center justify-center flex-shrink-0"
+        :class="props.result.verdict === 'unsafe' ? 'w-20 h-20' : 'w-16 h-16'"
         :style="{ background: theme.iconBg }"
       >
-        <svg class="w-9 h-9" :style="{ color: theme.icon }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          :class="props.result.verdict === 'unsafe' ? 'w-11 h-11' : 'w-9 h-9'"
+          :style="{ color: theme.icon }"
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
           <path v-if="props.result.verdict === 'safe'"
             stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
           <path v-else-if="props.result.verdict === 'unsafe'"
@@ -42,7 +47,6 @@ const theme = props.result?.verdict ? boldTheme[props.result.verdict] : boldThem
         </svg>
       </div>
 
-      <!-- Verdict badge — large and clear -->
       <span
         class="text-lg font-bold px-5 py-2 rounded-full text-white uppercase tracking-wide"
         :style="{ background: theme.badge }"
@@ -51,25 +55,33 @@ const theme = props.result?.verdict ? boldTheme[props.result.verdict] : boldThem
       </span>
     </div>
 
-    <!-- Headline — this is the primary message, must be unmissable -->
-    <p class="text-3xl font-bold leading-tight mb-2" :style="{ color: theme.text }">
+    <!-- Primary verdict headline — size scales by urgency -->
+    <p
+      class="font-bold leading-tight mb-3"
+      :class="props.result.verdict === 'unsafe'
+        ? 'text-4xl sm:text-5xl'
+        : props.result.verdict === 'warning'
+          ? 'text-3xl sm:text-4xl'
+          : 'text-3xl sm:text-4xl'"
+      :style="{ color: theme.text }"
+    >
       <span v-if="props.result.verdict === 'safe'">This website looks safe to visit</span>
-      <span v-else-if="props.result.verdict === 'unsafe'">Do not visit this website</span>
-      <span v-else>Proceed with caution</span>
+      <span v-else-if="props.result.verdict === 'unsafe'">This website is NOT safe — do not click any links on it</span>
+      <span v-else>Be careful before visiting this website</span>
     </p>
 
     <p class="text-xl mb-4" :style="{ color: theme.text, opacity: 0.85 }">
       Website checked: <strong>{{ props.result.hostname }}</strong>
     </p>
 
-    <!-- Risk factors — shown prominently if any exist -->
+    <!-- Risk factors -->
     <div v-if="props.result.riskFactors.length" class="mt-3 rounded-xl p-4" :style="{ background: 'rgba(0,0,0,0.04)' }">
-      <p class="text-base font-semibold mb-2" :style="{ color: theme.text }">Warning signs found:</p>
-      <ul class="space-y-1.5">
+      <p class="text-lg font-semibold mb-2" :style="{ color: theme.text }">Warning signs found:</p>
+      <ul class="space-y-2">
         <li
           v-for="rf in props.result.riskFactors"
           :key="rf"
-          class="flex items-start gap-2 text-lg"
+          class="flex items-start gap-2 text-lg font-medium"
           :style="{ color: theme.text }"
         >
           <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,9 +93,19 @@ const theme = props.result?.verdict ? boldTheme[props.result.verdict] : boldThem
       </ul>
     </div>
 
-    <!-- Safe advice -->
-    <div v-if="props.result.verdict === 'safe'" class="mt-4 text-lg" :style="{ color: theme.text, opacity: 0.8 }">
+    <!-- Safe reassurance -->
+    <div v-if="props.result.verdict === 'safe'" class="mt-4 text-lg" :style="{ color: theme.text, opacity: 0.85 }">
       Our checks found no known threats. See the details below for the full picture.
+    </div>
+
+    <!-- Unsafe action prompt -->
+    <div v-if="props.result.verdict === 'unsafe'" class="mt-4 rounded-xl p-4" :style="{ background: 'rgba(220,38,38,0.08)' }">
+      <p class="text-xl font-bold" :style="{ color: theme.text }">What to do:</p>
+      <ul class="mt-2 space-y-1">
+        <li class="text-lg" :style="{ color: theme.text }">· Do not click any links on this website</li>
+        <li class="text-lg" :style="{ color: theme.text }">· Do not enter any personal or banking details</li>
+        <li class="text-lg" :style="{ color: theme.text }">· If you received this link by text or email, report it to Scamwatch</li>
+      </ul>
     </div>
 
   </div>

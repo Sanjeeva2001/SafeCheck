@@ -29,7 +29,6 @@ const maxReports = computed(() =>
     : 1
 )
 
-// Colour-theme object passed to child components — red/amber/green for risk only
 const verdictTheme = {
   safe:    { banner: 'bg-green-50 border-green-200',  icon: 'bg-green-200',  iconColor: 'text-green-700', title: 'text-green-800', subtitle: 'text-green-700', badge: 'bg-green-600 text-white' },
   unsafe:  { banner: 'bg-red-50 border-red-200',      icon: 'bg-red-200',    iconColor: 'text-red-700',   title: 'text-red-900',   subtitle: 'text-red-700',   badge: 'bg-red-600 text-white'   },
@@ -73,30 +72,33 @@ function updateUrl(value) { url.value = value }
 </script>
 
 <template>
-  <section class="min-h-screen py-10 px-4" style="background-color: var(--bg);">
-    <div>
-
-      <!-- Page heading -->
-      <div class="text-center mb-10 animate-fade-in-up">
-        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style="background-color: var(--navy-tint);">
-          <svg class="w-10 h-10" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <!-- Compact navy hero band -->
+  <section style="background: linear-gradient(135deg, var(--navy) 0%, #1d4ed8 100%);">
+    <div class="px-4 py-12 sm:py-16">
+      <div class="text-center max-w-2xl mx-auto animate-fade-in-up">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-5 bg-white/15">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         </div>
-        <h1 class="text-5xl sm:text-6xl font-bold text-slate-900 mb-3 animate-fade-in-up stagger-1">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4">
           Is this website safe?
         </h1>
-        <p class="text-xl text-slate-500 max-w-xl mx-auto leading-relaxed animate-fade-in-up stagger-2">
+        <p class="text-xl text-white leading-relaxed" style="opacity: 0.92;">
           Type a website address below and we will check it for common warning signs. Results in plain English.
         </p>
       </div>
+    </div>
+  </section>
 
-      <!-- Two-column layout -->
+  <!-- Main content -->
+  <section class="py-10 px-4" style="background-color: var(--bg);">
+    <div>
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
         <!-- Left: form -->
-        <div class="lg:col-span-2 space-y-4">
+        <div class="lg:col-span-2">
           <UrlVerifierForm
             :url="url"
             :loading="loading"
@@ -123,13 +125,12 @@ function updateUrl(value) { url.value = value }
 
             <button
               @click="reset"
-              class="w-full text-lg font-semibold py-3 rounded-xl border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition"
+              class="w-full text-lg font-semibold py-3 rounded-xl border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900"
             >
               Check another website
             </button>
           </div>
 
-          <!-- Scam stats always visible -->
           <ScamStatsPanel
             :scam-stats="scamStats"
             :max-reports="maxReports"
