@@ -1,25 +1,106 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- *  Custom animations — used throughout the app
+ *  Design tokens — navy + off-white + amber accent
+ *  Red / amber / green are reserved for risk indicators only
  * ------------------------------------------------------------------ */
+:root {
+  --navy:        #1e3a8a; /* blue-900 — primary brand */
+  --navy-dark:   #172554; /* blue-950 — hover state  */
+  --navy-mid:    #1d4ed8; /* blue-700 — lighter navy for accents */
+  --navy-tint:   #eff6ff; /* blue-50  — very light tint */
+  --accent:      #d97706; /* amber-600 — CTA buttons only */
+  --accent-dark: #b45309; /* amber-700 — CTA hover    */
+  --bg:          #f8fafc; /* slate-50  — page background */
+}
 
-/* Cards and sections gently rise into view when the page loads */
+/* ------------------------------------------------------------------ *
+ *  Entrance animations
+ * ------------------------------------------------------------------ */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Result panels slide in from the right when they appear */
 @keyframes slideInRight {
   from { opacity: 0; transform: translateX(28px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
-.animate-fade-in-up     { animation: fadeInUp 0.55s ease both; }
-.animate-slide-in-right { animation: slideInRight 0.4s ease both; }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
-/* Stagger the three home cards so they pop in one after another */
+.animate-fade-in-up     { animation: fadeInUp     0.55s ease both; }
+.animate-slide-in-right { animation: slideInRight 0.4s  ease both; }
+.animate-fade-in        { animation: fadeIn       0.4s  ease both; }
+
+/* Stagger delays for sequential card entrances */
 .stagger-1 { animation-delay: 0.05s; }
 .stagger-2 { animation-delay: 0.18s; }
 .stagger-3 { animation-delay: 0.31s; }
+
+/* ------------------------------------------------------------------ *
+ *  Base typography — minimum 18px throughout
+ * ------------------------------------------------------------------ */
+body {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #1e293b;
+  background-color: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Utility: navy primary button
+ * ------------------------------------------------------------------ */
+.btn-navy {
+  background-color: var(--navy);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-navy:hover  { background-color: var(--navy-dark); }
+.btn-navy:active { transform: scale(0.98); }
+.btn-navy:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Utility: amber accent button (CTAs only)
+ * ------------------------------------------------------------------ */
+.btn-accent {
+  background-color: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-accent:hover  { background-color: var(--accent-dark); }
+.btn-accent:active { transform: scale(0.98); }
+.btn-accent:focus-visible {
+  outline: 3px solid var(--navy);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Risk verdict colours — used only for URL / T&C results
+ * ------------------------------------------------------------------ */
+.verdict-safe    { --verdict-bg: #f0fdf4; --verdict-border: #86efac; --verdict-text: #15803d; }
+.verdict-warning { --verdict-bg: #fffbeb; --verdict-border: #fcd34d; --verdict-text: #92400e; }
+.verdict-unsafe  { --verdict-bg: #fef2f2; --verdict-border: #fca5a5; --verdict-text: #991b1b; }

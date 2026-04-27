@@ -3,67 +3,52 @@ import { ref } from 'vue'
 
 const menuOpen = ref(false)
 
-// Each tool link carries its brand colour — Home stays neutral slate
 const links = [
-  { label: 'Home',           to: '/',               color: 'slate'  },
-  { label: 'URL Verifier',   to: '/url-verifier',   color: 'green'  },
-  { label: 'T&C Simplifier', to: '/tnc-simplifier', color: 'purple' },
-  { label: 'Scam Quiz',      to: '/scam-quiz',      color: 'amber'  },
+  { label: 'Home',           to: '/'               },
+  { label: 'URL Verifier',   to: '/url-verifier'   },
+  { label: 'T&C Simplifier', to: '/tnc-simplifier' },
+  { label: 'Scam Quiz',      to: '/scam-quiz'       },
 ]
-
 </script>
 
 <template>
-  <!-- Sticky header — stays at the top while you scroll -->
-  <header class="sticky top-0 z-50 shadow-sm">
+  <!-- Full-width navy header — no max-width constraint, stretches edge to edge -->
+  <header class="sticky top-0 z-50 shadow-md" style="background-color: var(--navy);">
 
-    <!-- Main nav bar -->
-    <nav class="border-b border-slate-200/80 bg-white/90 backdrop-blur">
-      <div class="mx-auto flex h-24 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <nav>
+      <!-- px-6 sm:px-10 lg:px-16 matches every other section on the page -->
+      <div class="flex h-20 items-center justify-between px-6 sm:px-10 lg:px-16">
 
         <!-- Logo + site name -->
-        <RouterLink to="/" class="flex items-center gap-4" @click="menuOpen = false">
-          <img src="/logo.png" alt="SafeCheck logo" class="h-14 w-14 rounded-2xl object-contain" />
-          <span class="text-2xl font-bold tracking-wide text-slate-900">SafeCheck</span>
+        <RouterLink
+          to="/"
+          class="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          @click="menuOpen = false"
+        >
+          <img src="/logo.png" alt="SafeCheck logo" class="h-12 w-12 rounded-xl object-contain bg-white/10 p-1" />
+          <span class="text-2xl font-bold tracking-wide text-white">SafeCheck</span>
         </RouterLink>
 
-        <!-- Desktop nav links — each tool uses its own brand colour when active -->
-        <div class="hidden items-center gap-2 md:flex">
+        <!-- Desktop nav links -->
+        <div class="hidden items-center gap-1 md:flex">
           <RouterLink
             v-for="link in links"
             :key="link.to"
             :to="link.to"
-            class="rounded-full px-6 py-3 text-xl font-medium transition"
-            :class="{
-              'text-slate-600  hover:bg-slate-100  hover:text-slate-900':  link.color === 'slate',
-              'text-green-700  hover:bg-green-50   hover:text-green-900':  link.color === 'green',
-              'text-purple-700 hover:bg-purple-50  hover:text-purple-900': link.color === 'purple',
-              'text-amber-600  hover:bg-amber-50   hover:text-amber-900':  link.color === 'amber',
-            }"
-            :active-class="
-              link.color === 'green'  ? 'bg-green-700  text-white hover:bg-green-700  hover:text-white' :
-              link.color === 'purple' ? 'bg-purple-700 text-white hover:bg-purple-700 hover:text-white' :
-              link.color === 'amber'  ? 'bg-amber-500  text-white hover:bg-amber-500  hover:text-white' :
-                                        'bg-slate-900  text-white hover:bg-slate-900  hover:text-white'
-            "
-            :exact-active-class="
-              link.color === 'green'  ? 'bg-green-700  text-white hover:bg-green-700  hover:text-white' :
-              link.color === 'purple' ? 'bg-purple-700 text-white hover:bg-purple-700 hover:text-white' :
-              link.color === 'amber'  ? 'bg-amber-500  text-white hover:bg-amber-500  hover:text-white' :
-                                        'bg-slate-900  text-white hover:bg-slate-900  hover:text-white'
-            "
+            class="rounded-lg px-5 py-2.5 text-lg font-medium text-blue-100 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            :exact-active-class="'bg-white text-blue-900 hover:bg-white hover:text-blue-900'"
           >
             {{ link.label }}
           </RouterLink>
         </div>
 
-        <!-- Hamburger — only shows on small screens -->
+        <!-- Hamburger — small screens only -->
         <button
           type="button"
-          class="inline-flex items-center justify-center rounded-full border border-slate-200 p-2.5 text-slate-700 transition hover:bg-slate-100 md:hidden"
+          class="inline-flex items-center justify-center rounded-lg border border-white/30 p-2.5 text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white md:hidden"
           :aria-expanded="menuOpen"
           aria-controls="mobile-nav"
-          aria-label="Toggle navigation"
+          aria-label="Toggle navigation menu"
           @click="menuOpen = !menuOpen"
         >
           <svg v-if="!menuOpen" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,33 +60,21 @@ const links = [
         </button>
       </div>
 
-      <!-- Mobile dropdown menu -->
-      <div v-if="menuOpen" id="mobile-nav" class="border-t border-slate-200 bg-white md:hidden">
-        <div class="mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8">
-          <div class="grid gap-2">
+      <!-- Mobile dropdown — full-width, no inner constraint -->
+      <div
+        v-if="menuOpen"
+        id="mobile-nav"
+        class="border-t border-white/20 md:hidden"
+        style="background-color: var(--navy-dark);"
+      >
+        <div class="px-6 py-3">
+          <div class="grid gap-1">
             <RouterLink
               v-for="link in links"
               :key="link.to"
               :to="link.to"
-              class="rounded-xl px-4 py-3 text-xl font-medium transition"
-              :class="{
-                'text-slate-700  hover:bg-slate-100':  link.color === 'slate',
-                'text-green-700  hover:bg-green-50':   link.color === 'green',
-                'text-purple-700 hover:bg-purple-50':  link.color === 'purple',
-                'text-amber-600  hover:bg-amber-50':   link.color === 'amber',
-              }"
-              :active-class="
-                link.color === 'green'  ? 'bg-green-50  text-green-900' :
-                link.color === 'purple' ? 'bg-purple-50 text-purple-900' :
-                link.color === 'amber'  ? 'bg-amber-50  text-amber-900' :
-                                          'bg-slate-100 text-slate-900'
-              "
-              :exact-active-class="
-                link.color === 'green'  ? 'bg-green-50  text-green-900' :
-                link.color === 'purple' ? 'bg-purple-50 text-purple-900' :
-                link.color === 'amber'  ? 'bg-amber-50  text-amber-900' :
-                                          'bg-slate-100 text-slate-900'
-              "
+              class="rounded-lg px-4 py-4 text-xl font-medium text-blue-100 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              :exact-active-class="'bg-white text-blue-900'"
               @click="menuOpen = false"
             >
               {{ link.label }}
