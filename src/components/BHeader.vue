@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 
 const menuOpen = ref(false)
+const logoSrc = `${import.meta.env.BASE_URL}logo.png`
 
 // Each tool link carries its brand colour — Home stays neutral slate
 const links = [
@@ -23,7 +24,7 @@ const links = [
 
         <!-- Logo + site name -->
         <RouterLink to="/" class="flex items-center gap-4" @click="menuOpen = false">
-          <img src="/logo.png" alt="SafeCheck logo" class="h-14 w-14 rounded-2xl object-contain" />
+          <img :src="logoSrc" alt="SafeCheck logo" class="h-14 w-14 rounded-2xl object-contain" />
           <span class="text-2xl font-bold tracking-wide text-slate-900">SafeCheck</span>
         </RouterLink>
 

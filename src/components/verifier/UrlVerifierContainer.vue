@@ -28,7 +28,7 @@ onMounted(async () => {
 
 // Used to scale the bar chart in the stats panel — the tallest bar should always fill 100%
 const maxReports = computed(() =>
-  scamStats.value
+  scamStats.value?.topScamTypes?.length
     ? Math.max(...scamStats.value.topScamTypes.map(r => Number(r.total_reports)))
     : 1
 )

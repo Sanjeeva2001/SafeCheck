@@ -1,4 +1,5 @@
 <script setup>
+const logoSrc = `${import.meta.env.BASE_URL}logo.png`
 // Footer links — kept in sync with the router so nothing goes stale
 const navLinks = [
   { label: 'Home',           to: '/'               },
@@ -32,7 +33,7 @@ const aboutItems = [
         <!-- Brand column — logo + short tagline -->
         <div class="flex flex-col gap-4">
           <RouterLink to="/" class="flex items-center gap-3">
-            <img src="/logo.png" alt="SafeCheck logo" class="h-12 w-12 rounded-xl object-contain" />
+            <img :src="logoSrc" alt="SafeCheck logo" class="h-12 w-12 rounded-xl object-contain" />
             <span class="text-2xl font-bold tracking-wide text-white">SafeCheck</span>
           </RouterLink>
           <p class="text-xl leading-relaxed text-slate-400">
