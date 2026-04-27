@@ -36,8 +36,7 @@ const allowedOrigins = [
 app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
-// register more specific route before the generic /api route
-app.use('/api/scam-stats', scamStatsRouter)
+
 app.post('/api/auth', (req, res) => {
   const { password } = req.body
 
@@ -47,9 +46,11 @@ app.post('/api/auth', (req, res) => {
     res.status(401).json({ success: false })
   }
 })
+
+app.use('/api/scam-stats', scamStatsRouter)
 app.use('/api', urlCheckRouter)
 
-// health checks for root and API-prefixed probes
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' })
 })

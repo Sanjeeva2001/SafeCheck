@@ -8,6 +8,8 @@ const api = axios.create({
   baseURL: apiBaseUrl,
 })
 
+export { api }
+
 export async function checkUrl(url) {
   const response = await api.post('/check-url', { url })
   return response.data

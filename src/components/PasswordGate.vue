@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import { api } from '../services/api.js'
 
 const password = ref('')
 const error = ref(false)
@@ -14,7 +14,7 @@ async function checkPassword() {
   loading.value = true
 
   try {
-    const response = await axios.post('/api/auth', { password: password.value })
+    const response = await api.post('/auth', { password: password.value })
     if (response.data.success) {
       emit('unlock')
     } else {
