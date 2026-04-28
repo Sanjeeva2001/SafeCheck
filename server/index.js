@@ -24,6 +24,7 @@ for (const [envName, label] of [
 
 const { default: urlCheckRouter } = await import('./routes/urlCheck.js')
 const { default: scamStatsRouter } = await import('./routes/scamStats.js')
+const { default: tncFetchRouter } = await import('./routes/tncFetch.js')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -49,6 +50,7 @@ app.post('/api/auth', (req, res) => {
 
 app.use('/api/scam-stats', scamStatsRouter)
 app.use('/api', urlCheckRouter)
+app.use('/api', tncFetchRouter)
 
 
 app.get('/health', (req, res) => {

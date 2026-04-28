@@ -1,19 +1,42 @@
 <script setup>
 import { ref } from 'vue'
+import { fetchTncFromUrl } from '../services/api.js'
 
 const inputMode = ref('url')
 const inputValue = ref('')
 const loading = ref(false)
 const hasResult = ref(false)
+const error = ref('')
 
-function handleAnalyze() {
+async function handleAnalyze() {
   if (!inputValue.value.trim()) return
+
+  error.value = ''
   loading.value = true
   hasResult.value = false
-  setTimeout(() => {
-    loading.value = false
+
+  try {
+    if (inputMode.value === 'url') {
+      // Fetch content from URL
+      const result = await fetchTncFromUrl(inputValue.value)
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to fetch URL content')
+      }
+
+      // Use the fetched content as the input for analysis
+      inputValue.value = result.content
+    }
+
+    // Simulate analysis with a slight delay
+    await new Promise(resolve => setTimeout(resolve, 1800))
     hasResult.value = true
-  }, 1800)
+  } catch (err) {
+    error.value = err.message || 'An error occurred. Please try again.'
+    console.error('[TNC Simplifier] Error:', err)
+  } finally {
+    loading.value = false
+  }
 }
 
 const sampleResult = {
@@ -82,6 +105,7 @@ const severityConfig = {
   pass:   { label: 'Fine',         bg: '#f0fdf4', border: '#86efac', icon: '#16a34a', iconBg: '#dcfce7' },
 }
 </script>
+</script>
 
 <template>
   <!-- Compact navy hero band -->
@@ -116,7 +140,7 @@ const severityConfig = {
           <!-- URL / Paste Text toggle — strong active state -->
           <div class="flex rounded-xl border border-slate-200 p-1 mb-5 bg-slate-50">
             <button
-              @click="inputMode = 'url'"
+              @click="inputMode = 'url'; error = ''"
               class="flex-1 text-lg font-semibold py-3 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900"
               :class="inputMode === 'url' ? 'text-white' : 'text-slate-600 hover:text-slate-800'"
               :style="inputMode === 'url' ? 'background-color: var(--navy);' : ''"
@@ -124,13 +148,26 @@ const severityConfig = {
               Website URL
             </button>
             <button
-              @click="inputMode = 'text'"
+              @click="inputMode = 'text'; error = ''"
               class="flex-1 text-lg font-semibold py-3 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900"
               :class="inputMode === 'text' ? 'text-white' : 'text-slate-600 hover:text-slate-800'"
               :style="inputMode === 'text' ? 'background-color: var(--navy);' : ''"
             >
               Paste Text
             </button>
+          </div>
+
+          <!-- Error message display -->
+          <div v-if="error" class="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 animate-fade-in">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p class="font-semibold text-red-800">Error</p>
+                <p class="text-sm text-red-700 mt-1">{{ error }}</p>
+              </div>
+            </div>
           </div>
 
           <label class="block text-xl font-semibold text-slate-800 mb-2">
@@ -140,30 +177,40 @@ const severityConfig = {
           <input
             v-if="inputMode === 'url'"
             v-model="inputValue"
-            type="url"
-            placeholder="https://example.com/terms"
+            type="text"
+            placeholder="https://example.com/terms or example.com/terms"
             class="w-full border border-slate-200 rounded-xl px-5 py-4 text-xl placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-transparent transition"
             style="font-size: 1.125rem;"
+            :disabled="loading"
           />
           <textarea
             v-else
             v-model="inputValue"
             rows="7"
-            placeholder="Paste the full Terms &amp; Conditions text here..."
+            placeholder="Paste the full Terms & Conditions text here..."
             class="w-full border border-slate-200 rounded-xl px-5 py-4 text-xl placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-transparent resize-none transition"
             style="font-size: 1.125rem;"
+            :disabled="loading"
           ></textarea>
+
+          <!-- Help text for each mode -->
+          <p v-if="inputMode === 'url'" class="mt-3 text-sm text-slate-600">
+            Enter the URL of any website's Terms & Conditions page. We'll fetch the content and analyze it for you.
+          </p>
+          <p v-else class="mt-3 text-sm text-slate-600">
+            Copy and paste the full text of the Terms & Conditions here. You can paste from a PDF, website, or any document.
+          </p>
 
           <button
             @click="handleAnalyze"
             :disabled="loading || !inputValue.trim()"
-            class="btn-navy mt-4 w-full py-4 text-xl disabled:opacity-60 disabled:cursor-not-allowed"
+            class="btn-navy mt-4 w-full py-4 text-xl disabled:opacity-60 disabled:cursor-not-allowed transition"
           >
-            <svg v-if="loading" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <svg v-if="loading" class="w-5 h-5 animate-spin inline mr-2" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
-            <span>{{ loading ? 'Analysing...' : 'Analyse these T&Cs' }}</span>
+            <span>{{ loading ? (inputMode === 'url' ? 'Fetching content...' : 'Analysing...') : 'Analyse these T&Cs' }}</span>
           </button>
 
           <!-- What we look for -->
@@ -234,11 +281,18 @@ const severityConfig = {
 
           <!-- Prompt to try it -->
           <div class="rounded-2xl p-6 shadow-sm" style="background-color: var(--navy-tint); border: 1px solid #bfdbfe;">
-            <p class="text-lg font-bold mb-2" style="color: var(--navy);">Try it now — it only takes a moment</p>
-            <p class="text-lg text-slate-600 leading-relaxed">
-              Paste the link to any website's Terms &amp; Conditions in the panel on the left, then click
-              <strong>Analyse these T&amp;Cs</strong>. We will give you a plain-English summary within seconds.
-            </p>
+            <p class="text-lg font-bold mb-2" style="color: var(--navy);">Two easy ways to get started:</p>
+            <ul class="space-y-2 text-lg text-slate-700">
+              <li class="flex items-start gap-3">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-sm font-bold" style="color: var(--navy);">1</span>
+                <span><strong>Paste a link</strong> to any website's Terms & Conditions page</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-sm font-bold" style="color: var(--navy);">2</span>
+                <span><strong>Paste the text</strong> directly if you have it copied</span>
+              </li>
+            </ul>
+            <p class="text-sm text-slate-600 mt-3">We'll give you a plain-English summary within seconds.</p>
           </div>
 
         </div>

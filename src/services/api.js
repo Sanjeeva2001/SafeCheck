@@ -19,3 +19,13 @@ export async function getOnlineSeniorStats() {
   const response = await api.get('/scam-stats/online-seniors')
   return response.data
 }
+
+/**
+ * Fetch Terms & Conditions content from a URL
+ * @param {string} url - The URL to fetch T&C content from
+ * @returns {Promise<{success: boolean, content?: string, error?: string}>}
+ */
+export async function fetchTncFromUrl(url) {
+  const response = await api.post('/fetch-tnc', { url })
+  return response.data
+}
