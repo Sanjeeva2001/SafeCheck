@@ -145,84 +145,209 @@ const features = [
         </div>
 
         <!-- Right: senior lady illustration -->
-        <div class="hidden lg:flex justify-center items-center animate-fade-in-up stagger-2">
+        <div class="hero-visual-column hidden lg:flex justify-center items-center animate-fade-in-up stagger-2">
           <div class="relative">
-            <div class="w-80 h-80 rounded-3xl flex items-center justify-center" style="background-color: rgba(255,255,255,0.08);">
-              <svg viewBox="0 0 320 310" class="w-72 h-72" fill="none" xmlns="http://www.w3.org/2000/svg"
-                aria-label="Illustration of an older Australian woman checking a link on her phone and seeing it is safe">
+            <div class="senior-shield-stage rounded-3xl flex items-center justify-center" style="background-color: rgba(255,255,255,0.08);">
+              <div class="protective-bubble" aria-hidden="true">
+                <span class="bubble-ripple bubble-ripple-top-left"></span>
+                <span class="bubble-ripple bubble-ripple-right"></span>
+                <span class="bubble-ripple bubble-ripple-bottom-left"></span>
+                <span class="bubble-ripple bubble-ripple-top"></span>
+                <span class="bubble-ripple bubble-ripple-upper-right"></span>
+                <span class="bubble-ripple bubble-ripple-left"></span>
+                <span class="bubble-ripple bubble-ripple-bottom-right"></span>
+              </div>
 
-                <circle cx="160" cy="155" r="138" fill="rgba(255,255,255,0.04)"/>
-                <path d="M90 312 Q88 245 115 228 Q138 215 160 210 Q182 215 205 228 Q232 245 230 312Z" fill="rgba(100,130,190,0.65)"/>
-                <path d="M143 210 L160 205 L177 210 L170 238 L160 244 L150 238Z" fill="rgba(220,230,248,0.68)"/>
-                <rect x="152" y="190" width="16" height="24" rx="7" fill="rgba(252,198,158,0.95)"/>
-                <ellipse cx="160" cy="156" rx="48" ry="52" fill="rgba(252,198,158,0.95)"/>
-                <path d="M112 146 Q108 102 136 86 Q160 76 184 86 Q212 102 208 146 Q198 120 160 116 Q122 120 112 146Z" fill="rgba(212,212,222,0.97)"/>
-                <path d="M112 146 Q104 158 106 176 Q113 172 118 162Z" fill="rgba(212,212,222,0.94)"/>
-                <path d="M208 146 Q216 158 214 176 Q207 172 202 162Z" fill="rgba(212,212,222,0.94)"/>
-                <path d="M122 118 Q132 110 143 110" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <path d="M177 110 Q188 110 198 118" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <path d="M136 136 Q144 131 152 133" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <path d="M168 133 Q176 131 184 136" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <ellipse cx="144" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
-                <ellipse cx="176" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
-                <circle cx="145.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
-                <circle cx="177.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
-                <path d="M185 144 Q190 140 191 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
-                <path d="M135 144 Q130 140 129 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
-                <rect x="132" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
-                <rect x="166" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
-                <path d="M154 150 L166 150" stroke="rgba(80,82,106,0.88)" stroke-width="2.2"/>
-                <path d="M132 150 Q122 149 120 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
-                <path d="M188 150 Q198 149 200 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
-                <path d="M157 164 Q160 170 163 164" stroke="rgba(200,145,100,0.42)" stroke-width="1.8" fill="none"/>
-                <path d="M141 178 Q160 198 179 178" stroke="rgba(190,110,65,0.78)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-                <circle cx="138" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
-                <circle cx="182" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
-                <ellipse cx="130" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
-                <ellipse cx="190" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
-                <path d="M205 238 Q240 248 254 264" stroke="rgba(252,198,158,0.92)" stroke-width="18" stroke-linecap="round" fill="none"/>
-                <ellipse cx="257" cy="270" rx="14" ry="11" fill="rgba(252,198,158,0.92)"/>
-                <rect x="246" y="254" width="38" height="64" rx="8" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
-                <rect x="249" y="258" width="32" height="52" rx="5" fill="rgba(255,255,255,0.09)"/>
-                <rect x="252" y="262" width="26" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
-                <rect x="254" y="269" width="20" height="3" rx="1.5" fill="rgba(255,255,255,0.18)"/>
-                <circle cx="265" cy="285" r="13" fill="rgba(74,222,128,0.28)" stroke="rgba(74,222,128,0.75)" stroke-width="1.8"/>
-                <path d="M259 285 l4 4 l9-9" stroke="rgba(74,222,128,1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="256" y="302" width="18" height="4" rx="2" fill="rgba(74,222,128,0.55)"/>
-                <path d="M115 238 Q88 250 76 268" stroke="rgba(252,198,158,0.88)" stroke-width="16" stroke-linecap="round" fill="none"/>
-                <circle cx="264" cy="80" r="26" fill="rgba(74,222,128,0.2)" stroke="rgba(74,222,128,0.55)" stroke-width="1.5"/>
-                <path d="M264 68 Q264 68 254 72 L254 82 Q254 92 264 96 Q274 92 274 82 L274 72 Z" fill="rgba(74,222,128,0.46)"/>
-                <path d="M258 82 l3.5 3.5 l8.5-8.5" stroke="rgba(74,222,128,1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="90" cy="100" r="2.5" fill="rgba(255,255,255,0.25)"/>
-                <circle cx="78" cy="140" r="1.8" fill="rgba(255,255,255,0.18)"/>
-                <circle cx="234" cy="108" r="2" fill="rgba(255,255,255,0.2)"/>
-                <circle cx="235" cy="130" r="3" fill="rgba(74,222,128,0.22)"/>
-              </svg>
-            </div>
+              <div class="threat-label threat-suspicious-link" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9.6 14.4 8 16a3.8 3.8 0 0 1-5.4-5.4L5 8.2a3.8 3.8 0 0 1 5.4 0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                    <path d="m14.4 9.6 1.6-1.6a3.8 3.8 0 0 1 5.4 5.4L19 15.8a3.8 3.8 0 0 1-5.4 0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                    <path d="M17.5 15.2v2.1m0 1.9h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Suspicious link</span>
+              </div>
 
-            <div class="absolute -top-4 -right-4 bg-white rounded-2xl px-4 py-3 shadow-xl flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+              <div class="threat-label threat-unknown-tnc" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+                    <path d="M14 3v5h4" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+                    <path d="M12 16.2v-.4c0-1.4 1.9-1.5 1.9-3a1.9 1.9 0 0 0-3.5-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M12 19h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Unknown T&amp;Cs</span>
+              </div>
+
+              <div class="threat-label threat-phishing-email" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="3.5" y="6" width="17" height="12" rx="2.5" stroke="currentColor" stroke-width="2"/>
+                    <path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17 13v2.3m0 2h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Phishing email</span>
+              </div>
+
+              <div class="threat-label threat-malware-popup" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="4" y="5" width="16" height="14" rx="2.5" stroke="currentColor" stroke-width="1.9"/>
+                    <path d="M8 9h8M8 13h4m5 1.5 2 2m0-2-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Malware popup</span>
+              </div>
+
+              <div class="threat-label threat-tech-call" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 5c.4 6.2 5 10.8 12 12l-2.2 3c-7.4-1.7-11.5-5.9-13.8-13L6 5h1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="M16 5h3v3m-.3-2.7-4.4 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Fake support call</span>
+              </div>
+
+              <div class="threat-label threat-password-request" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="5" y="10" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.9"/>
+                    <path d="M8 10V8a4 4 0 0 1 8 0v2M12 14v2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                    <path d="M18 5v2m0 2h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Password request</span>
+              </div>
+
+              <div class="threat-label threat-fake-prize" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M5 10h14v10H5V10Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+                    <path d="M4 7h16v3H4V7Zm8 0v13M9 7C7 7 6 5.8 6.6 4.6 7.4 3 10 4.4 12 7Zm3 0c2-2.6 4.6-4 5.4-2.4C18 5.8 17 7 15 7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span>Fake prize</span>
+              </div>
+
+              <div class="blocked-badge blocked-top-left" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Link blocked</span>
+              </div>
+
+              <div class="blocked-badge blocked-right" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>T&amp;Cs decoded</span>
+              </div>
+
+              <div class="blocked-badge blocked-bottom-left" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Email flagged</span>
+              </div>
+
+              <div class="blocked-badge blocked-top" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Popup stopped</span>
+              </div>
+
+              <div class="blocked-badge blocked-upper-right" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Call screened</span>
+              </div>
+
+              <div class="blocked-badge blocked-left" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Password safe</span>
+              </div>
+
+              <div class="blocked-badge blocked-bottom-right" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Prize rejected</span>
+              </div>
+
+              <div class="bubble-sheen" aria-hidden="true">
+                <svg viewBox="0 0 320 320" fill="none">
+                  <path d="M92 72 Q132 38 184 48" stroke="rgba(255,255,255,0.22)" stroke-width="5" stroke-linecap="round"/>
+                  <path d="M66 132 Q72 104 88 84" stroke="rgba(255,255,255,0.14)" stroke-width="4" stroke-linecap="round"/>
                 </svg>
               </div>
-              <div>
-                <p class="text-sm font-bold text-gray-900">Link checked</p>
-                <p class="text-xs text-green-600 font-semibold">This site is safe ✓</p>
-              </div>
-            </div>
 
-            <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl px-4 py-3 shadow-xl flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: #fef3c7;">
-                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01" />
+              <div class="sr-only">
+                Animated protection scene showing suspicious link, fake terms and conditions, and phishing email threats being blocked.
+              </div>
+
+              <div class="hero-illustration-layer">
+                <svg viewBox="0 0 320 310" class="grandma-hero-svg" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  aria-label="Illustration of an older Australian woman checking a link on her phone and seeing it is safe">
+
+                  <circle cx="160" cy="155" r="138" fill="rgba(255,255,255,0.04)"/>
+                  <path d="M90 312 Q88 245 115 228 Q138 215 160 210 Q182 215 205 228 Q232 245 230 312Z" fill="rgba(100,130,190,0.65)"/>
+                  <path d="M143 210 L160 205 L177 210 L170 238 L160 244 L150 238Z" fill="rgba(220,230,248,0.68)"/>
+                  <rect x="152" y="190" width="16" height="24" rx="7" fill="rgba(252,198,158,0.95)"/>
+                  <ellipse cx="160" cy="156" rx="48" ry="52" fill="rgba(252,198,158,0.95)"/>
+                  <path d="M112 146 Q108 102 136 86 Q160 76 184 86 Q212 102 208 146 Q198 120 160 116 Q122 120 112 146Z" fill="rgba(212,212,222,0.97)"/>
+                  <path d="M112 146 Q104 158 106 176 Q113 172 118 162Z" fill="rgba(212,212,222,0.94)"/>
+                  <path d="M208 146 Q216 158 214 176 Q207 172 202 162Z" fill="rgba(212,212,222,0.94)"/>
+                  <path d="M122 118 Q132 110 143 110" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M177 110 Q188 110 198 118" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M136 136 Q144 131 152 133" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M168 133 Q176 131 184 136" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <ellipse cx="144" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
+                  <ellipse cx="176" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
+                  <circle cx="145.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
+                  <circle cx="177.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
+                  <path d="M185 144 Q190 140 191 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
+                  <path d="M135 144 Q130 140 129 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
+                  <rect x="132" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
+                  <rect x="166" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
+                  <path d="M154 150 L166 150" stroke="rgba(80,82,106,0.88)" stroke-width="2.2"/>
+                  <path d="M132 150 Q122 149 120 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <path d="M188 150 Q198 149 200 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <path d="M157 164 Q160 170 163 164" stroke="rgba(200,145,100,0.42)" stroke-width="1.8" fill="none"/>
+                  <path d="M141 178 Q160 198 179 178" stroke="rgba(190,110,65,0.78)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+                  <circle cx="138" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
+                  <circle cx="182" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
+                  <ellipse cx="130" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
+                  <ellipse cx="190" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
+                  <path d="M205 238 Q240 248 254 264" stroke="rgba(252,198,158,0.92)" stroke-width="18" stroke-linecap="round" fill="none"/>
+                  <ellipse cx="257" cy="270" rx="14" ry="11" fill="rgba(252,198,158,0.92)"/>
+                  <rect x="246" y="254" width="38" height="64" rx="8" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
+                  <rect x="249" y="258" width="32" height="52" rx="5" fill="rgba(255,255,255,0.09)"/>
+                  <rect x="252" y="262" width="26" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="254" y="269" width="20" height="3" rx="1.5" fill="rgba(255,255,255,0.18)"/>
+                  <circle cx="265" cy="285" r="13" fill="rgba(74,222,128,0.28)" stroke="rgba(74,222,128,0.75)" stroke-width="1.8"/>
+                  <path d="M259 285 l4 4 l9-9" stroke="rgba(74,222,128,1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <rect x="256" y="302" width="18" height="4" rx="2" fill="rgba(74,222,128,0.55)"/>
+                  <path d="M115 238 Q88 250 76 268" stroke="rgba(252,198,158,0.88)" stroke-width="16" stroke-linecap="round" fill="none"/>
+                  <circle cx="264" cy="80" r="26" fill="rgba(74,222,128,0.2)" stroke="rgba(74,222,128,0.55)" stroke-width="1.5"/>
+                  <path d="M264 68 Q264 68 254 72 L254 82 Q254 92 264 96 Q274 92 274 82 L274 72 Z" fill="rgba(74,222,128,0.46)"/>
+                  <path d="M258 82 l3.5 3.5 l8.5-8.5" stroke="rgba(74,222,128,1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="90" cy="100" r="2.5" fill="rgba(255,255,255,0.25)"/>
+                  <circle cx="78" cy="140" r="1.8" fill="rgba(255,255,255,0.18)"/>
+                  <circle cx="234" cy="108" r="2" fill="rgba(255,255,255,0.2)"/>
+                  <circle cx="235" cy="130" r="3" fill="rgba(74,222,128,0.22)"/>
                 </svg>
               </div>
-              <div>
-                <p class="text-sm font-bold text-gray-900">T&amp;C flagged</p>
-                <p class="text-xs text-amber-700 font-semibold">Data sharing clause found</p>
-              </div>
+
             </div>
+
           </div>
         </div>
 
@@ -580,3 +705,603 @@ const features = [
   </section>
 
 </template>
+
+<style scoped>
+.hero-visual-column {
+  min-height: 29rem;
+}
+
+.senior-shield-stage {
+  position: relative;
+  width: clamp(27rem, 34vw, 31rem);
+  height: clamp(27rem, 34vw, 31rem);
+  overflow: visible;
+  isolation: isolate;
+}
+
+.senior-shield-stage::before {
+  content: "";
+  position: absolute;
+  inset: -0.75rem;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 50% 43%, rgba(255, 255, 255, 0.16), rgba(191, 219, 254, 0.08) 62%, rgba(255, 255, 255, 0.03) 100%);
+  filter: blur(12px);
+  opacity: 0.78;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.protective-bubble {
+  position: absolute;
+  inset: -0.75rem;
+  border-radius: 9999px;
+  background: rgba(219, 234, 254, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    inset 0 0 38px rgba(255, 255, 255, 0.1),
+    0 0 30px rgba(147, 197, 253, 0.12);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.protective-bubble::after {
+  content: "";
+  position: absolute;
+  inset: 0.7rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.bubble-sheen,
+.hero-illustration-layer,
+.threat-label,
+.blocked-badge {
+  position: absolute;
+  pointer-events: none;
+}
+
+.bubble-sheen {
+  inset: -0.75rem;
+  z-index: 2;
+}
+
+.bubble-sheen svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-illustration-layer {
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grandma-hero-svg {
+  width: min(28.5rem, 93%);
+  height: min(28.5rem, 93%);
+  max-width: none;
+}
+
+.bubble-ripple {
+  position: absolute;
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.34);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.45);
+  will-change: transform, opacity;
+  animation: bubbleRipple 16s ease-out infinite;
+}
+
+.bubble-ripple-top-left {
+  left: 2%;
+  top: 25%;
+}
+
+.bubble-ripple-right {
+  left: 100%;
+  top: 50%;
+  animation-delay: 2.2s;
+}
+
+.bubble-ripple-bottom-left {
+  left: 2%;
+  top: 73%;
+  animation-delay: 4.4s;
+}
+
+.bubble-ripple-top {
+  left: 50%;
+  top: 0%;
+  animation-delay: 6.6s;
+}
+
+.bubble-ripple-upper-right {
+  left: 88%;
+  top: 14%;
+  animation-delay: 8.8s;
+}
+
+.bubble-ripple-left {
+  left: 0%;
+  top: 50%;
+  animation-delay: 11s;
+}
+
+.bubble-ripple-bottom-right {
+  left: 88%;
+  top: 88%;
+  animation-delay: 13.2s;
+}
+
+.threat-label {
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: max-content;
+  min-height: 2.25rem;
+  padding: 0.44rem 0.74rem;
+  border-radius: 9999px;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(194, 65, 12, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-duration: 16s;
+  animation-timing-function: cubic-bezier(0.34, 1.02, 0.58, 1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.threat-symbol {
+  width: 1.1rem;
+  height: 1.1rem;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.threat-symbol svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.threat-suspicious-link {
+  left: -2.8rem;
+  top: 5.2rem;
+  background: rgba(194, 65, 12, 0.84);
+  animation-name: suspiciousLinkApproach;
+}
+
+.threat-unknown-tnc {
+  right: -4.2rem;
+  top: 10.2rem;
+  background: rgba(185, 28, 28, 0.8);
+  animation-name: unknownTncApproach;
+  animation-delay: 2.2s;
+}
+
+.threat-phishing-email {
+  left: -2.8rem;
+  top: 16.8rem;
+  background: rgba(180, 83, 9, 0.84);
+  animation-name: phishingEmailApproach;
+  animation-delay: 4.4s;
+}
+
+.threat-malware-popup {
+  left: 8.3rem;
+  top: -2.6rem;
+  background: rgba(190, 75, 12, 0.82);
+  animation-name: malwarePopupApproach;
+  animation-delay: 6.6s;
+}
+
+.threat-tech-call {
+  right: -4.2rem;
+  top: 4.2rem;
+  background: rgba(153, 27, 27, 0.82);
+  animation-name: techCallApproach;
+  animation-delay: 8.8s;
+}
+
+.threat-password-request {
+  left: -3.4rem;
+  top: 11rem;
+  background: rgba(180, 83, 9, 0.84);
+  animation-name: passwordRequestApproach;
+  animation-delay: 11s;
+}
+
+.threat-fake-prize {
+  right: -3.6rem;
+  top: 19rem;
+  background: rgba(194, 65, 12, 0.82);
+  animation-name: fakePrizeApproach;
+  animation-delay: 13.2s;
+}
+
+.blocked-badge {
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: max-content;
+  padding: 0.28rem 0.52rem;
+  border-radius: 9999px;
+  color: #166534;
+  background: rgba(240, 253, 244, 0.96);
+  border: 1px solid rgba(134, 239, 172, 0.75);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(4px) scale(0.94);
+  will-change: transform, opacity;
+  animation: blockedBadge 16s ease-out infinite;
+}
+
+.blocked-badge svg {
+  width: 0.82rem;
+  height: 0.82rem;
+}
+
+.blocked-top-left {
+  left: -2rem;
+  top: 5.1rem;
+}
+
+.blocked-right {
+  right: -4rem;
+  top: 10.2rem;
+  animation-delay: 2.2s;
+}
+
+.blocked-bottom-left {
+  left: -2rem;
+  top: 16.7rem;
+  animation-delay: 4.4s;
+}
+
+.blocked-top {
+  left: 8.6rem;
+  top: -2.7rem;
+  animation-delay: 6.6s;
+}
+
+.blocked-upper-right {
+  right: -4rem;
+  top: 4rem;
+  animation-delay: 8.8s;
+}
+
+.blocked-left {
+  left: -4.8rem;
+  top: 11rem;
+  animation-delay: 11s;
+}
+
+.blocked-bottom-right {
+  right: -3.8rem;
+  top: 19rem;
+  animation-delay: 13.2s;
+}
+
+@keyframes suspiciousLinkApproach {
+  0%,
+  5%,
+  40%,
+  100% {
+    transform: translate(-7rem, -3.8rem) rotate(-5deg) scale(1);
+    opacity: 0;
+  }
+
+  9%,
+  19% {
+    opacity: 0.9;
+  }
+
+  24% {
+    transform: translate(0, 0) rotate(-2deg) scale(1);
+  }
+
+  27% {
+    transform: translate(0.26rem, 0.18rem) rotate(-2deg) scaleX(0.9) scaleY(1.06);
+  }
+
+  31% {
+    transform: translate(-1.5rem, -1rem) rotate(-4deg) scale(1.02);
+    opacity: 0.88;
+  }
+
+  38% {
+    transform: translate(-6.6rem, -3.2rem) rotate(-5deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes unknownTncApproach {
+  0%,
+  5%,
+  40%,
+  100% {
+    transform: translate(7.2rem, 0.1rem) rotate(4deg) scale(1);
+    opacity: 0;
+  }
+
+  9%,
+  19% {
+    opacity: 0.9;
+  }
+
+  24% {
+    transform: translate(0, 0) rotate(2deg) scale(1);
+  }
+
+  27% {
+    transform: translate(-0.28rem, 0) rotate(2deg) scaleX(0.88) scaleY(1.06);
+  }
+
+  31% {
+    transform: translate(1.45rem, 0) rotate(3deg) scale(1.02);
+    opacity: 0.88;
+  }
+
+  38% {
+    transform: translate(6.8rem, 0.1rem) rotate(4deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes phishingEmailApproach {
+  0%,
+  5%,
+  40%,
+  100% {
+    transform: translate(-7rem, 4.3rem) rotate(5deg) scale(1);
+    opacity: 0;
+  }
+
+  9%,
+  19% {
+    opacity: 0.9;
+  }
+
+  24% {
+    transform: translate(0, 0) rotate(2deg) scale(1);
+  }
+
+  27% {
+    transform: translate(0.25rem, -0.22rem) rotate(2deg) scaleX(0.9) scaleY(1.06);
+  }
+
+  31% {
+    transform: translate(-1.4rem, 0.9rem) rotate(4deg) scale(1.02);
+    opacity: 0.88;
+  }
+
+  38% {
+    transform: translate(-6.8rem, 3.7rem) rotate(5deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes malwarePopupApproach {
+  0%,
+  5%,
+  40%,
+  100% {
+    transform: translate(0, -6rem) rotate(-2deg) scale(1);
+    opacity: 0;
+  }
+
+  9%,
+  19% {
+    opacity: 0.9;
+  }
+
+  24% {
+    transform: translate(0, 0) rotate(-1deg) scale(1);
+  }
+
+  27% {
+    transform: translate(0, 0.25rem) rotate(-1deg) scaleX(1.06) scaleY(0.9);
+  }
+
+  31% {
+    transform: translate(0, -1.35rem) rotate(-2deg) scale(1.02);
+    opacity: 0.88;
+  }
+
+  38% {
+    transform: translate(0, -5.7rem) rotate(-2deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes techCallApproach {
+  0%,
+  5%,
+  40%,
+  100% {
+    transform: translate(6.4rem, -4.6rem) rotate(5deg) scale(1);
+    opacity: 0;
+  }
+
+  9%,
+  19% {
+    opacity: 0.9;
+  }
+
+  24% {
+    transform: translate(0, 0) rotate(3deg) scale(1);
+  }
+
+  27% {
+    transform: translate(-0.24rem, 0.2rem) rotate(3deg) scaleX(0.9) scaleY(1.06);
+  }
+
+  31% {
+    transform: translate(1.25rem, -1rem) rotate(5deg) scale(1.02);
+    opacity: 0.88;
+  }
+
+  38% {
+    transform: translate(6rem, -4.2rem) rotate(5deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes passwordRequestApproach {
+  0%,
+  5%,
+  40%,
+  100% {
+    transform: translate(-6.8rem, 0) rotate(-3deg) scale(1);
+    opacity: 0;
+  }
+
+  9%,
+  19% {
+    opacity: 0.9;
+  }
+
+  24% {
+    transform: translate(0, 0) rotate(-1deg) scale(1);
+  }
+
+  27% {
+    transform: translate(0.25rem, 0) rotate(-1deg) scaleX(0.9) scaleY(1.06);
+  }
+
+  31% {
+    transform: translate(-1.35rem, 0) rotate(-3deg) scale(1.02);
+    opacity: 0.88;
+  }
+
+  38% {
+    transform: translate(-6.9rem, 0) rotate(-3deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes fakePrizeApproach {
+  0%,
+  5%,
+  40%,
+  100% {
+    transform: translate(6.8rem, 5.8rem) rotate(6deg) scale(1);
+    opacity: 0;
+  }
+
+  9%,
+  19% {
+    opacity: 0.9;
+  }
+
+  24% {
+    transform: translate(0, 0) rotate(3deg) scale(1);
+  }
+
+  27% {
+    transform: translate(-0.25rem, -0.24rem) rotate(3deg) scaleX(0.9) scaleY(1.06);
+  }
+
+  31% {
+    transform: translate(1.25rem, 1.05rem) rotate(5deg) scale(1.02);
+    opacity: 0.88;
+  }
+
+  38% {
+    transform: translate(6.5rem, 5.5rem) rotate(6deg) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes bubbleRipple {
+  0%,
+  42%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+
+  27% {
+    opacity: 0.46;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+
+  63% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.55);
+  }
+}
+
+@keyframes blockedBadge {
+  0%,
+  30%,
+  52%,
+  100% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.94);
+  }
+
+  34%,
+  43% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  49% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .senior-shield-stage::before,
+  .bubble-ripple,
+  .threat-label,
+  .blocked-badge {
+    animation: none;
+  }
+
+  .bubble-ripple,
+  .blocked-badge {
+    display: none;
+  }
+
+  .threat-suspicious-link {
+    transform: translate(-9.25rem, 0.45rem) rotate(-4deg);
+    opacity: 0.9;
+  }
+
+  .threat-unknown-tnc {
+    transform: translate(8rem, 0) rotate(3deg);
+    opacity: 0.9;
+  }
+
+  .threat-phishing-email {
+    transform: translate(-9.05rem, -0.25rem) rotate(4deg);
+    opacity: 0.9;
+  }
+
+  .threat-malware-popup,
+  .threat-tech-call,
+  .threat-password-request,
+  .threat-fake-prize {
+    display: none;
+  }
+}
+</style>
