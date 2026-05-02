@@ -1,4 +1,4 @@
-import axios from 'axios'
+import httpClient from './httpClient.js'
 
 const PHISHSTATS_ENDPOINT = 'https://api.phishstats.info/api/phishing'
 const PHISHSTATS_TIMEOUT_MS = 7000
@@ -13,7 +13,7 @@ function buildParams(url) {
 
 export async function checkPhishStats(url) {
   try {
-    const response = await axios.get(PHISHSTATS_ENDPOINT, {
+    const response = await httpClient.get(PHISHSTATS_ENDPOINT, {
       params: buildParams(url),
       timeout: PHISHSTATS_TIMEOUT_MS,
     })

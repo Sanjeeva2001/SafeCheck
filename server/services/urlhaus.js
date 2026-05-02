@@ -1,4 +1,4 @@
-import axios from 'axios'
+import httpClient from './httpClient.js'
 
 const URLHAUS_LOOKUP_URL = 'https://urlhaus-api.abuse.ch/v1/url/'
 const URLHAUS_TIMEOUT_MS = 7000
@@ -14,7 +14,7 @@ export async function checkUrlhaus(url) {
   const body = new URLSearchParams({ url }).toString()
 
   try {
-    const response = await axios.post(URLHAUS_LOOKUP_URL, body, {
+    const response = await httpClient.post(URLHAUS_LOOKUP_URL, body, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Auth-Key': apiKey,

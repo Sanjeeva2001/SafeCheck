@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -6,19 +5,24 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const projectRoot = path.resolve(__dirname, '..')
 
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({ path: path.join(__dirname, '.env') })
+for (const envPath of [
+  path.join(projectRoot, '.env'),
+  path.join(__dirname, '.env'),
+]) {
+  dotenv.config({ path: envPath, override: true })
 }
 
 for (const [envName, label] of [
   ['URLHAUS_API_KEY', 'URLhaus'],
-  ['OTX_API_KEY', 'OTX'],
   ['GOOGLE_SAFE_BROWSING_API_KEY', 'Google Safe Browsing'],
   ['VIRUSTOTAL_API_KEY', 'VirusTotal'],
+  ['WHOIS_API_KEY', 'WHOIS (domain age)'],
+  ['DB_NAME', 'Database name'],
 ]) {
   if (!process.env[envName]) {
-    console.warn(`[SafeCheck] ${label} API key is missing. Related checks will fall back to safe defaults.`)
+    console.warn(`[SafeCheck] ${label} is missing. Related features may be unavailable.`)
   }
 }
 
@@ -57,6 +61,15 @@ app.get('/health', (req, res) => {
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' })
+})
+
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON body.' })
+  }
+
+  console.error('Unhandled server error:', err)
+  res.status(500).json({ error: 'Internal server error' })
 })
 
 app.listen(PORT, () => {
