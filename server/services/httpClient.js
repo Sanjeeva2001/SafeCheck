@@ -1,7 +1,8 @@
 import axios from 'axios'
 
-// proxy: false stops axios from picking up HTTP_PROXY / HTTPS_PROXY / ALL_PROXY
-// from the environment. Without this, a dead proxy in the environment blocks all outbound calls.
+// Without proxy: false, axios picks up HTTP_PROXY / HTTPS_PROXY from the
+// environment and routes calls through it. On dev this caused ECONNREFUSED
+// on every outbound request. All services import this instead of axios directly.
 const httpClient = axios.create({ proxy: false })
 
 export default httpClient

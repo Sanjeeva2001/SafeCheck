@@ -11,6 +11,7 @@ export async function checkUrlhaus(url) {
     return { error: true, matched: false }
   }
 
+  // URLhaus expects the URL as a form-encoded body, not JSON
   const body = new URLSearchParams({ url }).toString()
 
   try {
@@ -23,11 +24,11 @@ export async function checkUrlhaus(url) {
     })
 
     const data = response.data || {}
-    console.log('[URLhaus] raw response:', JSON.stringify(data))
     const queryStatus = String(data.query_status || '').toLowerCase()
     const urlStatus = data.url_status || null
     const tags = Array.isArray(data.tags) ? data.tags : []
 
+    // is_db_match means the URL is in their malware database
     if (queryStatus === 'is_db_match') {
       return {
         matched: true,

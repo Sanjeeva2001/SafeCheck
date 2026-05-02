@@ -3,6 +3,8 @@ import mysql from 'mysql2/promise'
 const requiredDbEnv = ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME']
 const missingDbEnv = requiredDbEnv.filter((envName) => !process.env[envName])
 
+// Pool is null when DB env vars are missing -- the scam stats route falls
+// back to local CSV files in that case so the app still works without a database
 const pool = missingDbEnv.length === 0
   ? mysql.createPool({
       host: process.env.DB_HOST,

@@ -1,14 +1,14 @@
 import dns from 'dns/promises'
 import httpClient from './httpClient.js'
 
-// Points: domain age 8, DNS records 9 (A=2, MX=4, NS=3), blocklist 6, WHOIS data 2 = 25 total.
+// Points: A records 2, domain age 8, MX 4, NS 3, blocklist 6, WHOIS 2 = 25 total.
 export async function checkDnsAnalysis(hostname) {
   let score = 0
   const details = {}
 
   const cleanHostname = hostname.replace(/^https?:\/\//, '').split('/')[0]
 
-  // Check if the domain resolves at all. If not, return early with score 0.
+  // If the domain does not resolve at all, nothing else is worth checking
   let aRecords = []
   try {
     aRecords = await dns.resolve4(cleanHostname)
@@ -33,11 +33,11 @@ export async function checkDnsAnalysis(hostname) {
     }
   }
 
-  // A records confirmed: 2 points
   score += 2
   details.aRecords = { status: 'pass', points: 2, count: aRecords.length }
 
-  // Domain age via WHOIS API: 8 points
+  // Domain age via WHOIS: 8 points
+  // Scammers almost always use freshly registered domains so age is a strong signal
   let domainStatus = 'established'
   const whoisKey = process.env.WHOIS_API_KEY
 
@@ -50,8 +50,8 @@ export async function checkDnsAnalysis(hostname) {
 
       const record = whoisRes.data?.WhoisRecord
 
-      // Only treat as unregistered when the API explicitly says there is no WHOIS data at all.
-      // Other dataError values (partial data, privacy protection, etc) still have usable fields.
+      // Only MISSING_WHOIS_DATA means the domain does not exist.
+      // Other dataError values (privacy protection, partial data) still have usable fields.
       if (!record || record.dataError === 'MISSING_WHOIS_DATA') {
         return {
           category: 'DNS Analysis',
@@ -69,7 +69,7 @@ export async function checkDnsAnalysis(hostname) {
         }
       }
 
-      // Try the main record first, then fall back to registryData which some TLDs use.
+      // Some TLDs store the creation date in registryData instead of the top-level record
       const createdDate = record?.createdDate
         || record?.registryData?.createdDate
         || record?.registryData?.creationDate
@@ -108,7 +108,7 @@ export async function checkDnsAnalysis(hostname) {
               : `Website has been around for ${ageInMonths} months`,
         }
       } else {
-        // WHOIS record exists but creation date is hidden
+        // WHOIS record exists but the creation date is privacy-protected
         domainStatus = 'unknown_age'
         score += 2
         details.domainAge = {
@@ -129,7 +129,7 @@ export async function checkDnsAnalysis(hostname) {
     details.domainAge = { status: 'warn', points: 2, message: 'Domain age check is not configured' }
   }
 
-  // MX records (mail servers): 4 points
+  // MX records: real businesses almost always have mail servers configured
   try {
     const mx = await dns.resolveMx(cleanHostname)
     if (mx?.length > 0) {
@@ -142,7 +142,7 @@ export async function checkDnsAnalysis(hostname) {
     details.mxRecords = { status: 'warn', points: 0, message: 'No mail server records found' }
   }
 
-  // NS records (nameservers): 3 points
+  // NS records: nameservers -- every properly registered domain has these
   try {
     const ns = await dns.resolveNs(cleanHostname)
     if (ns?.length > 0) {
@@ -155,9 +155,8 @@ export async function checkDnsAnalysis(hostname) {
     details.nsRecords = { status: 'warn', points: 0, message: 'No nameserver records found' }
   }
 
-  // DNS blocklist check against Spamhaus, SpamCop, SORBS: 6 points.
-  // Reverse the IP and query <reversed-ip>.<blocklist>.
-  // If the DNS query resolves, the IP is listed (bad). If it throws NXDOMAIN, the IP is clean.
+  // DNS blocklist check: reverse the IP and query each blocklist as a DNS name.
+  // If the lookup resolves, the IP is listed (bad). If it throws NXDOMAIN, it is clean.
   try {
     const reversedIp = aRecords[0].split('.').reverse().join('.')
     const blocklists = ['zen.spamhaus.org', 'bl.spamcop.net', 'dnsbl.sorbs.net']
@@ -186,7 +185,7 @@ export async function checkDnsAnalysis(hostname) {
     details.blocklist = { status: 'warn', points: 3, message: 'Could not check blocklists right now' }
   }
 
-  // WHOIS completeness: 2 points
+  // WHOIS completeness: 2 points if the registrar is publicly visible
   const registrar = details.domainAge?.registrar
   if (registrar && registrar !== 'Unknown') {
     score += 2

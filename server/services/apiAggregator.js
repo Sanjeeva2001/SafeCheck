@@ -3,6 +3,8 @@ import { checkVirusTotal } from './virusTotal.js'
 import { checkUrlhaus } from './urlhaus.js'
 import { checkPhishStats } from './phishStats.js'
 
+// Any API taking longer than this gets cut off. 8 seconds is generous enough
+// for a real response but short enough not to stall the user.
 const TIMEOUT_MS = 8000
 
 function withTimeout(promise, name) {
@@ -14,8 +16,8 @@ function withTimeout(promise, name) {
   ])
 }
 
-// Points per API: Google 7, VirusTotal 8, URLhaus 5, PhishStats 5 = 25 total.
-// On error/timeout we give partial credit so a flaky API doesn't tank the score.
+// Runs all 4 threat checks in parallel. Points: Google 7, VirusTotal 8, URLhaus 5, PhishStats 5 = 25.
+// API errors get partial credit rather than 0 -- the failure is on our side, not the site's.
 export async function checkApiAggregation(url, hostname) {
   let score = 0
   const details = {}
@@ -40,6 +42,7 @@ export async function checkApiAggregation(url, hostname) {
   }
 
   // VirusTotal: 8 points
+  // 1-2 detections is warn (could be a false positive), 3+ is danger
   const vt = vtResult.status === 'fulfilled' ? vtResult.value : { error: true }
   if (vt.error) {
     score += 4

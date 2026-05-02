@@ -1,8 +1,8 @@
 import * as cheerio from 'cheerio'
 import httpClient from './httpClient.js'
 
-// Keyword lists for classifying what kind of page the site is.
-// Checked against the page title and first 3000 characters of body text.
+// Phrases that appear on parked domain pages shown by registrars when a
+// domain has been registered but no site has been built on it yet
 const PARKED_SIGNALS = [
   'domain for sale',
   'buy this domain',
@@ -47,9 +47,8 @@ function matchesAny(text, signals) {
   return signals.some(signal => text.includes(signal))
 }
 
-// Fetches the page and classifies it based on its content.
-// Returns a check object in the same format as the other checks:
-// { label, status, detail }
+// Fetches the page and returns a plain-English description of what kind of site it is.
+// Informational only -- does not contribute to the score.
 export async function summarisePageContent(url) {
   const label = 'What this website appears to be'
 
@@ -61,7 +60,6 @@ export async function summarisePageContent(url) {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SafeCheck/1.0)' },
     })
 
-    // If the server returned an error status, report it directly.
     if (response.status === 404) {
       return { label, status: 'warn', detail: 'This page does not exist (404 not found)' }
     }
@@ -72,7 +70,6 @@ export async function summarisePageContent(url) {
       return { label, status: 'warn', detail: 'This website had a server error when we tried to load it' }
     }
 
-    // No HTML body to read.
     if (!response.data || typeof response.data !== 'string') {
       return { label, status: 'warn', detail: 'This page did not return any readable content' }
     }
@@ -81,13 +78,12 @@ export async function summarisePageContent(url) {
 
     const title = $('title').text().toLowerCase().trim()
 
-    // Grab text from the body but cap it so we are not processing huge pages.
+    // Cap at 3000 characters -- enough to catch signals in the above-the-fold content
     const bodyText = $('body').text().toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 3000)
 
     const combined = `${title} ${bodyText}`
 
-    // Check each page type in order from most specific to most general.
-
+    // Check expired before parked because some expired pages also mention "for sale"
     if (matchesAny(combined, EXPIRED_SIGNALS)) {
       return {
         label,
@@ -112,7 +108,7 @@ export async function summarisePageContent(url) {
       }
     }
 
-    // Check for a login or credential-entry page.
+    // A password field means someone is being asked to log in
     const passwordFields = $('input[type="password"]').length
     if (passwordFields > 0) {
       return {
@@ -122,7 +118,7 @@ export async function summarisePageContent(url) {
       }
     }
 
-    // Very short pages with almost no content are suspicious.
+    // Words shorter than 3 characters are filtered out to avoid counting filler like "a", "to"
     const wordCount = bodyText.split(' ').filter(w => w.length > 2).length
     if (wordCount < 20) {
       return {
@@ -132,7 +128,6 @@ export async function summarisePageContent(url) {
       }
     }
 
-    // Page looks like a normal website.
     const displayTitle = $('title').text().trim()
     if (displayTitle && displayTitle.length > 0) {
       return {
@@ -149,7 +144,6 @@ export async function summarisePageContent(url) {
     }
 
   } catch (err) {
-    // Connection refused, timeout, or DNS failure at the scraping stage.
     if (err.code === 'ECONNREFUSED') {
       return { label, status: 'warn', detail: 'This website refused the connection when we tried to load it' }
     }

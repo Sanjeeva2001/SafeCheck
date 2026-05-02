@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..')
 
+// Load .env from project root first, then server/ -- server/ overrides root if both exist
 for (const envPath of [
   path.join(projectRoot, '.env'),
   path.join(__dirname, '.env'),
@@ -14,6 +15,7 @@ for (const envPath of [
   dotenv.config({ path: envPath, override: true })
 }
 
+// Warn on startup if any API key is missing so it is obvious what needs configuring
 for (const [envName, label] of [
   ['URLHAUS_API_KEY', 'URLhaus'],
   ['GOOGLE_SAFE_BROWSING_API_KEY', 'Google Safe Browsing'],
@@ -40,7 +42,7 @@ const allowedOrigins = [
 app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
-
+// Simple password gate used by the frontend PasswordGate component
 app.post('/api/auth', (req, res) => {
   const { password } = req.body
 
@@ -54,7 +56,6 @@ app.post('/api/auth', (req, res) => {
 app.use('/api/scam-stats', scamStatsRouter)
 app.use('/api', urlCheckRouter)
 
-
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' })
 })
@@ -63,6 +64,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' })
 })
 
+// Catch malformed JSON bodies before they bubble up as unhandled errors
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return res.status(400).json({ error: 'Invalid JSON body.' })

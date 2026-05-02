@@ -1,6 +1,8 @@
 import https from 'https'
 
 // Points: valid cert 10, expiry 8, TLS version 4, trusted issuer 3 = 25 total.
+// Uses Node's built-in https module because we need raw TLS socket access to
+// read certificate details -- axios abstracts that away.
 export async function checkSslCertificate(hostname) {
   const cleanHostname = hostname.replace(/^https?:\/\//, '').split('/')[0]
 
@@ -18,6 +20,7 @@ export async function checkSslCertificate(hostname) {
       })
     }, 6000)
 
+    // rejectUnauthorized: false so we can inspect bad certs rather than Node throwing before we see them
     const req = https.request(
       { host: cleanHostname, port: 443, method: 'GET', rejectUnauthorized: false },
       (res) => {
@@ -51,7 +54,7 @@ export async function checkSslCertificate(hostname) {
           }
         }
 
-        // Certificate expiry: 8 points, 4 if expiring within 30 days
+        // Expiry: 8 points if more than 30 days left, 4 if expiring soon, 0 if expired
         if (daysLeft > 30) {
           score += 8
           details.expiry = { status: 'pass', points: 8, daysLeft, message: `Certificate is valid for another ${daysLeft} days` }
@@ -62,7 +65,7 @@ export async function checkSslCertificate(hostname) {
           details.expiry = { status: 'danger', points: 0, daysLeft, message: 'Certificate has expired' }
         }
 
-        // TLS version: 4 points for 1.2 or 1.3
+        // TLS 1.2 and 1.3 are current standards -- anything older has known vulnerabilities
         const tlsVersion = res.socket.getProtocol?.() || 'Unknown'
         if (tlsVersion === 'TLSv1.3' || tlsVersion === 'TLSv1.2') {
           score += 4
@@ -71,7 +74,7 @@ export async function checkSslCertificate(hostname) {
           details.tlsVersion = { status: 'warn', points: 0, version: tlsVersion, message: `Uses outdated encryption (${tlsVersion})` }
         }
 
-        // Not self-signed and has a real issuer: 3 points
+        // Self-signed means the site vouched for itself -- anyone can do that
         const isSelfSigned = cert.issuer?.CN === cert.subject?.CN
         if (!isSelfSigned && cert.issuer?.O) {
           score += 3
