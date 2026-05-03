@@ -44,7 +44,7 @@ test.describe('Frontend Smoke Tests', () => {
     await page.reload()
     
     // Check for main heading text
-    const mainHeading = page.getByText(/Stay safe online/i)
+    const mainHeading = page.getByRole('heading', { level: 1, name: /Stay safe online/i })
     await expect(mainHeading).toBeVisible()
   })
 
@@ -57,9 +57,9 @@ test.describe('Frontend Smoke Tests', () => {
     await page.reload()
     
     // Check for CTA buttons by their text content
-    const checkLinkButton = page.getByRole('button', { name: /Check a link now/i })
-    const simplifyButton = page.getByRole('button', { name: /Simplify/i })
-    const quizButton = page.getByRole('button', { name: /scam quiz/i })
+    const checkLinkButton = page.getByRole('button', { name: 'Check a link now', exact: true })
+    const simplifyButton = page.getByRole('button', { name: 'Simplify terms & conditions', exact: true })
+    const quizButton = page.getByRole('button', { name: 'Take the scam quiz', exact: true })
     
     await expect(checkLinkButton).toBeVisible()
     await expect(simplifyButton).toBeVisible()
@@ -75,7 +75,7 @@ test.describe('Frontend Smoke Tests', () => {
     await page.reload()
     
     // Click the "Check a link now" button
-    const checkLinkButton = page.getByRole('button', { name: /Check a link now/i })
+    const checkLinkButton = page.getByRole('button', { name: 'Check a link now', exact: true })
     await checkLinkButton.click()
     
     // Verify we navigated to the URL verifier page
