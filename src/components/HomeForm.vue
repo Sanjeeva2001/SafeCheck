@@ -41,6 +41,13 @@ const ageGroups = [
   { group: 'Under 35', pct: 26,  tooltip: 'Younger Australians face lower average losses but are increasingly targeted through social platforms.' },
 ]
 
+const scamProofCards = [
+  { value: '$2.74B', label: 'reported scam losses in Australia in 2023' },
+  { value: '$1.3B', label: 'lost to investment scams, the largest category' },
+  { value: '65+', label: 'age group with the highest average loss per report' },
+  { value: '3 tools', label: 'to check links, fine print, and scam instincts' },
+]
+
 const features = [
   {
     page: 'url-verifier',
@@ -361,135 +368,123 @@ const features = [
   </section>
 
   <!-- ============================================================
-       SCAM STATISTICS — combined static + live data
-       (moved directly after hero so users see the stakes first)
+       SCAM STATISTICS — compact proof cards with optional detail
        ============================================================ -->
-  <section class="py-16 px-8 sm:px-16" style="background-color: var(--bg);">
+  <section class="py-12 px-8 sm:px-16" style="background-color: var(--bg);">
 
-    <div class="text-center mb-12 animate-fade-in-up">
-      <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">The scale of scams in Australia</h2>
-      <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-        In 2023, Australians reported over $2.74 billion in losses to scams.
-        Seniors aged 65+ are disproportionately targeted — knowing the numbers helps you stay alert.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-      <!-- Animated bar chart: top scam types by loss -->
-      <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up">
-        <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">ACCC Scamwatch 2023</p>
-        <h3 class="text-2xl font-bold text-slate-900 mb-2">Top scam types by financial loss</h3>
-        <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
-        <div class="space-y-5">
-          <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-lg font-medium text-slate-700">{{ type.name }}</span>
-              <span class="text-lg font-bold" style="color: var(--navy);">{{ type.amount }}</span>
-            </div>
-            <div
-              class="w-full bg-slate-100 rounded-full h-4 cursor-pointer"
-              @mouseenter="hoveredScamType = i"
-              @mouseleave="hoveredScamType = null"
-            >
-              <div
-                class="h-4 rounded-full"
-                style="transition: width 0.9s ease-out;"
-                :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
-              ></div>
-            </div>
-            <!-- Tooltip -->
-            <div
-              v-if="hoveredScamType === i"
-              class="absolute z-20 left-0 bg-slate-900 text-white text-sm rounded-xl px-4 py-3 shadow-xl leading-relaxed animate-fade-in pointer-events-none"
-              style="bottom: calc(100% + 8px); max-width: 300px; min-width: 200px;"
-            >
-              <p class="font-semibold mb-1">{{ type.name }} — {{ type.amount }}</p>
-              <p style="opacity: 0.85;">{{ type.tooltip }}</p>
-              <div class="absolute left-4 top-full w-0 h-0" style="border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #0f172a;"></div>
-            </div>
-          </div>
-        </div>
-        <p class="text-sm text-slate-400 mt-6">Source: ACCC Scamwatch 2023 Annual Report</p>
+    <div class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-8 items-start mb-8 animate-fade-in-up">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color: var(--navy);">Scam proof points</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-3 leading-tight">The risk is real, so the tools stay practical.</h2>
+        <p class="text-lg text-slate-600 leading-relaxed">
+          These numbers give context without getting in the way. Open the detail only if you want the full breakdown.
+        </p>
       </div>
 
-      <!-- Animated age group vulnerability chart -->
-      <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up stagger-1">
-        <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">Vulnerability by age</p>
-        <h3 class="text-2xl font-bold text-slate-900 mb-2">Who is most affected?</h3>
-        <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
-        <div class="space-y-4">
-          <div v-for="(age, i) in ageGroups" :key="age.group" class="flex items-center gap-4">
-            <span class="text-base font-semibold text-slate-600 w-24 flex-shrink-0">{{ age.group }}</span>
-            <div class="flex-1 relative">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div
+          v-for="card in scamProofCards"
+          :key="card.label"
+          class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"
+        >
+          <p class="text-3xl font-bold mb-2" style="color: var(--navy);">{{ card.value }}</p>
+          <p class="text-base text-slate-600 leading-snug">{{ card.label }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <details class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
+        <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900">
+          <span>
+            <span class="block text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">ACCC Scamwatch 2023</span>
+            <span class="block text-xl font-bold text-slate-900">Top scam types by financial loss</span>
+          </span>
+          <svg class="w-6 h-6 flex-shrink-0" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+
+        <div class="px-6 pb-6 pt-2 border-t border-slate-100">
+          <div class="space-y-5">
+            <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
+              <div class="flex items-center justify-between mb-2 gap-4">
+                <span class="text-lg font-medium text-slate-700">{{ type.name }}</span>
+                <span class="text-lg font-bold flex-shrink-0" style="color: var(--navy);">{{ type.amount }}</span>
+              </div>
               <div
-                class="bg-slate-100 rounded-full h-5 cursor-pointer"
-                @mouseenter="hoveredAgeGroup = i"
-                @mouseleave="hoveredAgeGroup = null"
+                class="w-full bg-slate-100 rounded-full h-4 cursor-pointer"
+                @mouseenter="hoveredScamType = i"
+                @mouseleave="hoveredScamType = null"
               >
                 <div
-                  class="h-5 rounded-full"
+                  class="h-4 rounded-full"
                   style="transition: width 0.9s ease-out;"
-                  :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.16})` }"
+                  :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
                 ></div>
               </div>
-              <!-- Tooltip -->
-              <div
-                v-if="hoveredAgeGroup === i"
-                class="absolute z-20 left-0 bg-slate-900 text-white text-sm rounded-xl px-4 py-3 shadow-xl leading-relaxed animate-fade-in pointer-events-none"
-                style="bottom: calc(100% + 8px); max-width: 280px; min-width: 180px;"
-              >
-                <p class="font-semibold mb-1">Age {{ age.group }} — {{ age.pct }}% risk index</p>
-                <p style="opacity: 0.85;">{{ age.tooltip }}</p>
-                <div class="absolute left-4 top-full w-0 h-0" style="border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #0f172a;"></div>
-              </div>
+              <p v-if="hoveredScamType === i" class="mt-2 text-base text-slate-600 leading-relaxed animate-fade-in">
+                {{ type.tooltip }}
+              </p>
             </div>
-            <span class="text-base font-bold w-12 text-right" style="color: var(--navy);">{{ age.pct }}%</span>
           </div>
+          <p class="text-sm text-slate-400 mt-6">Source: ACCC Scamwatch 2023 Annual Report</p>
         </div>
-        <p class="text-sm text-slate-400 mt-5">Relative vulnerability index — 65+ face the highest risk per person</p>
-      </div>
+      </details>
 
-      <!-- Live data from our database -->
-      <div class="lg:col-span-2 animate-fade-in-up stagger-2">
-        <ScamStatsPanel :scam-stats="scamStats" :max-reports="maxReports" />
-      </div>
-
-    </div>
-
-    <!-- Why are older Australians targeted — full-width prominent callout -->
-    <div
-      class="mt-10 rounded-3xl overflow-hidden animate-fade-in-up"
-      style="background: linear-gradient(135deg, var(--navy) 0%, #1d4ed8 100%);"
-    >
-      <div class="px-8 sm:px-12 py-10 sm:py-14 text-center">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/15 mb-6">
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+      <details class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up stagger-1">
+        <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900">
+          <span>
+            <span class="block text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">Older Australians</span>
+            <span class="block text-xl font-bold text-slate-900">Why checking links matters for people over 65</span>
+          </span>
+          <svg class="w-6 h-6 flex-shrink-0" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
+        </summary>
+
+        <div class="px-6 pb-6 pt-2 border-t border-slate-100">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="rounded-xl p-5" style="background-color: var(--navy-tint);">
+              <p class="text-2xl font-bold" style="color: var(--navy);">65+</p>
+              <p class="text-base text-slate-600 leading-snug mt-1">highest risk index in the age comparison</p>
+            </div>
+            <div class="rounded-xl p-5" style="background-color: var(--navy-tint);">
+              <p class="text-2xl font-bold" style="color: var(--navy);">Highest avg</p>
+              <p class="text-base text-slate-600 leading-snug mt-1">largest average loss per individual report</p>
+            </div>
+            <div class="rounded-xl p-5" style="background-color: var(--navy-tint);">
+              <p class="text-2xl font-bold" style="color: var(--navy);">Awareness</p>
+              <p class="text-base text-slate-600 leading-snug mt-1">the strongest first defence against scams</p>
+            </div>
+          </div>
+
+          <div class="space-y-4 mb-6">
+            <div v-for="(age, i) in ageGroups" :key="age.group" class="flex items-center gap-4">
+              <span class="text-base font-semibold text-slate-600 w-24 flex-shrink-0">{{ age.group }}</span>
+              <div class="flex-1 relative">
+                <div
+                  class="bg-slate-100 rounded-full h-5 cursor-pointer"
+                  @mouseenter="hoveredAgeGroup = i"
+                  @mouseleave="hoveredAgeGroup = null"
+                >
+                  <div
+                    class="h-5 rounded-full"
+                    style="transition: width 0.9s ease-out;"
+                    :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.16})` }"
+                  ></div>
+                </div>
+                <p v-if="hoveredAgeGroup === i" class="mt-2 text-base text-slate-600 leading-relaxed animate-fade-in">
+                  {{ age.tooltip }}
+                </p>
+              </div>
+              <span class="text-base font-bold w-12 text-right" style="color: var(--navy);">{{ age.pct }}%</span>
+            </div>
+          </div>
+
+          <ScamStatsPanel :scam-stats="scamStats" :max-reports="maxReports" />
         </div>
-        <h3 class="text-3xl sm:text-4xl font-bold text-white mb-5">Why are older Australians targeted?</h3>
-        <p class="text-xl sm:text-2xl text-white max-w-3xl mx-auto leading-relaxed mb-10" style="opacity: 0.9;">
-          Scammers specifically target people aged 65+ because they are more likely to have accumulated savings,
-          may be less familiar with digital warning signs, and can be more susceptible to unsolicited contact.
-          Knowledge is the most powerful protection.
-        </p>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          <div class="bg-white/10 rounded-2xl p-6 text-center">
-            <p class="text-3xl font-bold text-white mb-2">$2.74B</p>
-            <p class="text-base text-blue-200 leading-relaxed">Total losses reported to Scamwatch in 2023 — a record high</p>
-          </div>
-          <div class="bg-white/10 rounded-2xl p-6 text-center">
-            <p class="text-3xl font-bold text-white mb-2">Highest avg</p>
-            <p class="text-base text-blue-200 leading-relaxed">People aged 65+ have the highest average loss per individual report</p>
-          </div>
-          <div class="bg-white/10 rounded-2xl p-6 text-center">
-            <p class="text-3xl font-bold text-white mb-2">Awareness</p>
-            <p class="text-base text-blue-200 leading-relaxed">The single most effective defence against online scams</p>
-          </div>
-        </div>
-      </div>
+      </details>
     </div>
 
   </section>
