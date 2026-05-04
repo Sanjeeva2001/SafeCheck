@@ -9,7 +9,7 @@ const navLinks = [
 const reassurances = [
   { icon: 'free',    text: 'Free for all Australians'         },
   { icon: 'private', text: 'We do not store what you type'    },
-  { icon: 'guide',   text: 'Guidance only — not legal advice' },
+  { icon: 'guide',   text: 'General guidance, not legal advice' },
 ]
 </script>
 
@@ -27,7 +27,7 @@ const reassurances = [
             <span class="text-2xl font-bold tracking-wide text-white">SafeCheck</span>
           </RouterLink>
           <p class="text-lg leading-relaxed text-blue-200 max-w-xs">
-            Helping older Australians stay safe online — no sign-up, no data stored, no cost.
+            Simple online safety tools for older Australians. No sign-up, no stored data, no cost.
           </p>
           <div class="flex flex-col gap-3 mt-1">
             <div v-for="r in reassurances" :key="r.text" class="flex items-center gap-2">
@@ -87,7 +87,7 @@ const reassurances = [
       </div>
     </div>
 
-    <!-- Bottom bar — also full-width -->
+    <!-- Bottom bar -->
     <div class="border-t border-white/10">
       <div class="max-w-7xl mx-auto px-8 sm:px-16 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-base text-blue-300">
         <span>© 2025 SafeCheck. All rights reserved.</span>
