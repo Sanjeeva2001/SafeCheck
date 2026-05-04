@@ -122,11 +122,11 @@ ${text}`
     } catch (err) {
       lastError = err
       const status = err.response?.status
-      if (status !== 429 || attempt === 2) break
+      if (![429, 503].includes(status) || attempt === 2) break
 
       const retryAfterHeader = err.response?.headers?.['retry-after']
       const retryAfterSeconds = Number.parseInt(retryAfterHeader, 10)
-      const fallbackMs = Math.min(15000, 1500 * 2 ** attempt)
+      const fallbackMs = Math.min(15000, 2000 * 2 ** attempt)
       const delayMs = Number.isFinite(retryAfterSeconds) ? retryAfterSeconds * 1000 : fallbackMs
       await sleep(delayMs)
     }
@@ -184,6 +184,9 @@ router.post('/tnc-simplify', async (req, res) => {
     }
     if (status === 400) {
       return res.status(400).json({ error: 'The text could not be analysed. It may not be a valid T&C document.' })
+    }
+    if (status === 503) {
+      return res.status(503).json({ error: 'The AI service is temporarily overloaded. Please try again in a few seconds.' })
     }
     console.error('[TnC Simplifier] Error:', err.response?.data || err.message)
     res.status(500).json({ error: err.message || 'Analysis failed. Please try again.' })
