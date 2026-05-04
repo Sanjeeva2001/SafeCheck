@@ -92,61 +92,216 @@ const features = [
         <!-- Left: headline + CTAs -->
         <div class="animate-fade-in-up">
 
-          <div class="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
-            <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-base font-medium text-white">Free · No sign-up required · Nothing stored</span>
-          </div>
-
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-            Stay safe online -<br/>
-            <span class="text-white">simply and for free</span>
+            Protect your identity <br/>
+            & prevent financial fraud with<br/>
+            <span class="text-blue-200">SafeCheck</span>
           </h1>
 
           <p class="text-xl text-white leading-relaxed mb-8 max-w-xl" style="opacity: 0.92;">
-            SafeCheck helps you check suspicious links, understand confusing Terms &amp; Conditions,
-            and learn to spot online scams — all in plain English.
+            Stop your personal information from getting leaked, prevent endless scam calls, and protect your hard-earned savings. SafeCheck helps you spot suspicious links and hidden traps instantly.
           </p>
 
-          <!-- Three identical CTA buttons -->
-          <div class="flex flex-col sm:flex-row gap-4 flex-wrap">
+          <!-- Three horizontal CTA buttons -->
+          <div class="grid grid-cols-3 gap-3 sm:gap-4">
             <button
               @click="emit('navigate', 'url-verifier')"
-              class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xl font-bold bg-white text-blue-900 hover:bg-blue-50 shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
+              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              Check a link now
+              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Not sure if a website is safe?</span>
+              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Use Our URL Verifier</span>
             </button>
             <button
               @click="emit('navigate', 'tnc-simplifier')"
-              class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xl font-bold bg-white text-blue-900 hover:bg-blue-50 shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
+              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Simplify terms &amp; conditions
+              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Confused by the language of terms and conditions?</span>
+              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Simplify T&amp;Cs</span>
             </button>
             <button
               @click="emit('navigate', 'scam-quiz')"
-              class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xl font-bold bg-white text-blue-900 hover:bg-blue-50 shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
+              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              Take the scam quiz
+              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Want to test your scam knowledge?</span>
+              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Take Scam Quiz</span>
             </button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 mt-8">
+            <div v-for="item in ['Free', 'No sign-up required', 'Nothing stored']" :key="item" class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span class="text-base sm:text-lg font-medium text-white" style="opacity: 0.92;">{{ item }}</span>
+            </div>
           </div>
         </div>
 
         <!-- Right: senior lady illustration -->
         <div class="hero-visual-column hidden lg:flex justify-center items-center animate-fade-in-up stagger-2">
+        <div class="hero-visual-column hidden lg:flex justify-center items-center animate-fade-in-up stagger-2">
           <div class="relative">
+            <div class="senior-shield-stage rounded-3xl flex items-center justify-center" style="background-color: rgba(255,255,255,0.08);">
+              <div class="protective-bubble" aria-hidden="true">
+                <span class="bubble-ripple bubble-ripple-top-left"></span>
+                <span class="bubble-ripple bubble-ripple-right"></span>
+                <span class="bubble-ripple bubble-ripple-bottom-left"></span>
+                <span class="bubble-ripple bubble-ripple-top"></span>
+                <span class="bubble-ripple bubble-ripple-upper-right"></span>
+                <span class="bubble-ripple bubble-ripple-left"></span>
+                <span class="bubble-ripple bubble-ripple-bottom-right"></span>
+              </div>
+
+              <div class="threat-label threat-suspicious-link" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9.6 14.4 8 16a3.8 3.8 0 0 1-5.4-5.4L5 8.2a3.8 3.8 0 0 1 5.4 0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                    <path d="m14.4 9.6 1.6-1.6a3.8 3.8 0 0 1 5.4 5.4L19 15.8a3.8 3.8 0 0 1-5.4 0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                    <path d="M17.5 15.2v2.1m0 1.9h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Suspicious link</span>
+              </div>
+
+              <div class="threat-label threat-unknown-tnc" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+                    <path d="M14 3v5h4" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+                    <path d="M12 16.2v-.4c0-1.4 1.9-1.5 1.9-3a1.9 1.9 0 0 0-3.5-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M12 19h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Unknown T&amp;Cs</span>
+              </div>
+
+              <div class="threat-label threat-phishing-email" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="3.5" y="6" width="17" height="12" rx="2.5" stroke="currentColor" stroke-width="2"/>
+                    <path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17 13v2.3m0 2h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Phishing email</span>
+              </div>
+
+              <div class="threat-label threat-malware-popup" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="4" y="5" width="16" height="14" rx="2.5" stroke="currentColor" stroke-width="1.9"/>
+                    <path d="M8 9h8M8 13h4m5 1.5 2 2m0-2-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Malware popup</span>
+              </div>
+
+              <div class="threat-label threat-tech-call" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 5c.4 6.2 5 10.8 12 12l-2.2 3c-7.4-1.7-11.5-5.9-13.8-13L6 5h1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="M16 5h3v3m-.3-2.7-4.4 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Fake support call</span>
+              </div>
+
+              <div class="threat-label threat-password-request" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="5" y="10" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.9"/>
+                    <path d="M8 10V8a4 4 0 0 1 8 0v2M12 14v2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                    <path d="M18 5v2m0 2h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Password request</span>
+              </div>
+
+              <div class="threat-label threat-fake-prize" aria-hidden="true">
+                <span class="threat-symbol">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M5 10h14v10H5V10Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+                    <path d="M4 7h16v3H4V7Zm8 0v13M9 7C7 7 6 5.8 6.6 4.6 7.4 3 10 4.4 12 7Zm3 0c2-2.6 4.6-4 5.4-2.4C18 5.8 17 7 15 7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span>Fake prize</span>
+              </div>
+
+              <div class="blocked-badge blocked-top-left" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Link blocked</span>
+              </div>
+
+              <div class="blocked-badge blocked-right" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>T&amp;Cs decoded</span>
+              </div>
+
+              <div class="blocked-badge blocked-bottom-left" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Email flagged</span>
+              </div>
+
+              <div class="blocked-badge blocked-top" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Popup stopped</span>
+              </div>
+
+              <div class="blocked-badge blocked-upper-right" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Call screened</span>
+              </div>
+
+              <div class="blocked-badge blocked-left" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Password safe</span>
+              </div>
+
+              <div class="blocked-badge blocked-bottom-right" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.7-9.3a1 1 0 00-1.4-1.4L9 10.6 7.7 9.3a1 1 0 00-1.4 1.4l2 2a1 1 0 001.4 0l4-4Z" clip-rule="evenodd" />
+                </svg>
+                <span>Prize rejected</span>
+              </div>
+
+              <div class="bubble-sheen" aria-hidden="true">
+                <svg viewBox="0 0 320 320" fill="none">
+                  <path d="M92 72 Q132 38 184 48" stroke="rgba(255,255,255,0.22)" stroke-width="5" stroke-linecap="round"/>
+                  <path d="M66 132 Q72 104 88 84" stroke="rgba(255,255,255,0.14)" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+              </div>
+
+              <div class="sr-only">
+                Animated protection scene showing suspicious link, fake terms and conditions, and phishing email threats being blocked.
+              </div>
+
+              <div class="hero-illustration-layer">
+                <svg viewBox="0 0 320 310" class="grandma-hero-svg" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  aria-label="Illustration of an older Australian woman checking a link on her phone and seeing it is safe">
             <div class="senior-shield-stage rounded-3xl flex items-center justify-center" style="background-color: rgba(255,255,255,0.08);">
               <div class="protective-bubble" aria-hidden="true">
                 <span class="bubble-ripple bubble-ripple-top-left"></span>
@@ -345,6 +500,54 @@ const features = [
                   <circle cx="235" cy="130" r="3" fill="rgba(74,222,128,0.22)"/>
                 </svg>
               </div>
+                  <circle cx="160" cy="155" r="138" fill="rgba(255,255,255,0.04)"/>
+                  <path d="M90 312 Q88 245 115 228 Q138 215 160 210 Q182 215 205 228 Q232 245 230 312Z" fill="rgba(100,130,190,0.65)"/>
+                  <path d="M143 210 L160 205 L177 210 L170 238 L160 244 L150 238Z" fill="rgba(220,230,248,0.68)"/>
+                  <rect x="152" y="190" width="16" height="24" rx="7" fill="rgba(252,198,158,0.95)"/>
+                  <ellipse cx="160" cy="156" rx="48" ry="52" fill="rgba(252,198,158,0.95)"/>
+                  <path d="M112 146 Q108 102 136 86 Q160 76 184 86 Q212 102 208 146 Q198 120 160 116 Q122 120 112 146Z" fill="rgba(212,212,222,0.97)"/>
+                  <path d="M112 146 Q104 158 106 176 Q113 172 118 162Z" fill="rgba(212,212,222,0.94)"/>
+                  <path d="M208 146 Q216 158 214 176 Q207 172 202 162Z" fill="rgba(212,212,222,0.94)"/>
+                  <path d="M122 118 Q132 110 143 110" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M177 110 Q188 110 198 118" stroke="rgba(185,185,200,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M136 136 Q144 131 152 133" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M168 133 Q176 131 184 136" stroke="rgba(160,140,120,0.55)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <ellipse cx="144" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
+                  <ellipse cx="176" cy="148" rx="8" ry="7" fill="rgba(88,62,44,0.9)"/>
+                  <circle cx="145.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
+                  <circle cx="177.5" cy="146" r="2.5" fill="rgba(255,255,255,0.92)"/>
+                  <path d="M185 144 Q190 140 191 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
+                  <path d="M135 144 Q130 140 129 146" stroke="rgba(200,155,110,0.22)" stroke-width="1.2" fill="none"/>
+                  <rect x="132" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
+                  <rect x="166" y="142" width="22" height="16" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(80,82,106,0.88)" stroke-width="2.5"/>
+                  <path d="M154 150 L166 150" stroke="rgba(80,82,106,0.88)" stroke-width="2.2"/>
+                  <path d="M132 150 Q122 149 120 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <path d="M188 150 Q198 149 200 146" stroke="rgba(80,82,106,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <path d="M157 164 Q160 170 163 164" stroke="rgba(200,145,100,0.42)" stroke-width="1.8" fill="none"/>
+                  <path d="M141 178 Q160 198 179 178" stroke="rgba(190,110,65,0.78)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+                  <circle cx="138" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
+                  <circle cx="182" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
+                  <ellipse cx="130" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
+                  <ellipse cx="190" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
+                  <path d="M205 238 Q240 248 254 264" stroke="rgba(252,198,158,0.92)" stroke-width="18" stroke-linecap="round" fill="none"/>
+                  <ellipse cx="257" cy="270" rx="14" ry="11" fill="rgba(252,198,158,0.92)"/>
+                  <rect x="246" y="254" width="38" height="64" rx="8" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
+                  <rect x="249" y="258" width="32" height="52" rx="5" fill="rgba(255,255,255,0.09)"/>
+                  <rect x="252" y="262" width="26" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="254" y="269" width="20" height="3" rx="1.5" fill="rgba(255,255,255,0.18)"/>
+                  <circle cx="265" cy="285" r="13" fill="rgba(74,222,128,0.28)" stroke="rgba(74,222,128,0.75)" stroke-width="1.8"/>
+                  <path d="M259 285 l4 4 l9-9" stroke="rgba(74,222,128,1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <rect x="256" y="302" width="18" height="4" rx="2" fill="rgba(74,222,128,0.55)"/>
+                  <path d="M115 238 Q88 250 76 268" stroke="rgba(252,198,158,0.88)" stroke-width="16" stroke-linecap="round" fill="none"/>
+                  <circle cx="264" cy="80" r="26" fill="rgba(74,222,128,0.2)" stroke="rgba(74,222,128,0.55)" stroke-width="1.5"/>
+                  <path d="M264 68 Q264 68 254 72 L254 82 Q254 92 264 96 Q274 92 274 82 L274 72 Z" fill="rgba(74,222,128,0.46)"/>
+                  <path d="M258 82 l3.5 3.5 l8.5-8.5" stroke="rgba(74,222,128,1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="90" cy="100" r="2.5" fill="rgba(255,255,255,0.25)"/>
+                  <circle cx="78" cy="140" r="1.8" fill="rgba(255,255,255,0.18)"/>
+                  <circle cx="234" cy="108" r="2" fill="rgba(255,255,255,0.2)"/>
+                  <circle cx="235" cy="130" r="3" fill="rgba(74,222,128,0.22)"/>
+                </svg>
+              </div>
 
             </div>
 
@@ -371,86 +574,82 @@ const features = [
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-      <!-- Left column: ACCC 2023 annual report — animated interactive charts -->
-      <div class="space-y-6">
-
-        <!-- Animated bar chart: top scam types by loss -->
-        <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up">
-          <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">ACCC Scamwatch 2023</p>
-          <h3 class="text-2xl font-bold text-slate-900 mb-2">Top scam types by financial loss</h3>
-          <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
-          <div class="space-y-5">
-            <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-lg font-medium text-slate-700">{{ type.name }}</span>
-                <span class="text-lg font-bold" style="color: var(--navy);">{{ type.amount }}</span>
-              </div>
+      <!-- Animated bar chart: top scam types by loss -->
+      <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up">
+        <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">ACCC Scamwatch 2023</p>
+        <h3 class="text-2xl font-bold text-slate-900 mb-2">Top scam types by financial loss</h3>
+        <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
+        <div class="space-y-5">
+          <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-lg font-medium text-slate-700">{{ type.name }}</span>
+              <span class="text-lg font-bold" style="color: var(--navy);">{{ type.amount }}</span>
+            </div>
+            <div
+              class="w-full bg-slate-100 rounded-full h-4 cursor-pointer"
+              @mouseenter="hoveredScamType = i"
+              @mouseleave="hoveredScamType = null"
+            >
               <div
-                class="w-full bg-slate-100 rounded-full h-4 cursor-pointer"
-                @mouseenter="hoveredScamType = i"
-                @mouseleave="hoveredScamType = null"
+                class="h-4 rounded-full"
+                style="transition: width 0.9s ease-out;"
+                :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
+              ></div>
+            </div>
+            <!-- Tooltip -->
+            <div
+              v-if="hoveredScamType === i"
+              class="absolute z-20 left-0 bg-slate-900 text-white text-sm rounded-xl px-4 py-3 shadow-xl leading-relaxed animate-fade-in pointer-events-none"
+              style="bottom: calc(100% + 8px); max-width: 300px; min-width: 200px;"
+            >
+              <p class="font-semibold mb-1">{{ type.name }} — {{ type.amount }}</p>
+              <p style="opacity: 0.85;">{{ type.tooltip }}</p>
+              <div class="absolute left-4 top-full w-0 h-0" style="border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #0f172a;"></div>
+            </div>
+          </div>
+        </div>
+        <p class="text-sm text-slate-400 mt-6">Source: ACCC Scamwatch 2023 Annual Report</p>
+      </div>
+
+      <!-- Animated age group vulnerability chart -->
+      <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up stagger-1">
+        <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">Vulnerability by age</p>
+        <h3 class="text-2xl font-bold text-slate-900 mb-2">Who is most affected?</h3>
+        <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
+        <div class="space-y-4">
+          <div v-for="(age, i) in ageGroups" :key="age.group" class="flex items-center gap-4">
+            <span class="text-base font-semibold text-slate-600 w-24 flex-shrink-0">{{ age.group }}</span>
+            <div class="flex-1 relative">
+              <div
+                class="bg-slate-100 rounded-full h-5 cursor-pointer"
+                @mouseenter="hoveredAgeGroup = i"
+                @mouseleave="hoveredAgeGroup = null"
               >
                 <div
-                  class="h-4 rounded-full"
+                  class="h-5 rounded-full"
                   style="transition: width 0.9s ease-out;"
-                  :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
+                  :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.16})` }"
                 ></div>
               </div>
               <!-- Tooltip -->
               <div
-                v-if="hoveredScamType === i"
+                v-if="hoveredAgeGroup === i"
                 class="absolute z-20 left-0 bg-slate-900 text-white text-sm rounded-xl px-4 py-3 shadow-xl leading-relaxed animate-fade-in pointer-events-none"
-                style="bottom: calc(100% + 8px); max-width: 300px; min-width: 200px;"
+                style="bottom: calc(100% + 8px); max-width: 280px; min-width: 180px;"
               >
-                <p class="font-semibold mb-1">{{ type.name }} — {{ type.amount }}</p>
-                <p style="opacity: 0.85;">{{ type.tooltip }}</p>
+                <p class="font-semibold mb-1">Age {{ age.group }} — {{ age.pct }}% risk index</p>
+                <p style="opacity: 0.85;">{{ age.tooltip }}</p>
                 <div class="absolute left-4 top-full w-0 h-0" style="border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #0f172a;"></div>
               </div>
             </div>
+            <span class="text-base font-bold w-12 text-right" style="color: var(--navy);">{{ age.pct }}%</span>
           </div>
-          <p class="text-sm text-slate-400 mt-6">Source: ACCC Scamwatch 2023 Annual Report</p>
         </div>
-
-        <!-- Animated age group vulnerability chart -->
-        <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up stagger-1">
-          <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">Vulnerability by age</p>
-          <h3 class="text-2xl font-bold text-slate-900 mb-2">Who is most affected?</h3>
-          <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
-          <div class="space-y-4">
-            <div v-for="(age, i) in ageGroups" :key="age.group" class="flex items-center gap-4">
-              <span class="text-base font-semibold text-slate-600 w-24 flex-shrink-0">{{ age.group }}</span>
-              <div class="flex-1 relative">
-                <div
-                  class="bg-slate-100 rounded-full h-5 cursor-pointer"
-                  @mouseenter="hoveredAgeGroup = i"
-                  @mouseleave="hoveredAgeGroup = null"
-                >
-                  <div
-                    class="h-5 rounded-full"
-                    style="transition: width 0.9s ease-out;"
-                    :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.16})` }"
-                  ></div>
-                </div>
-                <!-- Tooltip -->
-                <div
-                  v-if="hoveredAgeGroup === i"
-                  class="absolute z-20 left-0 bg-slate-900 text-white text-sm rounded-xl px-4 py-3 shadow-xl leading-relaxed animate-fade-in pointer-events-none"
-                  style="bottom: calc(100% + 8px); max-width: 280px; min-width: 180px;"
-                >
-                  <p class="font-semibold mb-1">Age {{ age.group }} — {{ age.pct }}% risk index</p>
-                  <p style="opacity: 0.85;">{{ age.tooltip }}</p>
-                  <div class="absolute left-4 top-full w-0 h-0" style="border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #0f172a;"></div>
-                </div>
-              </div>
-              <span class="text-base font-bold w-12 text-right" style="color: var(--navy);">{{ age.pct }}%</span>
-            </div>
-          </div>
-          <p class="text-sm text-slate-400 mt-5">Relative vulnerability index — 65+ face the highest risk per person</p>
-        </div>
+        <p class="text-sm text-slate-400 mt-5">Relative vulnerability index — 65+ face the highest risk per person</p>
       </div>
 
-      <!-- Right column: live data from our database -->
-      <div class="animate-fade-in-up stagger-2">
+      <!-- Live data from our database -->
+      <div class="lg:col-span-2 animate-fade-in-up stagger-2">
         <ScamStatsPanel :scam-stats="scamStats" :max-reports="maxReports" />
       </div>
 
@@ -708,13 +907,13 @@ const features = [
 
 <style scoped>
 .hero-visual-column {
-  min-height: 29rem;
+  min-height: 24rem;
 }
 
 .senior-shield-stage {
   position: relative;
-  width: clamp(27rem, 34vw, 31rem);
-  height: clamp(27rem, 34vw, 31rem);
+  width: clamp(20rem, 28vw, 24rem);
+  height: clamp(20rem, 28vw, 24rem);
   overflow: visible;
   isolation: isolate;
 }
@@ -780,8 +979,8 @@ const features = [
 }
 
 .grandma-hero-svg {
-  width: min(28.5rem, 93%);
-  height: min(28.5rem, 93%);
+  width: min(22rem, 93%);
+  height: min(22rem, 93%);
   max-width: none;
 }
 
