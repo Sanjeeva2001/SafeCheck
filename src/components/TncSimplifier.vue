@@ -25,7 +25,12 @@ async function handleAnalyze() {
     result.value = data
     hasResult.value = true
   } catch (err) {
-    error.value = err.response?.data?.error || 'Something went wrong. Please try again.'
+    if (err.response?.status === 429) {
+      const seconds = Number.isFinite(err.retryAfterSeconds) ? err.retryAfterSeconds : 30
+      error.value = `AI service is busy right now. Please wait about ${seconds} seconds, then try again.`
+    } else {
+      error.value = err.response?.data?.error || 'Something went wrong. Please try again.'
+    }
   } finally {
     loading.value = false
   }

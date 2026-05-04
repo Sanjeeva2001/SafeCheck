@@ -4,6 +4,10 @@ import { load } from 'cheerio'
 
 const router = express.Router()
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 async function scrapeUrl(url) {
   const response = await axios.get(url, {
     headers: {
@@ -95,19 +99,42 @@ ${text}`
     required: ['overallRisk', 'summary', 'flaggedClauses'],
   }
 
-  const response = await axios.post(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-    {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.2,
-        maxOutputTokens: 8192,
-        responseMimeType: 'application/json',
-        responseSchema,
-      },
-    },
-    { timeout: 60000 }
-  )
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`
+  let response
+  let lastError
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      response = await axios.post(
+        endpoint,
+        {
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 4096,
+            responseMimeType: 'application/json',
+            responseSchema,
+          },
+        },
+        { timeout: 60000 }
+      )
+      break
+    } catch (err) {
+      lastError = err
+      const status = err.response?.status
+      if (status !== 429 || attempt === 2) break
+
+      const retryAfterHeader = err.response?.headers?.['retry-after']
+      const retryAfterSeconds = Number.parseInt(retryAfterHeader, 10)
+      const fallbackMs = Math.min(15000, 1500 * 2 ** attempt)
+      const delayMs = Number.isFinite(retryAfterSeconds) ? retryAfterSeconds * 1000 : fallbackMs
+      await sleep(delayMs)
+    }
+  }
+
+  if (!response) {
+    throw lastError || new Error('AI request failed.')
+  }
 
   // Gemini 2.5 Flash may return thinking parts — find the non-thought part
   const parts = response.data.candidates?.[0]?.content?.parts ?? []
@@ -151,6 +178,8 @@ router.post('/tnc-simplify', async (req, res) => {
   } catch (err) {
     const status = err.response?.status
     if (status === 429) {
+      const retryAfter = err.response?.headers?.['retry-after'] || '30'
+      res.set('Retry-After', `${retryAfter}`)
       return res.status(429).json({ error: 'AI service rate limit reached. Please wait a moment and try again.' })
     }
     if (status === 400) {

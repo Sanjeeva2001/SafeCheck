@@ -21,6 +21,15 @@ export async function getOnlineSeniorStats() {
 }
 
 export async function simplifyTnC({ url, text, mode }) {
-  const response = await api.post('/tnc-simplify', { url, text, mode })
-  return response.data
+  try {
+    const response = await api.post('/tnc-simplify', { url, text, mode })
+    return response.data
+  } catch (err) {
+    const retryAfterHeader = err?.response?.headers?.['retry-after']
+    const retryAfterSeconds = Number.parseInt(retryAfterHeader, 10)
+    if (Number.isFinite(retryAfterSeconds)) {
+      err.retryAfterSeconds = retryAfterSeconds
+    }
+    throw err
+  }
 }
