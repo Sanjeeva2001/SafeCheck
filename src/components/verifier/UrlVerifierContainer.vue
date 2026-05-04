@@ -22,7 +22,7 @@ const verdictTheme = {
 const vc = computed(() => verdictTheme[result.value?.verdict] ?? verdictTheme.safe)
 
 function verdictText(verdict) {
-  if (verdict === 'unsafe')  return 'Unsafe — do not visit'
+  if (verdict === 'unsafe')  return 'Unsafe. Do not visit'
   if (verdict === 'warning') return 'Caution'
   return 'Safe'
 }
@@ -115,7 +115,7 @@ function updateUrl(value) { url.value = value }
             </button>
           </div>
 
-          <!-- What we check — shown when no result yet -->
+          <!-- What we check - shown when no result yet -->
           <div v-if="!result" class="bg-white rounded-2xl border border-slate-200 p-7 shadow-sm animate-fade-in-up">
             <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">How it works</p>
             <h3 class="text-2xl font-bold text-slate-900 mb-6">What SafeCheck looks for</h3>
@@ -125,7 +125,7 @@ function updateUrl(value) { url.value = value }
                   { title: 'Domain reputation',    desc: 'Cross-references the address against known threat databases and blocklists from around the world.' },
                   { title: 'Domain age',           desc: 'New domains registered just days or weeks ago are a common hallmark of scam and phishing sites.' },
                   { title: 'HTTPS & SSL',          desc: 'Checks whether the site uses a valid, trusted security certificate for encrypted connections.' },
-                  { title: 'Lookalike detection',  desc: 'Spots domain names designed to impersonate trusted brands — like your bank or a government agency.' },
+                  { title: 'Lookalike detection',  desc: 'Spots domain names designed to impersonate trusted brands, such as your bank or a government agency.' },
                   { title: 'Content signals',      desc: 'Reviews visible page content for urgency language, suspicious patterns, and phishing indicators.' },
                 ]"
                 :key="check.title"

@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- *  Design tokens — navy + off-white + amber accent
+ *  Design tokens: navy + off-white + amber accent
  *  Red / amber / green are reserved for risk indicators only
  * ------------------------------------------------------------------ */
 :root {
-  --navy:        #1e3a8a; /* blue-900 — primary brand */
-  --navy-dark:   #172554; /* blue-950 — hover state  */
-  --navy-mid:    #1d4ed8; /* blue-700 — lighter navy for accents */
-  --navy-tint:   #eff6ff; /* blue-50  — very light tint */
-  --accent:      #d97706; /* amber-600 — CTA buttons only */
-  --accent-dark: #b45309; /* amber-700 — CTA hover    */
-  --bg:          #f8fafc; /* slate-50  — page background */
+  --navy:        #1e3a8a; /* blue-900, primary brand */
+  --navy-dark:   #172554; /* blue-950, hover state  */
+  --navy-mid:    #1d4ed8; /* blue-700, lighter navy for accents */
+  --navy-tint:   #eff6ff; /* blue-50, very light tint */
+  --accent:      #d97706; /* amber-600, CTA buttons only */
+  --accent-dark: #b45309; /* amber-700, CTA hover */
+  --bg:          #f8fafc; /* slate-50, page background */
 }
 
 /* ------------------------------------------------------------------ *
@@ -42,7 +42,7 @@
 .stagger-3 { animation-delay: 0.31s; }
 
 /* ------------------------------------------------------------------ *
- *  Base typography — minimum 18px throughout
+ *  Base typography: minimum 18px throughout
  * ------------------------------------------------------------------ */
 body {
   font-size: 18px;
@@ -103,7 +103,7 @@ button { cursor: pointer; }
 }
 
 /* ------------------------------------------------------------------ *
- *  Risk verdict colours — used only for URL / T&C results
+ *  Risk verdict colours, used only for URL / T&C results
  * ------------------------------------------------------------------ */
 .verdict-safe    { --verdict-bg: #f0fdf4; --verdict-border: #86efac; --verdict-text: #15803d; }
 .verdict-warning { --verdict-bg: #fffbeb; --verdict-border: #fcd34d; --verdict-text: #92400e; }

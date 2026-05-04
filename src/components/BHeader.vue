@@ -12,7 +12,7 @@ const links = [
 </script>
 
 <template>
-  <!-- Full-width navy header — no max-width constraint, stretches edge to edge -->
+  <!-- Full-width navy header with edge-to-edge background -->
   <header class="sticky top-0 z-50 shadow-md" style="background-color: var(--navy);">
 
     <nav>
@@ -41,7 +41,7 @@ const links = [
           </RouterLink>
         </div>
 
-        <!-- Hamburger — small screens only -->
+        <!-- Hamburger, small screens only -->
         <button
           type="button"
           class="inline-flex items-center justify-center rounded-lg border border-white/30 p-2.5 text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white md:hidden"
@@ -59,7 +59,7 @@ const links = [
         </button>
       </div>
 
-      <!-- Mobile dropdown — full-width, no inner constraint -->
+      <!-- Mobile dropdown, full-width -->
       <div
         v-if="menuOpen"
         id="mobile-nav"

@@ -67,7 +67,7 @@ const props = defineProps({
       </div>
 
       <p class="text-sm text-slate-300 mt-4">
-        Source: Scamwatch &amp; NASC — 65+ age group, online contact method only
+        Source: Scamwatch &amp; NASC, 65+ age group, online contact method only
       </p>
     </div>
 
