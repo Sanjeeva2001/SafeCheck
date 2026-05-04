@@ -40,7 +40,7 @@ const sampleTnC = `By using this service, you agree to our collection of informa
 
 We may share your personal information with our advertising partners, analytics providers, and affiliated businesses. Shared data may include your name, email address, browsing habits, and purchase history. You may not opt out of essential data sharing without terminating your account.
 
-Content you submit — including messages, uploaded documents, and search queries — may be used to train, test, and improve our artificial intelligence systems. This data may be retained for up to ten years.
+Content you submit, including messages, uploaded documents, and search queries, may be used to train, test, and improve our artificial intelligence systems. This data may be retained for up to ten years.
 
 To cancel your subscription, you must submit a written cancellation request no less than 30 days before your next billing date. Cancellations received after this deadline will not take effect until the following renewal period, and no partial refunds will be issued.
 
@@ -79,8 +79,8 @@ const severityConfig = {
           T&amp;C Simplifier
         </h1>
         <p class="text-xl text-white leading-relaxed" style="opacity: 0.92;">
-          Paste a link or the full Terms &amp; Conditions text and get a plain-English summary —
-          with a clear risk rating and the things that matter most, explained.
+          Paste a link or the full Terms &amp; Conditions text and get a plain-English summary
+          with a clear risk rating and the key details explained.
         </p>
       </div>
     </div>
@@ -94,7 +94,7 @@ const severityConfig = {
       <div class="lg:col-span-2 animate-fade-in-up">
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
 
-          <!-- URL / Paste Text toggle — strong active state -->
+          <!-- URL / Paste Text toggle - strong active state -->
           <div class="flex rounded-xl border border-slate-200 p-1 mb-4 bg-slate-50">
             <button
               @click="inputMode = 'url'"
@@ -182,7 +182,7 @@ const severityConfig = {
       <!-- ── Right: results or educational panel ──────────────── -->
       <div class="lg:col-span-3">
 
-        <!-- Educational empty state — fills the space usefully -->
+        <!-- Educational empty state - fills the space usefully -->
         <div v-if="!loading && !hasResult && !error" class="space-y-5 animate-fade-in">
 
           <!-- Why T&Cs matter -->
@@ -190,7 +190,7 @@ const severityConfig = {
             <h3 class="text-2xl font-bold text-slate-900 mb-4">Why do Terms &amp; Conditions matter?</h3>
             <p class="text-lg text-slate-600 leading-relaxed mb-5">
               When you sign up to a website or app, you agree to their Terms &amp; Conditions. Most people
-              tick "I agree" without reading them — but these documents can legally allow companies to do things
+              tick "I agree" without reading them, but these documents can legally allow companies to do things
               you may not expect:
             </p>
             <ul class="space-y-3 mb-5">
@@ -209,27 +209,27 @@ const severityConfig = {
               </li>
             </ul>
             <p class="text-lg text-slate-600 leading-relaxed">
-              SafeCheck reads the T&amp;Cs for you and highlights the clauses most likely to affect you — in plain English, not legal language.
+              SafeCheck reads the T&amp;Cs for you and highlights the clauses most likely to affect you in plain English, not legal language.
             </p>
           </div>
 
-          <!-- Prompt to try it — now appears before the real example -->
+          <!-- Prompt to try it - now appears before the real example -->
           <div class="rounded-2xl p-6 shadow-sm" style="background-color: var(--navy-tint); border: 1px solid #bfdbfe;">
-            <p class="text-lg font-bold mb-2" style="color: var(--navy);">Try it now — it only takes a moment</p>
+            <p class="text-lg font-bold mb-2" style="color: var(--navy);">Try it now. It only takes a moment.</p>
             <p class="text-lg text-slate-600 leading-relaxed">
               Paste the link to any website's Terms &amp; Conditions in the panel on the left, then click
               <strong>Analyse these T&amp;Cs</strong>. We will give you a plain-English summary within seconds.
             </p>
           </div>
 
-          <!-- Real-world case — shown below the CTA as supporting context -->
+          <!-- Real-world case - shown below the CTA as supporting context -->
           <div class="bg-white border-l-4 rounded-2xl p-6 shadow-sm" style="border-color: var(--navy);">
             <p class="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-2">A real example</p>
             <h4 class="text-xl font-bold text-slate-900 mb-3">Facebook &amp; Cambridge Analytica (2016)</h4>
             <p class="text-lg text-slate-600 leading-relaxed">
               Millions of Facebook users unknowingly agreed to terms that allowed their personal data to be
               harvested and used to influence political elections. Most had no idea until it became a global
-              news story. The company had to pay a <strong>$5 billion fine</strong> — but users never got their data back.
+              news story. The company had to pay a <strong>$5 billion fine</strong>, but users never got their data back.
             </p>
           </div>
 
@@ -377,7 +377,7 @@ const severityConfig = {
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p class="text-base font-bold text-slate-700 mb-1">Educational guidance only — not legal advice</p>
+              <p class="text-base font-bold text-slate-700 mb-1">Educational guidance only, not legal advice</p>
               <p class="text-base text-slate-600 leading-relaxed">
                 This summary is provided to help you understand what you may be agreeing to. It is not a substitute
                 for professional legal advice. If you have concerns about a specific document, please consult a

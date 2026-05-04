@@ -67,7 +67,7 @@ const features = [
     page: 'scam-quiz',
     icon: 'bulb',
     title: 'Scam Awareness Quiz',
-    desc: 'Test yourself with real scam scenarios. Eight short questions — no tech knowledge needed.',
+    desc: 'Test yourself with real scam scenarios. Eight short questions. No tech knowledge needed.',
     cta: 'Take the quiz',
   },
 ]
@@ -368,7 +368,7 @@ const features = [
   </section>
 
   <!-- ============================================================
-       SCAM STATISTICS — compact proof cards with optional detail
+       SCAM STATISTICS - compact proof cards with optional detail
        ============================================================ -->
   <section class="py-12 px-8 sm:px-16" style="background-color: var(--bg);">
 
@@ -496,7 +496,7 @@ const features = [
     <div class="text-center mb-12 animate-fade-in-up">
       <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">How can we help you today?</h2>
       <p class="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-        Three free tools — each designed to be simple, no matter your tech experience.
+        Three free tools designed to be simple, no matter your tech experience.
       </p>
     </div>
 
@@ -535,122 +535,6 @@ const features = [
           </svg>
         </div>
       </button>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       WHO IS THIS FOR — illustration + scenario tiles + text
-       ============================================================ -->
-  <section class="py-16 px-8 sm:px-16 bg-white">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
-      <!-- Left: real-life moments -->
-      <div class="animate-fade-in-up">
-        <div class="rounded-3xl p-7 sm:p-8 shadow-sm" style="background-color: var(--navy-tint); border: 1px solid #bfdbfe;">
-          <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color: var(--navy);">Built for real moments</p>
-          <h3 class="text-3xl font-bold text-slate-900 leading-tight mb-3">
-            When something online feels off, SafeCheck gives you a simple next step.
-          </h3>
-          <p class="text-lg text-slate-600 leading-relaxed mb-7">
-            No jargon, no accounts, no pressure. Just paste, read, and decide with more confidence.
-          </p>
-
-          <div class="grid gap-4">
-            <button
-              @click="emit('navigate', 'url-verifier')"
-              class="group w-full rounded-2xl bg-white p-5 text-left shadow-sm border border-blue-100 hover:border-blue-900 hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900"
-            >
-              <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: var(--navy);">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                </div>
-                <div class="flex-1">
-                  <p class="text-xl font-bold text-slate-900 mb-1">Received a suspicious link by text?</p>
-                  <p class="text-lg text-slate-600 leading-relaxed">Check it before you tap. SafeCheck explains the result in seconds.</p>
-                </div>
-                <svg class="w-5 h-5 mt-1 flex-shrink-0 transition-transform group-hover:translate-x-1" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
-
-            <button
-              @click="emit('navigate', 'tnc-simplifier')"
-              class="group w-full rounded-2xl bg-white p-5 text-left shadow-sm border border-blue-100 hover:border-blue-900 hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900"
-            >
-              <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: var(--navy);">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <div class="flex-1">
-                  <p class="text-xl font-bold text-slate-900 mb-1">Confused by the fine print?</p>
-                  <p class="text-lg text-slate-600 leading-relaxed">Paste the terms and see the parts that could affect your privacy, money, or rights.</p>
-                </div>
-                <svg class="w-5 h-5 mt-1 flex-shrink-0 transition-transform group-hover:translate-x-1" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
-
-            <button
-              @click="emit('navigate', 'scam-quiz')"
-              class="group w-full rounded-2xl bg-white p-5 text-left shadow-sm border border-blue-100 hover:border-blue-900 hover:shadow-lg transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900"
-            >
-              <div class="flex items-start gap-4">
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: var(--navy);">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <div class="flex-1">
-                  <p class="text-xl font-bold text-slate-900 mb-1">Want to sharpen your scam radar?</p>
-                  <p class="text-lg text-slate-600 leading-relaxed">Practise with real Australian scam scenarios and learn what to watch for.</p>
-                </div>
-                <svg class="w-5 h-5 mt-1 flex-shrink-0 transition-transform group-hover:translate-x-1" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: text content -->
-      <div class="animate-fade-in-up stagger-2">
-        <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color: var(--navy);">Designed for everyday Australians</p>
-        <h2 class="text-4xl font-bold text-slate-900 mb-6 leading-tight">
-          You shouldn't need to be a tech expert to stay safe online
-        </h2>
-        <p class="text-xl text-slate-600 leading-relaxed mb-6">
-          Online scams cost Australians over 65 more than a billion dollars every year.
-          SafeCheck gives you the same tools the experts use — in language everyone can understand.
-        </p>
-        <div class="space-y-4">
-          <div v-for="point in [
-            'Results in plain English — no technical jargon',
-            'No account, no password, no personal details needed',
-            'Works on phones, tablets, and computers',
-            'Completely free — always',
-          ]" :key="point" class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background-color: var(--navy);">
-              <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <p class="text-lg text-slate-700">{{ point }}</p>
-          </div>
-        </div>
-        <button @click="emit('navigate', 'url-verifier')" class="btn-navy mt-8 text-xl px-8 py-4">
-          Get started — it's free
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
     </div>
   </section>
 

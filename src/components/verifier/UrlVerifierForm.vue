@@ -18,7 +18,7 @@ const urlModel = computed({
 <template>
   <div class="space-y-6 animate-fade-in-up">
 
-    <!-- Open form — no card wrapper, content breathes freely on the page -->
+    <!-- Open form - no card wrapper, content breathes freely on the page -->
     <div>
       <label for="url-input" class="block text-xl font-semibold text-slate-800 mb-3">
         Website address
@@ -34,7 +34,7 @@ const urlModel = computed({
         style="font-size: 1.125rem;"
       />
       <p class="mb-5 text-lg text-slate-600 leading-relaxed">
-        Type or paste a website address. You do not need to include "https://" — any real web address works.
+        Type or paste a website address. You do not need to include "https://". Any real web address works.
       </p>
       <button
         @click="emit('submit')"
@@ -50,11 +50,11 @@ const urlModel = computed({
       <p v-if="props.error" class="mt-3 text-lg text-red-600 font-medium">{{ props.error }}</p>
     </div>
 
-    <!-- Three reassurance tiles — stacked on mobile, 3-col on sm+ -->
+    <!-- Three reassurance tiles - stacked on mobile, 3-col on sm+ -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div
         v-for="badge in [
-          { icon: 'flash', title: 'No account needed', body: 'Start checking right away — nothing to sign up for' },
+          { icon: 'flash', title: 'No account needed', body: 'Start checking right away. Nothing to sign up for' },
           { icon: 'chat',  title: 'Plain English',     body: 'Results explained simply, no technical words' },
           { icon: 'lock',  title: 'Private',           body: 'Nothing you type is saved or stored anywhere' },
         ]"
@@ -79,7 +79,7 @@ const urlModel = computed({
       </div>
     </div>
 
-    <!-- Disclaimer — Item 8: navy left border callout style -->
+    <!-- Disclaimer - Item 8: navy left border callout style -->
     <div
       class="rounded-xl px-5 py-4 flex gap-3 items-start"
       style="background-color: var(--navy-tint); border-left: 4px solid var(--navy); border-top: 1px solid #bfdbfe; border-right: 1px solid #bfdbfe; border-bottom: 1px solid #bfdbfe;"

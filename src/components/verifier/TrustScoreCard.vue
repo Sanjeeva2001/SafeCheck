@@ -8,7 +8,7 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle-breakdown'])
 
-// Risk-only colour mapping — never used for branding
+// Risk-only colour mapping, never used for branding
 const scoreStyle = {
   high: { text: 'text-green-700', bar: 'bg-green-600' },
   mid:  { text: 'text-amber-600', bar: 'bg-amber-500' },

@@ -55,7 +55,7 @@ const borderWidth = props.result?.verdict === 'unsafe' ? 'border-4' : 'border-4'
       </span>
     </div>
 
-    <!-- Primary verdict headline — size scales by urgency -->
+    <!-- Primary verdict headline - size scales by urgency -->
     <p
       class="font-bold leading-tight mb-3"
       :class="props.result.verdict === 'unsafe'
@@ -66,7 +66,7 @@ const borderWidth = props.result?.verdict === 'unsafe' ? 'border-4' : 'border-4'
       :style="{ color: theme.text }"
     >
       <span v-if="props.result.verdict === 'safe'">This website looks safe to visit</span>
-      <span v-else-if="props.result.verdict === 'unsafe'">This website is NOT safe — do not click any links on it</span>
+      <span v-else-if="props.result.verdict === 'unsafe'">This website is NOT safe. Do not click any links on it</span>
       <span v-else>Be careful before visiting this website</span>
     </p>
 
