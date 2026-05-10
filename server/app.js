@@ -15,14 +15,15 @@ for (const envPath of [
   dotenv.config({ path: envPath, override: true })
 }
 
-// Warn on startup if any API key is missing so it is obvious what needs configuring
+// check whether all api keys are working properly or not
 for (const [envName, label] of [
   ['URLHAUS_API_KEY', 'URLhaus'],
   ['GOOGLE_SAFE_BROWSING_API_KEY', 'Google Safe Browsing'],
   ['VIRUSTOTAL_API_KEY', 'VirusTotal'],
   ['WHOIS_API_KEY', 'WHOIS (domain age)'],
   ['DB_NAME', 'Database name'],
-  ['GEMINI_API_KEY', 'Gemini (T&C Simplifier)'],
+  ['DO_AGENT_ACCESS_KEY', 'DigitalOcean Agent Access Key'],
+  ['OPENAI_BASE_URL', 'DigitalOcean Agent Endpoint URL']
 ]) {
   if (!process.env[envName]) {
     console.warn(`[SafeCheck] ${label} is missing. Related features may be unavailable.`)

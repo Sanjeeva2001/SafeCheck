@@ -1,6 +1,7 @@
 import express from 'express'
 import axios from 'axios'
 import { load } from 'cheerio'
+import OpenAI from 'openai'
 
 const router = express.Router()
 
@@ -27,14 +28,10 @@ async function scrapeUrl(url) {
   const $ = load(response.data)
   $('script, style, nav, header, footer, aside, iframe, noscript').remove()
 
-  // Prefer semantic content containers over the full body
-  const mainSelectors = ['main', 'article', '.content', '#content', '.terms', '#terms', '.legal', '.tos', '#tos', '.policy']
-  for (const selector of mainSelectors) {
-    const el = $(selector)
-    if (el.length > 0) {
-      const text = el.text().replace(/\s+/g, ' ').trim()
-      if (text.split(/\s+/).length >= 100) return text
-    }
+  const selectors = ['main', 'article', '.content', '#content', '.terms', '#terms', '.legal', '.tos', '#tos', '.policy']
+  for (const selector of selectors) {
+    const text = $(selector).text().replace(/\s+/g, ' ').trim()
+    if (text.split(/\s+/).length >= 100) return text
   }
 
   return $('body').text().replace(/\s+/g, ' ').trim()
@@ -45,106 +42,63 @@ function truncateToWords(text, maxWords = 10000) {
   return words.length <= maxWords ? text : words.slice(0, maxWords).join(' ')
 }
 
-async function analyzeWithGemini(text) {
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
-    throw new Error('Gemini API key is not configured. Add GEMINI_API_KEY to your .env file.')
-  }
+async function analyzeWithDO(text) {
+  const apiKey = process.env.DO_AGENT_ACCESS_KEY?.trim()
+  const baseURL = process.env.OPENAI_BASE_URL?.trim()
 
-  const prompt = `You are an expert privacy analyst helping everyday consumers understand Terms & Conditions documents.
+  if (!apiKey) throw new Error('DO_AGENT_ACCESS_KEY is not set in .env')
+  if (!baseURL) throw new Error('OPENAI_BASE_URL is not set in .env')
 
-Analyze the T&Cs below and produce a structured assessment with these rules:
+  const client = new OpenAI({ apiKey, baseURL })
 
-overallRisk: "low", "medium", or "high" based on how much users should be concerned.
-summary: 2-3 plain-English sentences covering the main risks or reassurances.
-flaggedClauses: 3 to 7 clauses, each with:
-  - category: short label (e.g. Data collection, Data sharing, AI training, Cancellation trap, Data retention, Arbitration)
-  - severity: "danger" (users would strongly object), "warn" (common but worth knowing), or "pass" (actually user-friendly)
-  - clause: the actual or paraphrased clause text (1-2 sentences)
-  - consequence: concrete plain-English explanation of what this means for the user
-  - realCase: a real-world example { name, detail } or null if none is relevant
+  const prompt = `You are a JSON API. Respond with ONLY a valid JSON object. No markdown, no code fences, no text before or after. Start with { and end with }
 
-Focus on: data collection, third-party data sharing, AI training use, cancellation/auto-renewal traps, data retention, arbitration clauses, liability waivers.
+Analyze these Terms and Conditions and return exactly this structure:
+{
+  "overallRisk": "low" or "medium" or "high",
+  "summary": "2-3 plain English sentences about the main risks",
+  "flaggedClauses": [
+    {
+      "category": "short label like Data collection or Arbitration",
+      "severity": "danger" or "warn" or "pass",
+      "clause": "the actual clause text",
+      "consequence": "plain English explanation of what this means for the user",
+      "realCase": { "name": "company name", "detail": "what happened" } or null
+    }
+  ]
+}
 
-T&Cs text to analyze:
+Include 3 to 7 flaggedClauses. Focus on: data collection, third-party sharing, AI training data usage, cancellation traps, data retention, arbitration, liability waivers.
+
+T&Cs text:
 ${text}`
 
-  const responseSchema = {
-    type: 'object',
-    properties: {
-      overallRisk: { type: 'string', enum: ['low', 'medium', 'high'] },
-      summary: { type: 'string' },
-      flaggedClauses: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            category: { type: 'string' },
-            severity: { type: 'string', enum: ['danger', 'warn', 'pass'] },
-            clause: { type: 'string' },
-            consequence: { type: 'string' },
-            realCase: {
-              type: 'object',
-              nullable: true,
-              properties: {
-                name: { type: 'string' },
-                detail: { type: 'string' },
-              },
-            },
-          },
-          required: ['category', 'severity', 'clause', 'consequence'],
-        },
-      },
-    },
-    required: ['overallRisk', 'summary', 'flaggedClauses'],
-  }
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`
-  let response
   let lastError
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      response = await axios.post(
-        endpoint,
-        {
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 4096,
-            responseMimeType: 'application/json',
-            responseSchema,
-          },
-        },
-        { timeout: 60000 }
-      )
-      break
+      const completion = await client.chat.completions.create({
+        model: 'n/a',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.2,
+        max_tokens: 4096,
+      })
+
+      const rawText = completion.choices[0]?.message?.content ?? ''
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) throw new Error('Could not parse AI response. Please try again.')
+      return JSON.parse(jsonMatch[0].trim())
+
     } catch (err) {
       lastError = err
-      const status = err.response?.status
+      const status = err.status || err.response?.status
+      if (status === 401) throw new Error('DigitalOcean authentication failed (401). Check DO_AGENT_ACCESS_KEY.')
       if (status !== 429 || attempt === 2) break
-
-      const retryAfterHeader = err.response?.headers?.['retry-after']
-      const retryAfterSeconds = Number.parseInt(retryAfterHeader, 10)
-      const fallbackMs = Math.min(15000, 1500 * 2 ** attempt)
-      const delayMs = Number.isFinite(retryAfterSeconds) ? retryAfterSeconds * 1000 : fallbackMs
-      await sleep(delayMs)
+      await sleep(Math.min(15000, 1500 * 2 ** attempt))
     }
   }
 
-  if (!response) {
-    throw lastError || new Error('AI request failed.')
-  }
-
-  // Gemini 2.5 Flash may return thinking parts — find the non-thought part
-  const parts = response.data.candidates?.[0]?.content?.parts ?? []
-  const rawText = (parts.find(p => !p.thought) ?? parts[parts.length - 1])?.text ?? ''
-
-  try {
-    return JSON.parse(rawText)
-  } catch {
-    throw new Error('Could not parse the AI response. Please try again.')
-  }
+  throw lastError || new Error('AI request failed.')
 }
 
 router.post('/tnc-simplify', async (req, res) => {
@@ -160,32 +114,23 @@ router.post('/tnc-simplify', async (req, res) => {
     try {
       tncText = await scrapeUrl(url)
     } catch (err) {
-      return res.status(422).json({
-        error: `Could not fetch the page: ${err.message} — try pasting the T&C text directly instead.`,
-      })
+      return res.status(422).json({ error: `Could not fetch the page: ${err.message}` })
     }
   }
 
   if (!tncText || tncText.split(/\s+/).length < 30) {
-    return res.status(422).json({ error: 'Not enough text to analyse. Try pasting the T&C text directly.' })
+    return res.status(422).json({ error: 'Not enough text to analyse. Paste the T&C text directly.' })
   }
 
-  tncText = truncateToWords(tncText, 10000)
+  tncText = truncateToWords(tncText)
 
   try {
-    const result = await analyzeWithGemini(tncText)
+    const result = await analyzeWithDO(tncText)
     res.json(result)
   } catch (err) {
-    const status = err.response?.status
-    if (status === 429) {
-      const retryAfter = err.response?.headers?.['retry-after'] || '30'
-      res.set('Retry-After', `${retryAfter}`)
-      return res.status(429).json({ error: 'AI service rate limit reached. Please wait a moment and try again.' })
-    }
-    if (status === 400) {
-      return res.status(400).json({ error: 'The text could not be analysed. It may not be a valid T&C document.' })
-    }
-    console.error('[TnC Simplifier] Error:', err.response?.data || err.message)
+    const status = err.status || err.response?.status
+    if (status === 429) return res.status(429).json({ error: 'Rate limit reached. Wait a moment and retry.' })
+    console.error('[TnC Simplifier]', err.message)
     res.status(500).json({ error: err.message || 'Analysis failed. Please try again.' })
   }
 })
