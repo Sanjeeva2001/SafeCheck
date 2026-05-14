@@ -2,8 +2,27 @@ import express from 'express'
 import axios from 'axios'
 import { load } from 'cheerio'
 import OpenAI from 'openai'
+import multer from 'multer'
+import { PDFParse } from 'pdf-parse'
 
 const router = express.Router()
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+const MIN_WORD_COUNT = 30
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['application/pdf', 'text/plain']
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true)
+    } else {
+      cb(new Error('Only PDF and plain text files can be uploaded.'))
+    }
+  },
+})
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -40,6 +59,32 @@ async function scrapeUrl(url) {
 function truncateToWords(text, maxWords = 10000) {
   const words = text.split(/\s+/)
   return words.length <= maxWords ? text : words.slice(0, maxWords).join(' ')
+}
+
+async function extractTextFromFile(file) {
+  if (!file) {
+    const error = new Error('Please upload a PDF or plain text file to analyse.')
+    error.statusCode = 400
+    throw error
+  }
+
+  if (file.mimetype === 'application/pdf') {
+    const parser = new PDFParse({ data: file.buffer })
+    try {
+      const parsed = await parser.getText()
+      return parsed.text.replace(/\s+/g, ' ').trim()
+    } finally {
+      await parser.destroy()
+    }
+  }
+
+  if (file.mimetype === 'text/plain') {
+    return file.buffer.toString('utf8').replace(/\s+/g, ' ').trim()
+  }
+
+  const error = new Error('Only PDF and plain text files can be uploaded.')
+  error.statusCode = 400
+  throw error
 }
 
 async function analyzeWithDO(text) {
@@ -101,16 +146,36 @@ ${text}`
   throw lastError || new Error('AI request failed.')
 }
 
-router.post('/tnc-simplify', async (req, res) => {
+router.post('/tnc-simplify', (req, res, next) => {
+  upload.single('file')(req, res, err => {
+    if (!err) return next()
+
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File is too large. Please upload a file smaller than 5 MB.' })
+    }
+
+    return res.status(400).json({ error: err.message || 'File upload failed.' })
+  })
+}, async (req, res) => {
   const { url, text, mode } = req.body
 
-  if (!url && !text) {
-    return res.status(400).json({ error: 'Provide either a URL or text to analyse.' })
+  if (mode === 'file' && !req.file) {
+    return res.status(400).json({ error: 'Please upload a PDF or plain text file to analyse.' })
+  }
+
+  if (mode !== 'file' && !url && !text) {
+    return res.status(400).json({ error: 'Provide a URL, pasted text, or uploaded file to analyse.' })
   }
 
   let tncText = text
 
-  if (mode === 'url' || (url && !text)) {
+  if (mode === 'file') {
+    try {
+      tncText = await extractTextFromFile(req.file)
+    } catch (err) {
+      return res.status(err.statusCode || 422).json({ error: err.message || 'Could not read the uploaded file.' })
+    }
+  } else if (mode === 'url' || (url && !text)) {
     try {
       tncText = await scrapeUrl(url)
     } catch (err) {
@@ -118,8 +183,11 @@ router.post('/tnc-simplify', async (req, res) => {
     }
   }
 
-  if (!tncText || tncText.split(/\s+/).length < 30) {
-    return res.status(422).json({ error: 'Not enough text to analyse. Paste the T&C text directly.' })
+  if (!tncText || tncText.split(/\s+/).length < MIN_WORD_COUNT) {
+    const message = mode === 'file'
+      ? 'Not enough readable text was found in the uploaded file. Please upload a text-based PDF or paste the T&C text directly.'
+      : 'Not enough text to analyse. Paste the T&C text directly.'
+    return res.status(422).json({ error: message })
   }
 
   tncText = truncateToWords(tncText)

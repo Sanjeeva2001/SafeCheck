@@ -1,29 +1,119 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { simplifyTnC } from '../services/api.js'
 
 const inputMode = ref('url')
 const inputValue = ref('')
+const uploadedFile = ref(null)
+const selectedFileName = ref('')
+const selectedFileSize = ref('')
+const selectedFileType = ref('')
+const fileInputRef = ref(null)
 const loading = ref(false)
 const hasResult = ref(false)
 const result = ref(null)
 const error = ref('')
+const resultSourceMode = ref('')
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+const allowedFileTypes = ['application/pdf', 'text/plain']
+
+const canAnalyze = computed(() => {
+  if (loading.value) return false
+  if (inputMode.value === 'file') return Boolean(uploadedFile.value)
+  return Boolean(inputValue.value.trim())
+})
+
+const uploadStatusMessage = computed(() => {
+  if (inputMode.value === 'file') return 'Uploading and analysing your PDF...'
+  if (inputMode.value === 'url') return 'Fetching and analysing the Terms page...'
+  return 'Analysing the pasted Terms and Conditions...'
+})
+
+function formatFileSize(sizeInBytes) {
+  return `${(sizeInBytes / 1024 / 1024).toFixed(1)} MB`
+}
+
+function getFriendlyFileType(file) {
+  if (file.type === 'application/pdf') return 'PDF'
+  if (file.type === 'text/plain') return 'Text file'
+  return file.type || 'Unknown'
+}
+
+function setInputMode(mode) {
+  inputMode.value = mode
+  error.value = ''
+}
+
+function handleFileChange(event) {
+  const file = event.target.files?.[0]
+  uploadedFile.value = null
+  selectedFileName.value = ''
+  selectedFileSize.value = ''
+  selectedFileType.value = ''
+  error.value = ''
+
+  if (!file) return
+
+  if (!allowedFileTypes.includes(file.type)) {
+    error.value = 'Only PDF and text files are supported.'
+    event.target.value = ''
+    return
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    error.value = 'This file is too large. Please upload a file under 5 MB.'
+    event.target.value = ''
+    return
+  }
+
+  uploadedFile.value = file
+  selectedFileName.value = file.name
+  selectedFileSize.value = formatFileSize(file.size)
+  selectedFileType.value = getFriendlyFileType(file)
+}
+
+function removeSelectedFile() {
+  uploadedFile.value = null
+  selectedFileName.value = ''
+  selectedFileSize.value = ''
+  selectedFileType.value = ''
+  error.value = ''
+
+  if (fileInputRef.value) {
+    fileInputRef.value.value = ''
+  }
+
+  if (hasResult.value && resultSourceMode.value === 'file') {
+    hasResult.value = false
+    result.value = null
+    resultSourceMode.value = ''
+  }
+}
 
 async function handleAnalyze() {
-  if (!inputValue.value.trim()) return
+  if (loading.value) return
+  if (inputMode.value === 'file' && !uploadedFile.value) {
+    error.value = 'Please upload a PDF or text file before analysing.'
+    return
+  }
+  if (!canAnalyze.value) return
+
   loading.value = true
   hasResult.value = false
   error.value = ''
   result.value = null
+  resultSourceMode.value = ''
 
   try {
     const data = await simplifyTnC({
       mode: inputMode.value,
       url: inputMode.value === 'url' ? inputValue.value.trim() : undefined,
       text: inputMode.value === 'text' ? inputValue.value.trim() : undefined,
+      file: inputMode.value === 'file' ? uploadedFile.value : undefined,
     })
     result.value = data
     hasResult.value = true
+    resultSourceMode.value = inputMode.value
   } catch (err) {
     if (err.response?.status === 429) {
       const seconds = Number.isFinite(err.retryAfterSeconds) ? err.retryAfterSeconds : 30
@@ -49,6 +139,8 @@ These terms may be updated at any time without individual notice. Continued use 
 function trySample() {
   inputMode.value = 'text'
   inputValue.value = sampleTnC
+  removeSelectedFile()
+  error.value = ''
 }
 
 const riskConfig = {
@@ -94,32 +186,47 @@ const severityConfig = {
       <div class="lg:col-span-2 animate-fade-in-up">
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
 
-          <!-- URL / Paste Text toggle - strong active state -->
+          <!-- URL / Paste Text / Upload PDF toggle - strong active state -->
           <div class="flex rounded-xl border border-slate-200 p-1 mb-4 bg-slate-50">
             <button
-              @click="inputMode = 'url'"
-              class="flex-1 text-lg font-semibold py-3 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900"
+              @click="setInputMode('url')"
+              class="flex-1 text-base sm:text-lg font-semibold py-3 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900"
               :class="inputMode === 'url' ? 'text-white' : 'text-slate-600 hover:text-slate-800'"
               :style="inputMode === 'url' ? 'background-color: var(--navy);' : ''"
             >
               Website URL
             </button>
             <button
-              @click="inputMode = 'text'"
-              class="flex-1 text-lg font-semibold py-3 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900"
+              @click="setInputMode('text')"
+              class="flex-1 text-base sm:text-lg font-semibold py-3 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900"
               :class="inputMode === 'text' ? 'text-white' : 'text-slate-600 hover:text-slate-800'"
               :style="inputMode === 'text' ? 'background-color: var(--navy);' : ''"
             >
               Paste Text
+            </button>
+            <button
+              @click="setInputMode('file')"
+              class="flex-1 text-base sm:text-lg font-semibold py-3 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900"
+              :class="inputMode === 'file' ? 'text-white' : 'text-slate-600 hover:text-slate-800'"
+              :style="inputMode === 'file' ? 'background-color: var(--navy);' : ''"
+            >
+              Upload PDF
             </button>
           </div>
 
           <!-- Item 6: Try a sample link -->
           <div class="flex items-center justify-between mb-2">
             <label class="block text-xl font-semibold text-slate-800">
-              {{ inputMode === 'url' ? 'Link to the Terms & Conditions page' : 'Paste the Terms & Conditions here' }}
+              {{
+                inputMode === 'url'
+                  ? 'Link to the Terms & Conditions page'
+                  : inputMode === 'text'
+                    ? 'Paste the Terms & Conditions here'
+                    : 'Upload a PDF or text file'
+              }}
             </label>
             <button
+              v-if="inputMode !== 'file'"
               type="button"
               @click="trySample"
               class="text-base font-semibold ml-3 flex-shrink-0 underline decoration-dotted underline-offset-2 hover:no-underline transition-all"
@@ -138,24 +245,86 @@ const severityConfig = {
             style="font-size: 1.125rem;"
           />
           <textarea
-            v-else
+            v-else-if="inputMode === 'text'"
             v-model="inputValue"
             rows="7"
             placeholder="Paste the full Terms &amp; Conditions text here..."
             class="w-full border border-slate-200 rounded-xl px-5 py-4 text-xl placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-transparent resize-none transition"
             style="font-size: 1.125rem;"
           ></textarea>
+          <div
+            v-else
+            class="border border-dashed border-slate-300 rounded-xl px-5 py-6 bg-slate-50"
+          >
+            <div class="rounded-xl border border-blue-100 p-4 mb-5" style="background-color: var(--navy-tint);">
+              <p class="text-base font-bold mb-3" style="color: var(--navy);">How to upload Terms &amp; Conditions</p>
+              <ol class="space-y-2 text-base text-slate-700 leading-relaxed">
+                <li><strong>Step 1:</strong> Download or save the Terms and Conditions as a PDF from the website.</li>
+                <li><strong>Step 2:</strong> Click Upload PDF and choose the file from your device.</li>
+                <li><strong>Step 3:</strong> Click Analyse these T&amp;Cs.</li>
+                <li><strong>Step 4:</strong> Read the plain-English summary and risky clauses.</li>
+              </ol>
+              <p class="mt-3 text-base text-slate-600 leading-relaxed">
+                If the website does not provide a PDF, copy the Terms and Conditions text and use Paste Text instead.
+              </p>
+            </div>
+
+            <input
+              id="tnc-file-upload"
+              ref="fileInputRef"
+              type="file"
+              accept=".pdf,.txt,application/pdf,text/plain"
+              class="sr-only"
+              :disabled="loading"
+              @change="handleFileChange"
+            />
+            <label
+              for="tnc-file-upload"
+              class="btn-navy inline-flex px-5 py-3 text-lg"
+              :class="loading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'"
+            >
+              Choose file
+            </label>
+
+            <div
+              v-if="uploadedFile"
+              class="mt-4 bg-white border border-slate-200 rounded-xl p-4"
+            >
+              <div class="flex items-start justify-between gap-4">
+                <div class="space-y-1">
+                  <p class="text-lg font-semibold text-slate-800">Selected file: {{ selectedFileName }}</p>
+                  <p class="text-base text-slate-600">Size: {{ selectedFileSize }}</p>
+                  <p class="text-base text-slate-600">Type: {{ selectedFileType }}</p>
+                </div>
+                <button
+                  type="button"
+                  @click="removeSelectedFile"
+                  :disabled="loading"
+                  class="text-base font-semibold underline decoration-dotted underline-offset-2 hover:no-underline disabled:opacity-60 disabled:cursor-not-allowed"
+                  style="color: var(--navy);"
+                >
+                  Remove file
+                </button>
+              </div>
+            </div>
+            <p v-else class="mt-3 text-lg text-slate-700">
+              No file selected
+            </p>
+            <p class="mt-1 text-base text-slate-500">
+              PDF or .txt only, maximum 5 MB. Scanned PDFs without selectable text are not supported.
+            </p>
+          </div>
 
           <button
             @click="handleAnalyze"
-            :disabled="loading || !inputValue.trim()"
+            :disabled="!canAnalyze"
             class="btn-navy mt-4 w-full py-4 text-xl disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <svg v-if="loading" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
-            <span>{{ loading ? 'Analysing...' : 'Analyse these T&Cs' }}</span>
+            <span>{{ loading ? uploadStatusMessage : 'Analyse these T&Cs' }}</span>
           </button>
 
           <!-- What we look for -->
@@ -259,7 +428,7 @@ const severityConfig = {
             <div class="flex items-center gap-4 mb-4">
               <div class="w-14 h-14 rounded-full bg-slate-100 animate-pulse"></div>
               <div class="flex-1">
-                <div class="h-5 w-32 bg-slate-100 rounded animate-pulse mb-2"></div>
+                <p class="text-base font-semibold text-slate-600 mb-2">{{ uploadStatusMessage }}</p>
                 <div class="h-8 w-48 bg-slate-100 rounded animate-pulse"></div>
               </div>
             </div>

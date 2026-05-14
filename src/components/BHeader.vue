@@ -9,6 +9,7 @@ const links = [
   { label: 'URL Verifier',   to: '/url-verifier'   },
   { label: 'T&C Simplifier', to: '/tnc-simplifier' },
   { label: 'Scam Quiz',      to: '/scam-quiz'       },
+  { label: 'Awareness',      to: '/awareness'       },
 ]
 </script>
 
