@@ -8,6 +8,26 @@ const showFeedback = ref(false)
 const score = ref(0)
 const quizFinished = ref(false)
 
+function buildShuffledQuestions() {
+  return scamQuizQuestions.map((question) => {
+    const optionsWithCorrectFlag = question.options.map((option, index) => ({
+      text: option,
+      isCorrect: index === question.correctIndex,
+    }))
+
+    const shuffledOptions = [...optionsWithCorrectFlag].sort(() => Math.random() - 0.5)
+    const correctIndex = shuffledOptions.findIndex((option) => option.isCorrect)
+
+    return {
+      ...question,
+      options: shuffledOptions.map((option) => option.text),
+      correctIndex,
+    }
+  })
+}
+
+const quizQuestions = ref(buildShuffledQuestions())
+
 const knowledgeTips = [
   {
     title: 'Pause before acting',
@@ -27,8 +47,8 @@ const knowledgeTips = [
   },
 ]
 
-const currentQuestion = computed(() => scamQuizQuestions[currentQuestionIndex.value])
-const totalQuestions = computed(() => scamQuizQuestions.length)
+const currentQuestion = computed(() => quizQuestions.value[currentQuestionIndex.value])
+const totalQuestions = computed(() => quizQuestions.value.length)
 const isCorrect = computed(() => selectedAnswer.value === currentQuestion.value.correctIndex)
 const progressPercent = computed(() => ((currentQuestionIndex.value + 1) / totalQuestions.value) * 100)
 
@@ -66,6 +86,7 @@ function nextQuestion() {
 }
 
 function tryAgain() {
+  quizQuestions.value = buildShuffledQuestions()
   currentQuestionIndex.value = 0
   selectedAnswer.value = null
   showFeedback.value = false

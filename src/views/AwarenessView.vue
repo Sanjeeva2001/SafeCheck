@@ -1,9 +1,51 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue'
 import {
   awarenessInsights,
   scamAwarenessCards,
   supportLinks,
 } from '../data/scamAwarenessData.js'
+import { getOnlineSeniorStats } from '../services/api.js'
+
+const statsLoading = ref(false)
+const statsError = ref('')
+const seniorStats = ref(null)
+
+const topScamTypes = computed(() => seniorStats.value?.topScamTypes || [])
+const summary = computed(() => seniorStats.value?.summary || null)
+
+const maxReports = computed(() => {
+  return Math.max(...topScamTypes.value.map(item => Number(item.total_reports) || 0), 1)
+})
+
+function formatNumber(value) {
+  return new Intl.NumberFormat('en-AU').format(Number(value) || 0)
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('en-AU', {
+    style: 'currency',
+    currency: 'AUD',
+    maximumFractionDigits: 0,
+  }).format(Number(value) || 0)
+}
+
+function getBarWidth(value) {
+  return `${((Number(value) || 0) / maxReports.value) * 100}%`
+}
+
+onMounted(async () => {
+  statsLoading.value = true
+  statsError.value = ''
+
+  try {
+    seniorStats.value = await getOnlineSeniorStats()
+  } catch (err) {
+    statsError.value = 'Scam statistics could not be loaded right now. You can still read the safety information below.'
+  } finally {
+    statsLoading.value = false
+  }
+})
 </script>
 
 <template>
@@ -28,6 +70,93 @@ import {
 
   <section class="py-12 px-8 sm:px-16" style="background-color: var(--bg);">
     <div class="max-w-6xl mx-auto space-y-10">
+      <section class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm animate-fade-in-up">
+        <div class="mb-6">
+          <h2 class="text-3xl font-bold text-slate-900 mb-3">
+            Scam statistics for older Australians
+          </h2>
+          <p class="text-lg text-slate-600 leading-relaxed">
+            These figures show online scam reports involving Australians aged 65 and over. They help explain why simple scam warnings matter.
+          </p>
+        </div>
+
+        <div v-if="statsLoading" class="text-lg text-slate-600">
+          Loading scam statistics...
+        </div>
+
+        <div v-else-if="statsError" class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <p class="text-lg text-amber-900 leading-relaxed">
+            {{ statsError }}
+          </p>
+        </div>
+
+        <div v-else-if="summary" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-blue-100 p-5" style="background-color: var(--navy-tint);">
+              <p class="text-base font-semibold text-slate-600 uppercase tracking-wide mb-2">
+                Reported online scam cases
+              </p>
+              <p class="text-4xl font-bold" style="color: var(--navy);">
+                {{ formatNumber(summary.total_reports) }}
+              </p>
+              <p class="text-lg text-slate-700 mt-2">
+                Reports from people aged 65 and over.
+              </p>
+            </div>
+
+            <div class="rounded-xl border border-blue-100 p-5" style="background-color: var(--navy-tint);">
+              <p class="text-base font-semibold text-slate-600 uppercase tracking-wide mb-2">
+                Reported money lost
+              </p>
+              <p class="text-4xl font-bold" style="color: var(--navy);">
+                {{ formatCurrency(summary.total_lost) }}
+              </p>
+              <p class="text-lg text-slate-700 mt-2">
+                Reported losses from online scam cases.
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-5">
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">
+              Common online scam types
+            </h3>
+            <p class="text-lg text-slate-600 leading-relaxed mb-5">
+              Longer bars mean more reports. This chart uses simple comparison instead of complex numbers.
+            </p>
+
+            <div v-if="topScamTypes.length" class="space-y-4">
+              <div
+                v-for="item in topScamTypes"
+                :key="item.scam_type"
+                class="space-y-2"
+              >
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                  <p class="text-lg font-semibold text-slate-800">
+                    {{ item.scam_type }}
+                  </p>
+                  <p class="text-base text-slate-600">
+                    {{ formatNumber(item.total_reports) }} reports
+                  </p>
+                </div>
+
+                <div class="w-full bg-slate-100 rounded-full h-5 overflow-hidden">
+                  <div
+                    class="h-5 rounded-full"
+                    style="background-color: var(--navy);"
+                    :style="{ width: getBarWidth(item.total_reports) }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <p v-else class="text-lg text-slate-600 leading-relaxed">
+              No scam type data is available right now.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <div class="animate-fade-in-up">
         <h2 class="text-3xl font-bold text-slate-900 mb-3">Common scam types</h2>
         <p class="text-lg text-slate-600 leading-relaxed mb-6">
