@@ -42,7 +42,7 @@ function analysisResponse(overallRisk, flaggedClauses = []) {
   }
 }
 
-test.describe('T&C Simplifier integration, validation, and error handling', () => {
+test.describe('T&C Simplifier integration, validation, error handling, and security', () => {
   test('pasted text flow displays the mocked risk, summary, and flagged clauses', async ({ page }) => {
     await mockTncAnalysis(page, analysisResponse('medium', [
       {
@@ -84,6 +84,34 @@ test.describe('T&C Simplifier integration, validation, and error handling', () =
     await expect(page.getByRole('button', { name: /Analyse these T&Cs/i })).toBeDisabled()
   })
 
+  test('executable file type is rejected before analysis', async ({ page }) => {
+    await openTncSimplifier(page)
+
+    await page.getByRole('button', { name: 'Upload PDF', exact: true }).click()
+    await page.locator('#tnc-file-upload').setInputFiles({
+      name: 'installer.exe',
+      mimeType: 'application/x-msdownload',
+      buffer: Buffer.from('fake executable content'),
+    })
+
+    await expect(page.getByText('Only PDF and text files are supported.')).toBeVisible()
+    await expect(page.getByRole('button', { name: /Analyse these T&Cs/i })).toBeDisabled()
+  })
+
+  test('oversized frontend file is rejected before analysis', async ({ page }) => {
+    await openTncSimplifier(page)
+
+    await page.getByRole('button', { name: 'Upload PDF', exact: true }).click()
+    await page.locator('#tnc-file-upload').setInputFiles({
+      name: 'large-terms.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.alloc(5 * 1024 * 1024 + 1, 'a'),
+    })
+
+    await expect(page.getByText('This file is too large. Please upload a file under 5 MB.')).toBeVisible()
+    await expect(page.getByRole('button', { name: /Analyse these T&Cs/i })).toBeDisabled()
+  })
+
   test('rate limit response shows a friendly wait message', async ({ page }) => {
     await mockTncAnalysis(
       page,
@@ -110,6 +138,7 @@ test.describe('T&C Simplifier integration, validation, and error handling', () =
     await expect(page.getByText('Analysis failed', { exact: true })).toBeVisible()
     await expect(page.getByText('Analysis failed. Please try again.')).toBeVisible()
     await expect(page.getByText(/at .*\.js|Stack trace|TypeError|ReferenceError/i)).toHaveCount(0)
+    await expect(page.locator('body')).not.toContainText(/API key|token|password|secret|Stack trace|at .*\.js/i)
   })
 
   test('low, medium, and high risk values display the correct risk labels', async ({ page }) => {
