@@ -154,53 +154,53 @@ function getSeniorBarWidth(value) {
             <span class="text-blue-200">SafeCheck</span>
           </h1>
 
-          <p class="text-xl text-white leading-relaxed mb-8 max-w-xl" style="opacity: 0.92;">
+          <p class="home-hero-copy">
             Stop your personal information from getting leaked, prevent endless scam calls, and protect your hard-earned savings. SafeCheck helps you spot suspicious links and hidden traps instantly.
           </p>
 
           <!-- Three horizontal CTA buttons -->
-          <div class="grid grid-cols-3 gap-3 sm:gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             <button
               @click="emit('navigate', 'url-verifier')"
-              class="home-hero-cta h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="home-hero-cta-icon flex-shrink-0 text-blue-600 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              <span class="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">Not sure if a website is safe?</span>
+              <span class="home-hero-cta-prompt">Not sure if a website is safe?</span>
               <span class="home-cta-label">Use Our URL Verifier</span>
             </button>
             <button
               @click="emit('navigate', 'tnc-simplifier')"
-              class="home-hero-cta h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="home-hero-cta-icon flex-shrink-0 text-blue-600 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span class="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">Confused by the language of terms and conditions?</span>
+              <span class="home-hero-cta-prompt">Confused by the language of terms and conditions?</span>
               <span class="home-cta-label">Simplify T&amp;Cs</span>
             </button>
             <button
               @click="emit('navigate', 'scam-quiz')"
-              class="home-hero-cta h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="home-hero-cta-icon flex-shrink-0 text-blue-600 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              <span class="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">Want to test your scam knowledge?</span>
+              <span class="home-hero-cta-prompt">Want to test your scam knowledge?</span>
               <span class="home-cta-label">Take Scam Quiz</span>
             </button>
           </div>
 
-          <div class="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 mt-8">
-            <div v-for="item in ['Free', 'No sign-up required', 'Nothing stored']" :key="item" class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <div class="home-hero-trust flex flex-col sm:flex-row flex-wrap">
+            <div v-for="item in ['Free', 'No sign-up required', 'Nothing stored']" :key="item" class="home-hero-trust-item flex items-center">
+              <svg class="home-hero-trust-icon text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
-              <span class="text-base sm:text-lg font-medium text-white" style="opacity: 0.92;">{{ item }}</span>
+              <span class="home-hero-trust-text">{{ item }}</span>
             </div>
           </div>
         </div>
@@ -836,6 +836,16 @@ function getSeniorBarWidth(value) {
   line-height: 1.65;
 }
 
+.home-hero-copy {
+  max-width: 48rem;
+  margin-bottom: 2.4rem;
+  color: #ffffff;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-weight: 500;
+  line-height: 1.58;
+  opacity: 0.94;
+}
+
 .home-card-grid {
   align-items: stretch;
 }
@@ -847,7 +857,22 @@ function getSeniorBarWidth(value) {
 }
 
 .home-hero-cta {
-  min-height: 10.75rem;
+  min-height: 13.25rem;
+  gap: 0.85rem;
+  padding: 1.45rem 1.25rem;
+}
+
+.home-hero-cta-icon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.1rem;
+}
+
+.home-hero-cta-prompt {
+  color: rgb(51, 65, 85);
+  font-size: clamp(1.15rem, 1.35vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .home-cta-label,
@@ -864,13 +889,35 @@ function getSeniorBarWidth(value) {
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 3.25rem;
+  min-height: 4.1rem;
   margin-top: auto;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;
   border-radius: 0.85rem;
-  font-size: 1.05rem;
+  font-size: clamp(1.25rem, 1.7vw, 1.6rem);
   line-height: 1.15;
   font-weight: 900;
+}
+
+.home-hero-trust {
+  gap: 1.25rem 2rem;
+  margin-top: 2.35rem;
+}
+
+.home-hero-trust-item {
+  gap: 0.75rem;
+}
+
+.home-hero-trust-icon {
+  width: 1.85rem;
+  height: 1.85rem;
+}
+
+.home-hero-trust-text {
+  color: #ffffff;
+  font-size: clamp(1.25rem, 1.6vw, 1.6rem);
+  font-weight: 750;
+  line-height: 1.25;
+  opacity: 0.94;
 }
 
 .readable-cta-pill {
@@ -900,7 +947,7 @@ function getSeniorBarWidth(value) {
 
 @media (min-width: 640px) {
   .home-cta-label {
-    font-size: 1.15rem;
+    font-size: clamp(1.2rem, 1.55vw, 1.5rem);
   }
 }
 
