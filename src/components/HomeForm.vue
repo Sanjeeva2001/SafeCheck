@@ -162,36 +162,36 @@ function getSeniorBarWidth(value) {
           <div class="grid grid-cols-3 gap-3 sm:gap-4">
             <button
               @click="emit('navigate', 'url-verifier')"
-              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
               <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Not sure if a website is safe?</span>
-              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Use Our URL Verifier</span>
+              <span class="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">Not sure if a website is safe?</span>
+              <span class="home-cta-label">Use Our URL Verifier</span>
             </button>
             <button
               @click="emit('navigate', 'tnc-simplifier')"
-              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
               <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Confused by the language of terms and conditions?</span>
-              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Simplify T&amp;Cs</span>
+              <span class="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">Confused by the language of terms and conditions?</span>
+              <span class="home-cta-label">Simplify T&amp;Cs</span>
             </button>
             <button
               @click="emit('navigate', 'scam-quiz')"
-              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
               <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Want to test your scam knowledge?</span>
-              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Take Scam Quiz</span>
+              <span class="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">Want to test your scam knowledge?</span>
+              <span class="home-cta-label">Take Scam Quiz</span>
             </button>
           </div>
 
@@ -456,8 +456,7 @@ function getSeniorBarWidth(value) {
               <p class="text-base text-slate-700 leading-relaxed">{{ card.detail }}</p>
               <button
                 type="button"
-                class="mt-4 inline-flex items-center gap-2 text-base font-semibold underline decoration-dotted underline-offset-4 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 rounded"
-                style="color: var(--navy);"
+                class="readable-cta-pill mt-4 inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900"
                 @click.stop="goToProofPoint(card.id)"
               >
                 Know more
@@ -489,7 +488,7 @@ function getSeniorBarWidth(value) {
             <p class="text-lg text-slate-600 leading-relaxed">
               Investment scams caused the largest reported losses in 2023, followed by remote access and payment redirection scams.
             </p>
-            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-5">Click to view chart</p>
+            <p class="flip-card-cta-text mt-5">Click to view chart</p>
           </div>
 
           <div class="visualisation-flip-face visualisation-flip-back">
@@ -538,7 +537,7 @@ function getSeniorBarWidth(value) {
             <p class="text-lg text-slate-600 leading-relaxed">
               Australians aged 65+ show the highest risk in this comparison, with awareness and link checking acting as practical first steps.
             </p>
-            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-5">Click to view chart</p>
+            <p class="flip-card-cta-text mt-5">Click to view chart</p>
           </div>
 
           <div class="visualisation-flip-face visualisation-flip-back">
@@ -588,7 +587,7 @@ function getSeniorBarWidth(value) {
             <p class="text-lg text-slate-600 leading-relaxed">
               This view uses the senior online scam dataset to show reported losses, report volume, and the most reported scam types.
             </p>
-            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-5">Click to view chart</p>
+            <p class="flip-card-cta-text mt-5">Click to view chart</p>
           </div>
 
           <div class="visualisation-flip-face visualisation-flip-back">
@@ -682,7 +681,7 @@ function getSeniorBarWidth(value) {
         </div>
         <p class="text-2xl font-bold text-slate-900 mb-3 leading-snug">{{ f.title }}</p>
         <p class="text-lg text-slate-600 leading-relaxed mb-6">{{ f.desc }}</p>
-        <div class="flex items-center gap-2 text-lg font-semibold group-hover:gap-3 transition-all" style="color: var(--navy);">
+        <div class="readable-cta-pill feature-card-cta inline-flex items-center gap-2 group-hover:gap-3 transition-all">
           {{ f.cta }}
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -695,6 +694,62 @@ function getSeniorBarWidth(value) {
 </template>
 
 <style scoped>
+.home-hero-cta {
+  min-height: 10.75rem;
+}
+
+.home-cta-label,
+.readable-cta-pill,
+.flip-card-cta-text {
+  background: var(--navy);
+  color: #ffffff;
+  border: 2px solid var(--navy-dark);
+  box-shadow: 0 8px 18px rgba(23, 37, 84, 0.16);
+}
+
+.home-cta-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.85rem;
+  font-size: 1.05rem;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.readable-cta-pill {
+  border-radius: 999px;
+  padding: 0.8rem 1.15rem;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.feature-card-cta {
+  width: fit-content;
+}
+
+.flip-card-cta-text {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.65rem 0.95rem;
+  font-size: 1rem;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (min-width: 640px) {
+  .home-cta-label {
+    font-size: 1.15rem;
+  }
+}
+
 .hero-visual-column {
   min-height: 24rem;
 }
