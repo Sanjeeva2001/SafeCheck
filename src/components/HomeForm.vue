@@ -711,6 +711,17 @@ function getSeniorBarWidth(value) {
 </template>
 
 <style scoped>
+.home-content-section,
+.proof-flip-card,
+.proof-flip-card-inner,
+.proof-flip-face,
+.visualisation-flip-card,
+.visualisation-flip-card-inner,
+.visualisation-flip-face,
+.tool-card {
+  --home-section-card-height: 34rem;
+}
+
 .home-content-section {
   padding-top: 4.5rem;
   padding-bottom: 4.5rem;
@@ -732,7 +743,8 @@ function getSeniorBarWidth(value) {
 }
 
 .home-section-inner {
-  max-width: 80rem;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
 }
 
@@ -769,7 +781,7 @@ function getSeniorBarWidth(value) {
 }
 
 .tool-card {
-  min-height: 25rem;
+  min-height: var(--home-section-card-height);
   display: flex;
   flex-direction: column;
 }
@@ -836,7 +848,7 @@ function getSeniorBarWidth(value) {
 }
 
 .proof-flip-card {
-  min-height: 31rem;
+  min-height: var(--home-section-card-height);
   position: relative;
   perspective: 1000px;
   cursor: pointer;
@@ -868,7 +880,7 @@ function getSeniorBarWidth(value) {
 .proof-flip-card-inner {
   position: relative;
   width: 100%;
-  min-height: 31rem;
+  min-height: var(--home-section-card-height);
   transform-style: preserve-3d;
   transition: transform 0.55s ease, box-shadow 0.2s ease;
   border-radius: 1rem;
@@ -889,7 +901,7 @@ function getSeniorBarWidth(value) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 31rem;
+  min-height: var(--home-section-card-height);
   padding: 1.5rem;
   border: 1px solid rgb(226, 232, 240);
   border-radius: 1rem;
@@ -914,7 +926,7 @@ function getSeniorBarWidth(value) {
 }
 
 .visualisation-flip-card {
-  min-height: 34rem;
+  min-height: var(--home-section-card-height);
   position: relative;
   perspective: 1000px;
   cursor: pointer;
@@ -928,7 +940,7 @@ function getSeniorBarWidth(value) {
 .visualisation-flip-card-inner {
   position: relative;
   width: 100%;
-  min-height: 34rem;
+  min-height: var(--home-section-card-height);
   transform-style: preserve-3d;
   transition: transform 0.55s ease, box-shadow 0.2s ease;
   border-radius: 1rem;
@@ -948,7 +960,7 @@ function getSeniorBarWidth(value) {
   inset: 0;
   display: flex;
   flex-direction: column;
-  min-height: 34rem;
+  min-height: var(--home-section-card-height);
   padding: 1.5rem;
   border: 1px solid rgb(226, 232, 240);
   border-radius: 1rem;
