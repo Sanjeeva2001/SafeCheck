@@ -4,7 +4,7 @@ const logoSrc = `${import.meta.env.BASE_URL}logo.png`
 const navLinks = [
   { label: 'Home',           to: '/'               },
   { label: 'URL Verifier',   to: '/url-verifier'   },
-  { label: 'T&C Simplifier', to: '/tnc-simplifier' },
+  { label: 'Explain my Terms', to: '/tnc-simplifier' },
   { label: 'Scam Quiz',      to: '/scam-quiz'       },
 ]
 
@@ -65,7 +65,7 @@ const reassurances = [
           <h3 class="text-sm font-semibold uppercase tracking-widest text-blue-300 mb-1">Our Tools</h3>
           <div v-for="tool in [
             { to: '/url-verifier',   icon: 'link', title: 'URL Verifier',   desc: 'Check if a link is safe to visit'       },
-            { to: '/tnc-simplifier', icon: 'doc',  title: 'T&C Simplifier', desc: 'Plain-English summary of fine print'    },
+            { to: '/tnc-simplifier', icon: 'doc',  title: 'Explain my Terms', desc: 'Plain-English summary of fine print'    },
             { to: '/scam-quiz',      icon: 'bulb', title: 'Scam Quiz',      desc: 'Learn to spot scams with real examples' },
           ]" :key="tool.to" class="flex items-start gap-3">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 bg-white/10">

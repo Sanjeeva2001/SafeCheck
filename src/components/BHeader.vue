@@ -7,7 +7,7 @@ const logoSrc = `${import.meta.env.BASE_URL}logo.png`
 const links = [
   { label: 'Home',           to: '/'               },
   { label: 'URL Verifier',   to: '/url-verifier'   },
-  { label: 'T&C Simplifier', to: '/tnc-simplifier' },
+  { label: 'Explain my Terms', to: '/tnc-simplifier' },
   { label: 'Scam Quiz',      to: '/scam-quiz'       },
   { label: 'Awareness',      to: '/awareness'       },
 ]
