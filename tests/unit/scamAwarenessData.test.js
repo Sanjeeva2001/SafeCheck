@@ -42,7 +42,6 @@ describe('scamAwarenessData', () => {
       'total-losses',
       'investment-losses',
       'older-australians',
-      'safecheck-tools',
     ])
 
     scamProofPoints.forEach((point) => {

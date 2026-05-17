@@ -35,18 +35,6 @@ export const scamProofPoints = [
     sourceLabel: 'Open the source website',
     sourceUrl: 'https://www.scamwatch.gov.au/',
   },
-  {
-    id: 'safecheck-tools',
-    value: '3 tools',
-    label: 'to check links, fine print, and scam instincts',
-    source: 'SafeCheck guidance',
-    detailTitle: 'Different scams need different checks',
-    detail: 'A suspicious website, hidden terms, and a fake message each need a different kind of thinking. SafeCheck brings those checks into one place so users can slow down and inspect risk.',
-    awarenessTitle: 'Use the right check for the moment',
-    awarenessText: 'Use the URL verifier before opening a suspicious site, the T&C simplifier before agreeing to fine print, and the quiz to practise recognising common scam patterns.',
-    sourceLabel: 'Learn scam warning signs',
-    sourceUrl: 'https://www.cyber.gov.au/learn-basics/explore-basics/recognise-and-report-scams',
-  },
 ]
 
 export const scamAwarenessCards = [

@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { getOnlineSeniorStats } from '../services/api.js'
 import { scamProofPoints } from '../data/scamAwarenessData.js'
-import ScamStatsPanel from './verifier/ScamStatsPanel.vue'
 
 const emit = defineEmits(['navigate'])
 
@@ -11,12 +10,33 @@ const animated = ref(false)
 const hoveredScamType = ref(null)
 const hoveredAgeGroup = ref(null)
 const flippedProofCards = ref({})
+const flippedVisualisationCards = ref({})
 
 const maxReports = computed(() =>
   scamStats.value?.topScamTypes?.length
     ? Math.max(...scamStats.value.topScamTypes.map(r => Number(r.total_reports)))
     : 1
 )
+
+const seniorChartRows = computed(() => scamStats.value?.topScamTypes?.slice(0, 5) || [])
+
+const seniorSummaryCards = computed(() => {
+  const totalLost = Number(scamStats.value?.summary?.total_lost) || 0
+  const totalReports = Number(scamStats.value?.summary?.total_reports) || 0
+
+  return [
+    {
+      label: 'Reported losses',
+      value: `$${(totalLost / 1_000_000).toFixed(1)}M+`,
+      helper: 'from online scams affecting Australians 65+',
+    },
+    {
+      label: 'Senior reports',
+      value: totalReports.toLocaleString('en-AU'),
+      helper: 'online scam reports in the dataset',
+    },
+  ]
+})
 
 onMounted(async () => {
   setTimeout(() => { animated.value = true }, 150)
@@ -82,6 +102,23 @@ function handleProofKeydown(event, cardId) {
 
 function goToProofPoint(cardId) {
   emit('navigate', 'awareness', `#proof-${cardId}`)
+}
+
+function toggleVisualisationCard(cardId) {
+  flippedVisualisationCards.value = {
+    ...flippedVisualisationCards.value,
+    [cardId]: !flippedVisualisationCards.value[cardId],
+  }
+}
+
+function handleVisualisationKeydown(event, cardId) {
+  if (event.key !== 'Enter' && event.key !== ' ') return
+  event.preventDefault()
+  toggleVisualisationCard(cardId)
+}
+
+function getSeniorBarWidth(value) {
+  return `${((Number(value) || 0) / Math.max(maxReports.value, 1)) * 100}%`
 }
 </script>
 
@@ -393,13 +430,14 @@ function goToProofPoint(cardId) {
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="proof-points-grid grid grid-cols-1 md:grid-cols-3 gap-5">
         <div
           v-for="card in scamProofPoints"
           :key="card.id"
           role="button"
           tabindex="0"
           class="proof-flip-card"
+          :class="flippedProofCards[card.id] ? 'is-card-flipped' : ''"
           :aria-label="`${card.value}: ${card.label}. Click to flip for more detail.`"
           :aria-pressed="!!flippedProofCards[card.id]"
           @click="toggleProofCard(card.id)"
@@ -433,94 +471,174 @@ function goToProofPoint(cardId) {
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      <details class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
-        <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900">
-          <span>
-            <span class="block text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">ACCC Scamwatch 2023</span>
-            <span class="block text-xl font-bold text-slate-900">Top scam types by financial loss</span>
-          </span>
-          <svg class="w-6 h-6 flex-shrink-0" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </summary>
-
-        <div class="px-6 pb-6 pt-2 border-t border-slate-100">
-          <div class="space-y-4">
-            <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
-              <div class="flex items-center justify-between mb-2 gap-4">
-                <span class="text-base font-semibold text-slate-700 leading-tight">{{ type.name }}</span>
-                <span class="text-base font-bold flex-shrink-0" style="color: var(--navy);">{{ type.amount }}</span>
-              </div>
-              <div
-                class="w-full bg-slate-100 rounded-full h-3 cursor-pointer"
-                @mouseenter="hoveredScamType = i"
-                @mouseleave="hoveredScamType = null"
-              >
-                <div
-                  class="h-3 rounded-full"
-                  style="transition: width 0.9s ease-out;"
-                  :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
-                ></div>
-              </div>
-              <p v-if="hoveredScamType === i" class="mt-2 text-base text-slate-600 leading-relaxed animate-fade-in">
-                {{ type.tooltip }}
-              </p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-400 mt-6">Source: ACCC Scamwatch 2023 Annual Report</p>
-        </div>
-      </details>
-
-      <details class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up stagger-1">
-        <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900">
-          <span>
-            <span class="block text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">Older Australians</span>
-            <span class="block text-xl font-bold text-slate-900">Why checking links matters for people over 65</span>
-          </span>
-          <svg class="w-6 h-6 flex-shrink-0" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </summary>
-
-        <div class="px-6 pb-6 pt-2 border-t border-slate-100">
-          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 mb-6">
-            <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-2">
-              Main takeaway
+    <div class="visualisation-card-grid grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div
+        role="button"
+        tabindex="0"
+        class="visualisation-flip-card animate-fade-in-up"
+        :class="flippedVisualisationCards.losses ? 'is-card-flipped' : ''"
+        aria-label="Top scam types by financial loss. Click to flip and see the chart."
+        :aria-pressed="!!flippedVisualisationCards.losses"
+        @click="toggleVisualisationCard('losses')"
+        @keydown="handleVisualisationKeydown($event, 'losses')"
+      >
+        <div class="visualisation-flip-card-inner" :class="flippedVisualisationCards.losses ? 'is-flipped' : ''">
+          <div class="visualisation-flip-face visualisation-flip-front">
+            <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-2">ACCC Scamwatch 2023</p>
+            <h3 class="text-2xl font-bold text-slate-900 leading-tight mb-3">Top scam types by financial loss</h3>
+            <p class="text-lg text-slate-600 leading-relaxed">
+              Investment scams caused the largest reported losses in 2023, followed by remote access and payment redirection scams.
             </p>
-            <p class="text-lg font-semibold text-slate-800 leading-relaxed">
-              Australians aged 65+ show the highest risk in this comparison, with awareness and link checking acting as practical first steps.
-            </p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-5">Click to view chart</p>
           </div>
 
-          <div class="space-y-4 mb-6">
-            <div v-for="(age, i) in ageGroups" :key="age.group" class="grid gap-2">
-              <div class="flex items-baseline justify-between gap-3">
-                <span class="text-base font-semibold text-slate-700">{{ age.group }}</span>
-                <span class="text-base font-bold shrink-0" style="color: var(--navy);">{{ age.pct }}%</span>
-              </div>
-              <div class="relative">
+          <div class="visualisation-flip-face visualisation-flip-back">
+            <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-4">Financial loss by scam type</p>
+            <div class="space-y-4">
+              <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
+                <div class="flex items-center justify-between mb-2 gap-4">
+                  <span class="text-base font-semibold text-slate-700 leading-tight">{{ type.name }}</span>
+                  <span class="text-base font-bold flex-shrink-0" style="color: var(--navy);">{{ type.amount }}</span>
+                </div>
                 <div
-                  class="bg-slate-100 rounded-full h-3 cursor-pointer overflow-hidden"
-                  @mouseenter="hoveredAgeGroup = i"
-                  @mouseleave="hoveredAgeGroup = null"
+                  class="w-full bg-slate-100 rounded-full h-3 cursor-pointer"
+                  @mouseenter="hoveredScamType = i"
+                  @mouseleave="hoveredScamType = null"
                 >
                   <div
                     class="h-3 rounded-full"
                     style="transition: width 0.9s ease-out;"
-                    :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.12})` }"
+                    :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
                   ></div>
                 </div>
-                <p v-if="hoveredAgeGroup === i" class="mt-2 text-base text-slate-600 leading-relaxed animate-fade-in">
-                  {{ age.tooltip }}
+                <p v-if="hoveredScamType === i" class="mt-2 text-sm text-slate-600 leading-relaxed animate-fade-in">
+                  {{ type.tooltip }}
                 </p>
               </div>
             </div>
+            <p class="text-sm text-slate-400 mt-5">Source: ACCC Scamwatch 2023 Annual Report</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        role="button"
+        tabindex="0"
+        class="visualisation-flip-card animate-fade-in-up stagger-1"
+        :class="flippedVisualisationCards.age ? 'is-card-flipped' : ''"
+        aria-label="Age group scam risk comparison. Click to flip and see the chart."
+        :aria-pressed="!!flippedVisualisationCards.age"
+        @click="toggleVisualisationCard('age')"
+        @keydown="handleVisualisationKeydown($event, 'age')"
+      >
+        <div class="visualisation-flip-card-inner" :class="flippedVisualisationCards.age ? 'is-flipped' : ''">
+          <div class="visualisation-flip-face visualisation-flip-front">
+            <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-2">Older Australians</p>
+            <h3 class="text-2xl font-bold text-slate-900 leading-tight mb-3">Why checking links matters for people over 65</h3>
+            <p class="text-lg text-slate-600 leading-relaxed">
+              Australians aged 65+ show the highest risk in this comparison, with awareness and link checking acting as practical first steps.
+            </p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-5">Click to view chart</p>
           </div>
 
-          <ScamStatsPanel :scam-stats="scamStats" :max-reports="maxReports" />
+          <div class="visualisation-flip-face visualisation-flip-back">
+            <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-4">Relative risk by age group</p>
+            <div class="space-y-4">
+              <div v-for="(age, i) in ageGroups" :key="age.group" class="grid gap-2">
+                <div class="flex items-baseline justify-between gap-3">
+                  <span class="text-base font-semibold text-slate-700">{{ age.group }}</span>
+                  <span class="text-base font-bold shrink-0" style="color: var(--navy);">{{ age.pct }}%</span>
+                </div>
+                <div class="relative">
+                  <div
+                    class="bg-slate-100 rounded-full h-3 cursor-pointer overflow-hidden"
+                    @mouseenter="hoveredAgeGroup = i"
+                    @mouseleave="hoveredAgeGroup = null"
+                  >
+                    <div
+                      class="h-3 rounded-full"
+                      style="transition: width 0.9s ease-out;"
+                      :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.12})` }"
+                    ></div>
+                  </div>
+                  <p v-if="hoveredAgeGroup === i" class="mt-2 text-sm text-slate-600 leading-relaxed animate-fade-in">
+                    {{ age.tooltip }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </details>
+      </div>
+
+      <div
+        role="button"
+        tabindex="0"
+        class="visualisation-flip-card animate-fade-in-up stagger-2"
+        :class="flippedVisualisationCards.seniors ? 'is-card-flipped' : ''"
+        aria-label="Online scams affecting people over 65. Click to flip and see the chart."
+        :aria-pressed="!!flippedVisualisationCards.seniors"
+        @click="toggleVisualisationCard('seniors')"
+        @keydown="handleVisualisationKeydown($event, 'seniors')"
+      >
+        <div class="visualisation-flip-card-inner" :class="flippedVisualisationCards.seniors ? 'is-flipped' : ''">
+          <div class="visualisation-flip-face visualisation-flip-front">
+            <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-2">Scamwatch &amp; NASC</p>
+            <h3 class="text-2xl font-bold text-slate-900 leading-tight mb-3">Online scams affecting people over 65</h3>
+            <p class="text-lg text-slate-600 leading-relaxed">
+              This view uses the senior online scam dataset to show reported losses, report volume, and the most reported scam types.
+            </p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-5">Click to view chart</p>
+          </div>
+
+          <div class="visualisation-flip-face visualisation-flip-back">
+            <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-4">65+ online scam reports</p>
+            <div v-if="scamStats">
+              <div class="grid grid-cols-2 gap-3 mb-5">
+                <div
+                  v-for="stat in seniorSummaryCards"
+                  :key="stat.label"
+                  class="rounded-xl border border-slate-200 bg-slate-50 p-3"
+                >
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ stat.label }}</p>
+                  <p class="text-2xl font-bold mt-1" style="color: var(--navy);">{{ stat.value }}</p>
+                  <p class="text-sm text-slate-600 leading-snug mt-1">{{ stat.helper }}</p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div v-for="row in seniorChartRows" :key="row.scam_type" class="grid gap-2">
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="text-base font-semibold text-slate-700 leading-tight">{{ row.scam_type }}</span>
+                    <span class="text-base font-bold shrink-0" style="color: var(--navy);">
+                      {{ Number(row.total_reports || 0).toLocaleString('en-AU') }}
+                    </span>
+                  </div>
+                  <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full transition-all duration-700"
+                      style="background-color: var(--navy);"
+                      :style="{ width: getSeniorBarWidth(row.total_reports) }"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-sm text-slate-400 mt-4 leading-relaxed">65+ age group, online contact method only.</p>
+            </div>
+
+            <div v-else class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div v-for="i in 2" :key="i" class="h-24 bg-slate-100 rounded-xl animate-pulse"></div>
+              </div>
+              <div v-for="i in 5" :key="`senior-bar-${i}`" class="grid gap-2">
+                <div class="w-2/3 h-4 bg-slate-100 rounded animate-pulse"></div>
+                <div class="h-3 bg-slate-100 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </section>
@@ -582,7 +700,8 @@ function goToProofPoint(cardId) {
 }
 
 .proof-flip-card {
-  min-height: 17rem;
+  min-height: 31rem;
+  position: relative;
   perspective: 1000px;
   cursor: pointer;
   outline: none;
@@ -592,10 +711,28 @@ function goToProofPoint(cardId) {
   box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.28);
 }
 
+.proof-points-grid,
+.visualisation-card-grid {
+  position: relative;
+}
+
+.proof-points-grid {
+  z-index: 2;
+}
+
+.visualisation-card-grid {
+  z-index: 1;
+}
+
+.proof-flip-card.is-card-flipped,
+.visualisation-flip-card.is-card-flipped {
+  z-index: 10;
+}
+
 .proof-flip-card-inner {
   position: relative;
   width: 100%;
-  min-height: 17rem;
+  min-height: 31rem;
   transform-style: preserve-3d;
   transition: transform 0.55s ease, box-shadow 0.2s ease;
   border-radius: 1rem;
@@ -616,8 +753,8 @@ function goToProofPoint(cardId) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 17rem;
-  padding: 1.25rem;
+  min-height: 31rem;
+  padding: 1.5rem;
   border: 1px solid rgb(226, 232, 240);
   border-radius: 1rem;
   background: white;
@@ -632,7 +769,71 @@ function goToProofPoint(cardId) {
 .proof-flip-back {
   transform: rotateY(180deg);
   justify-content: flex-start;
-  overflow: auto;
+  overflow: visible;
+}
+
+.proof-flip-card-inner:not(.is-flipped) .proof-flip-back,
+.proof-flip-card-inner.is-flipped .proof-flip-front {
+  pointer-events: none;
+}
+
+.visualisation-flip-card {
+  min-height: 34rem;
+  position: relative;
+  perspective: 1000px;
+  cursor: pointer;
+  outline: none;
+}
+
+.visualisation-flip-card:focus-visible .visualisation-flip-card-inner {
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.28);
+}
+
+.visualisation-flip-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 34rem;
+  transform-style: preserve-3d;
+  transition: transform 0.55s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.visualisation-flip-card:hover .visualisation-flip-card-inner {
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+.visualisation-flip-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.visualisation-flip-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 34rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(226, 232, 240);
+  border-radius: 1rem;
+  background: white;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.visualisation-flip-front {
+  justify-content: center;
+}
+
+.visualisation-flip-back {
+  transform: rotateY(180deg);
+  justify-content: flex-start;
+  overflow: visible;
+}
+
+.visualisation-flip-card-inner:not(.is-flipped) .visualisation-flip-back,
+.visualisation-flip-card-inner.is-flipped .visualisation-flip-front {
+  pointer-events: none;
 }
 
 .senior-shield-stage {

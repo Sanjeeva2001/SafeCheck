@@ -45,4 +45,31 @@ test.describe('Home scam proof points', () => {
     await expect(page.locator('#proof-total-losses')).toBeVisible()
     await expect(page.locator('#proof-total-losses').getByRole('link', { name: /Read the ACCC report/i })).toHaveAttribute('href', /accc\.gov\.au/)
   })
+
+  test('visualisations are split into three flip cards instead of collapsible tabs', async ({ page }) => {
+    await unlock(page)
+
+    await expect(page.locator('details')).toHaveCount(0)
+
+    const lossCard = page.getByRole('button', { name: /Top scam types by financial loss/i })
+    const ageCard = page.getByRole('button', { name: /Age group scam risk comparison/i })
+    const seniorCard = page.getByRole('button', { name: /Online scams affecting people over 65/i })
+
+    await expect(lossCard).toBeVisible()
+    await expect(ageCard).toBeVisible()
+    await expect(seniorCard).toBeVisible()
+
+    await lossCard.click()
+    await expect(lossCard).toHaveAttribute('aria-pressed', 'true')
+    await expect(lossCard.getByText('Remote access scams')).toBeVisible()
+
+    await ageCard.click()
+    await expect(ageCard).toHaveAttribute('aria-pressed', 'true')
+    await expect(ageCard.getByText('55-64')).toBeVisible()
+
+    await seniorCard.click()
+    await expect(seniorCard).toHaveAttribute('aria-pressed', 'true')
+    await expect(seniorCard.getByText('Senior reports')).toBeVisible()
+    await expect(seniorCard.getByText('Investment scams')).toBeVisible()
+  })
 })
