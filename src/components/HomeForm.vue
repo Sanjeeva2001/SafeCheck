@@ -417,20 +417,19 @@ function getSeniorBarWidth(value) {
   </section>
 
   <!-- ============================================================
-       SCAM STATISTICS - compact proof cards with optional detail
+       PROOF POINTS
        ============================================================ -->
-  <section class="py-12 px-8 sm:px-16" style="background-color: var(--bg);">
-
-    <div class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-8 items-start mb-8 animate-fade-in-up">
-      <div>
-        <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color: var(--navy);">Scam proof points</p>
-        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-3 leading-tight">The risk is real, so the tools stay practical.</h2>
-        <p class="text-lg text-slate-600 leading-relaxed">
-          These numbers give context without getting in the way. Open the detail only if you want the full breakdown.
+  <section class="home-content-section home-proof-band px-8 sm:px-16">
+    <div class="home-section-inner">
+      <div class="home-section-header animate-fade-in-up">
+        <p class="home-section-kicker">Scam proof points</p>
+        <h2>The risk is real, so the tools stay practical.</h2>
+        <p>
+          These quick numbers explain why SafeCheck exists. Flip a card for the detail, then follow the source if you want to read more.
         </p>
       </div>
 
-      <div class="proof-points-grid grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="proof-points-grid home-card-grid grid grid-cols-1 md:grid-cols-3 gap-5">
         <div
           v-for="card in scamProofPoints"
           :key="card.id"
@@ -469,8 +468,22 @@ function getSeniorBarWidth(value) {
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="visualisation-card-grid grid grid-cols-1 lg:grid-cols-3 gap-5">
+  <!-- ============================================================
+       VISUALISATIONS
+       ============================================================ -->
+  <section class="home-content-section home-visualisation-band px-8 sm:px-16">
+    <div class="home-section-inner">
+      <div class="home-section-header animate-fade-in-up">
+        <p class="home-section-kicker">Scam visualisations</p>
+        <h2>See the patterns behind the scam risk.</h2>
+        <p>
+          Each visual card starts simple, then flips to show the chart. The three cards line up so users can compare the information at a glance.
+        </p>
+      </div>
+
+      <div class="visualisation-card-grid home-card-grid grid grid-cols-1 lg:grid-cols-3 gap-5">
       <div
         role="button"
         tabindex="0"
@@ -639,26 +652,29 @@ function getSeniorBarWidth(value) {
         </div>
       </div>
     </div>
+    </div>
 
   </section>
 
   <!-- ============================================================
        HOW WE CAN HELP
        ============================================================ -->
-  <section class="py-16 sm:py-20 px-8 sm:px-16" style="background-color: var(--bg);">
-    <div class="text-center mb-12 animate-fade-in-up">
-      <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">How can we help you today?</h2>
-      <p class="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-        Three free tools designed to be simple, no matter your tech experience.
-      </p>
-    </div>
+  <section class="home-content-section home-tools-band px-8 sm:px-16">
+    <div class="home-section-inner">
+      <div class="home-section-header animate-fade-in-up">
+        <p class="home-section-kicker">Choose your next step</p>
+        <h2>How can we help you today?</h2>
+        <p>
+          Three free tools designed to be simple, no matter your tech experience.
+        </p>
+      </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="home-card-grid grid grid-cols-1 sm:grid-cols-3 gap-6">
       <button
         v-for="(f, index) in features"
         :key="f.page"
         @click="emit('navigate', f.page)"
-        class="bg-white rounded-2xl p-8 text-left border-2 border-slate-100 hover:border-blue-900 hover:shadow-xl transition-all duration-200 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900 animate-fade-in-up"
+        class="tool-card bg-white rounded-2xl p-8 text-left border-2 border-slate-100 hover:border-blue-900 hover:shadow-xl transition-all duration-200 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900 animate-fade-in-up"
         :class="index === 0 ? 'stagger-1' : index === 1 ? 'stagger-2' : 'stagger-3'"
         style="box-shadow: 0 1px 4px rgba(0,0,0,0.06);"
       >
@@ -689,11 +705,75 @@ function getSeniorBarWidth(value) {
         </div>
       </button>
     </div>
+    </div>
   </section>
 
 </template>
 
 <style scoped>
+.home-content-section {
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
+}
+
+.home-proof-band {
+  background: var(--bg);
+  border-top: 1px solid rgb(226, 232, 240);
+}
+
+.home-visualisation-band {
+  background: #ffffff;
+  border-top: 1px solid rgb(219, 234, 254);
+  border-bottom: 1px solid rgb(219, 234, 254);
+}
+
+.home-tools-band {
+  background: var(--navy-tint);
+}
+
+.home-section-inner {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.home-section-header {
+  max-width: 52rem;
+  margin-bottom: 2.25rem;
+}
+
+.home-section-kicker {
+  margin-bottom: 0.75rem;
+  color: var(--navy);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.home-section-header h2 {
+  margin-bottom: 0.85rem;
+  color: rgb(15, 23, 42);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.home-section-header p {
+  color: rgb(71, 85, 105);
+  font-size: 1.2rem;
+  line-height: 1.65;
+}
+
+.home-card-grid {
+  align-items: stretch;
+}
+
+.tool-card {
+  min-height: 25rem;
+  display: flex;
+  flex-direction: column;
+}
+
 .home-hero-cta {
   min-height: 10.75rem;
 }
@@ -731,6 +811,7 @@ function getSeniorBarWidth(value) {
 
 .feature-card-cta {
   width: fit-content;
+  margin-top: auto;
 }
 
 .flip-card-cta-text {
