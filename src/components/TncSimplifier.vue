@@ -386,6 +386,14 @@ function setRiskCardIndex(severity, index, total) {
             </p>
           </div>
 
+          <div
+            v-if="loading"
+            class="mt-4 rounded-xl border border-amber-200 px-4 py-3 text-sm font-semibold text-amber-900"
+            style="background-color: #fffbeb;"
+          >
+            Please allow the AI Model upto 90 seconds to crunch all of the Terms & Conditions Data.
+          </div>
+
           <button
             @click="handleAnalyze"
             :disabled="!canAnalyze"
