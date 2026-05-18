@@ -542,7 +542,7 @@ function getSeniorBarWidth(value) {
         <p class="home-section-kicker">Scam visualisations</p>
         <h2>See the patterns behind the scam risk.</h2>
         <p>
-          Each visual card starts simple, then flips to show the chart. The three cards line up so users can compare the information at a glance.
+          The numbers behind why SafeCheck exists.
         </p>
       </div>
 
