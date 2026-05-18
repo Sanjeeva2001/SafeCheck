@@ -450,6 +450,24 @@ function setRiskCardIndex(severity, index, total) {
             </li>
           </ul>
         </div>
+
+        <div
+          v-if="hasResult && !loading && result"
+          class="mt-5 bg-slate-50 border border-slate-200 rounded-xl p-5 flex gap-3 items-start"
+        >
+          <svg class="w-6 h-6 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <p class="text-base font-bold text-slate-700 mb-1">Educational guidance only, not legal advice</p>
+            <p class="text-base text-slate-600 leading-relaxed">
+              This summary is provided to help you understand what you may be agreeing to. It is not a substitute
+              for professional legal advice. If you have concerns about a specific document, please consult a
+              qualified solicitor or contact the Australian Consumer and Competition Commission (ACCC).
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- ── Right: results or educational panel ──────────────── -->
@@ -727,22 +745,6 @@ function setRiskCardIndex(severity, index, total) {
               </section>
             </div>
           </div>
-
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 flex gap-3 items-start">
-            <svg class="w-6 h-6 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <p class="text-base font-bold text-slate-700 mb-1">Educational guidance only, not legal advice</p>
-              <p class="text-base text-slate-600 leading-relaxed">
-                This summary is provided to help you understand what you may be agreeing to. It is not a substitute
-                for professional legal advice. If you have concerns about a specific document, please consult a
-                qualified solicitor or contact the Australian Consumer and Competition Commission (ACCC).
-              </p>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>
