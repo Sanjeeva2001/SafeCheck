@@ -149,13 +149,11 @@ function getSeniorBarWidth(value) {
         <div class="animate-fade-in-up">
 
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-            Protect your identity <br/>
-            & prevent financial fraud with<br/>
-            <span class="text-blue-200">SafeCheck</span>
+            Check suspicious links, understand the fine print, and spot scams before they reach you.
           </h1>
 
           <p class="home-hero-copy">
-            Stop your personal information from getting leaked, prevent endless scam calls, and protect your hard-earned savings. SafeCheck helps you spot suspicious links and hidden traps instantly.
+            SafeCheck gives you three free, plain-English tools to check a suspicious link, understand what you are agreeing to, and build the instincts to recognise a scam.
           </p>
 
           <!-- Three horizontal CTA buttons -->
