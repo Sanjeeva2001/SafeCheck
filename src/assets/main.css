@@ -1,17 +1,20 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- *  Design tokens — navy + off-white + amber accent
+ *  Design tokens: navy + off-white + blue accent
  *  Red / amber / green are reserved for risk indicators only
  * ------------------------------------------------------------------ */
 :root {
-  --navy:        #1e3a8a; /* blue-900 — primary brand */
-  --navy-dark:   #172554; /* blue-950 — hover state  */
-  --navy-mid:    #1d4ed8; /* blue-700 — lighter navy for accents */
-  --navy-tint:   #eff6ff; /* blue-50  — very light tint */
-  --accent:      #d97706; /* amber-600 — CTA buttons only */
-  --accent-dark: #b45309; /* amber-700 — CTA hover    */
-  --bg:          #f8fafc; /* slate-50  — page background */
+  --navy:        #1e3a8a; /* blue-900, primary brand */
+  --navy-dark:   #172554; /* blue-950, hover state  */
+  --navy-mid:    #1d4ed8; /* blue-700, lighter navy for accents */
+  --navy-tint:   #eff6ff; /* blue-50, very light tint */
+  --accent:      #2563eb; /* blue-600, CTA buttons only */
+  --accent-dark: #1d4ed8; /* blue-700, CTA hover */
+  --bg:          #f8fafc; /* slate-50, page background */
+  --font-heading: "Merriweather", Georgia, "Times New Roman", serif;
+  --font-sans: "Merriweather", Georgia, "Times New Roman", serif;
+  --default-font-family: "Merriweather", Georgia, "Times New Roman", serif;
 }
 
 /* ------------------------------------------------------------------ *
@@ -42,8 +45,37 @@
 .stagger-3 { animation-delay: 0.31s; }
 
 /* ------------------------------------------------------------------ *
- *  Base typography — minimum 18px throughout
+ *  Base typography: minimum 18px throughout
  * ------------------------------------------------------------------ */
+html,
+body,
+#app {
+  font-family: var(--font-heading);
+}
+
+#app,
+#app * {
+  font-family: var(--font-heading);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+#app h1,
+#app h2,
+#app h3,
+#app h4,
+#app h5,
+#app h6 {
+  font-family: var(--font-heading);
+}
+
 body {
   font-size: 18px;
   line-height: 1.7;
@@ -79,7 +111,7 @@ button { cursor: pointer; }
 }
 
 /* ------------------------------------------------------------------ *
- *  Utility: amber accent button (CTAs only)
+ *  Utility: blue accent button (CTAs only)
  * ------------------------------------------------------------------ */
 .btn-accent {
   background-color: var(--accent);
@@ -103,8 +135,47 @@ button { cursor: pointer; }
 }
 
 /* ------------------------------------------------------------------ *
- *  Risk verdict colours — used only for URL / T&C results
+ *  Risk verdict colours, used only for URL / T&C results
  * ------------------------------------------------------------------ */
 .verdict-safe    { --verdict-bg: #f0fdf4; --verdict-border: #86efac; --verdict-text: #15803d; }
 .verdict-warning { --verdict-bg: #fffbeb; --verdict-border: #fcd34d; --verdict-text: #92400e; }
 .verdict-unsafe  { --verdict-bg: #fef2f2; --verdict-border: #fca5a5; --verdict-text: #991b1b; }
+
+/* ------------------------------------------------------------------ *
+ *  Reduced motion: keep UI states immediate and static for users who
+ *  request less animation at the system level.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .animate-fade-in,
+  .animate-fade-in-up,
+  .animate-slide-in-right,
+  .v-enter-active,
+  .v-leave-active,
+  .v-move,
+  [class*="-enter-active"],
+  [class*="-leave-active"],
+  [class*="-move"] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .animate-spin,
+  .animate-ping,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+}

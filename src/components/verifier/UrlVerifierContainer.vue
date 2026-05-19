@@ -1,10 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { checkUrl } from '../../services/api.js'
 import { getWebsiteInputError } from '../../../shared/websiteValidation.js'
 import UrlVerifierForm from './UrlVerifierForm.vue'
 import VerdictBanner from './VerdictBanner.vue'
-import TrustScoreCard from './TrustScoreCard.vue'
 import ChecksList from './ChecksList.vue'
 
 const showScoreBreakdown = ref(false)
@@ -12,6 +11,7 @@ const url = ref('')
 const loading = ref(false)
 const result = ref(null)
 const error = ref('')
+const resultsPanelRef = ref(null)
 
 const verdictTheme = {
   safe:    { banner: 'bg-green-50 border-green-200',  icon: 'bg-green-200',  iconColor: 'text-green-700', title: 'text-green-800', subtitle: 'text-green-700', badge: 'bg-green-600 text-white' },
@@ -22,7 +22,7 @@ const verdictTheme = {
 const vc = computed(() => verdictTheme[result.value?.verdict] ?? verdictTheme.safe)
 
 function verdictText(verdict) {
-  if (verdict === 'unsafe')  return 'Unsafe — do not visit'
+  if (verdict === 'unsafe')  return 'Unsafe. Do not visit'
   if (verdict === 'warning') return 'Caution'
   return 'Safe'
 }
@@ -38,11 +38,28 @@ async function handleSubmit() {
   try {
     const data = await checkUrl(input)
     result.value = data
+    scrollResultsIntoView()
   } catch (err) {
     error.value = err.response?.data?.error || 'Something went wrong. Please try again.'
   } finally {
     loading.value = false
   }
+}
+
+function scrollResultsIntoView() {
+  nextTick(() => {
+    const panel = resultsPanelRef.value
+    if (!panel) return
+
+    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0
+    const top = panel.getBoundingClientRect().top + window.scrollY - headerHeight - 24
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    window.scrollTo({
+      top: Math.max(top, 0),
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    })
+  })
 }
 
 function reset() {
@@ -87,23 +104,21 @@ function updateUrl(value) { url.value = value }
             :url="url"
             :loading="loading"
             :error="error"
+            :result="result"
+            :show-score-breakdown="showScoreBreakdown"
             @update:url="updateUrl"
             @submit="handleSubmit"
+            @toggle-score-breakdown="showScoreBreakdown = !showScoreBreakdown"
           />
         </div>
 
         <!-- Right: results or "what we check" explainer -->
         <div class="lg:col-span-3">
-          <div v-if="result" class="space-y-4">
+          <div v-if="result" ref="resultsPanelRef" class="space-y-4 scroll-mt-28">
             <VerdictBanner
               :result="result"
               :vc="vc"
               :verdict-label="verdictText(result.verdict)"
-            />
-            <TrustScoreCard
-              :result="result"
-              :show-score-breakdown="showScoreBreakdown"
-              @toggle-breakdown="showScoreBreakdown = !showScoreBreakdown"
             />
             <ChecksList :check-groups="result.checkGroups" />
 
@@ -115,8 +130,8 @@ function updateUrl(value) { url.value = value }
             </button>
           </div>
 
-          <!-- What we check — shown when no result yet -->
-          <div v-if="!result" class="bg-white rounded-2xl border border-slate-200 p-7 shadow-sm animate-fade-in-up">
+          <!-- What we check - shown when no result yet -->
+          <div id="what-safecheck-looks-for" v-if="!result" class="bg-white rounded-2xl border border-slate-200 p-7 shadow-sm animate-fade-in-up scroll-mt-24">
             <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">How it works</p>
             <h3 class="text-2xl font-bold text-slate-900 mb-6">What SafeCheck looks for</h3>
             <div class="space-y-5">
@@ -125,7 +140,7 @@ function updateUrl(value) { url.value = value }
                   { title: 'Domain reputation',    desc: 'Cross-references the address against known threat databases and blocklists from around the world.' },
                   { title: 'Domain age',           desc: 'New domains registered just days or weeks ago are a common hallmark of scam and phishing sites.' },
                   { title: 'HTTPS & SSL',          desc: 'Checks whether the site uses a valid, trusted security certificate for encrypted connections.' },
-                  { title: 'Lookalike detection',  desc: 'Spots domain names designed to impersonate trusted brands — like your bank or a government agency.' },
+                  { title: 'Lookalike detection',  desc: 'Spots domain names designed to impersonate trusted brands, such as your bank or a government agency.' },
                   { title: 'Content signals',      desc: 'Reviews visible page content for urgency language, suspicious patterns, and phishing indicators.' },
                 ]"
                 :key="check.title"

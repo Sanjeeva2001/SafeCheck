@@ -1,8 +1,29 @@
 import express from 'express'
 import axios from 'axios'
 import { load } from 'cheerio'
+import OpenAI from 'openai'
+import multer from 'multer'
+import { PDFParse } from 'pdf-parse'
 
 const router = express.Router()
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+const MIN_WORD_COUNT = 30
+const URL_READ_ERROR_MESSAGE = 'SafeCheck could not read this page automatically. Some websites prevent tools from accessing their content. Please copy the Terms and Conditions text from the website and paste it into the box instead.'
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['application/pdf', 'text/plain']
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true)
+    } else {
+      cb(new Error('Only PDF and plain text files can be uploaded.'))
+    }
+  },
+})
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -27,14 +48,10 @@ async function scrapeUrl(url) {
   const $ = load(response.data)
   $('script, style, nav, header, footer, aside, iframe, noscript').remove()
 
-  // Prefer semantic content containers over the full body
-  const mainSelectors = ['main', 'article', '.content', '#content', '.terms', '#terms', '.legal', '.tos', '#tos', '.policy']
-  for (const selector of mainSelectors) {
-    const el = $(selector)
-    if (el.length > 0) {
-      const text = el.text().replace(/\s+/g, ' ').trim()
-      if (text.split(/\s+/).length >= 100) return text
-    }
+  const selectors = ['main', 'article', '.content', '#content', '.terms', '#terms', '.legal', '.tos', '#tos', '.policy']
+  for (const selector of selectors) {
+    const text = $(selector).text().replace(/\s+/g, ' ').trim()
+    if (text.split(/\s+/).length >= 100) return text
   }
 
   return $('body').text().replace(/\s+/g, ' ').trim()
@@ -69,56 +86,22 @@ Focus on: data collection, third-party data sharing, AI training use, cancellati
 T&Cs text to analyze:
 ${text}`
 
-  const responseSchema = {
-    type: 'object',
-    properties: {
-      overallRisk: { type: 'string', enum: ['low', 'medium', 'high'] },
-      summary: { type: 'string' },
-      flaggedClauses: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            category: { type: 'string' },
-            severity: { type: 'string', enum: ['danger', 'warn', 'pass'] },
-            clause: { type: 'string' },
-            consequence: { type: 'string' },
-            realCase: {
-              type: 'object',
-              nullable: true,
-              properties: {
-                name: { type: 'string' },
-                detail: { type: 'string' },
-              },
-            },
-          },
-          required: ['category', 'severity', 'clause', 'consequence'],
-        },
-      },
-    },
-    required: ['overallRisk', 'summary', 'flaggedClauses'],
-  }
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`
-  let response
   let lastError
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      response = await axios.post(
-        endpoint,
-        {
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 4096,
-            responseMimeType: 'application/json',
-            responseSchema,
-          },
-        },
-        { timeout: 60000 }
-      )
-      break
+      const completion = await client.chat.completions.create({
+        model: 'n/a',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.2,
+        max_tokens: 4096,
+      })
+
+      const rawText = completion.choices[0]?.message?.content ?? ''
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) throw new Error('Could not parse AI response. Please try again.')
+      return JSON.parse(jsonMatch[0].trim())
+
     } catch (err) {
       lastError = err
       const status = err.response?.status
@@ -132,49 +115,60 @@ ${text}`
     }
   }
 
-  if (!response) {
-    throw lastError || new Error('AI request failed.')
-  }
-
-  // Gemini 2.5 Flash may return thinking parts — find the non-thought part
-  const parts = response.data.candidates?.[0]?.content?.parts ?? []
-  const rawText = (parts.find(p => !p.thought) ?? parts[parts.length - 1])?.text ?? ''
-
-  try {
-    return JSON.parse(rawText)
-  } catch {
-    throw new Error('Could not parse the AI response. Please try again.')
-  }
+  throw lastError || new Error('AI request failed.')
 }
 
-router.post('/tnc-simplify', async (req, res) => {
+router.post('/tnc-simplify', (req, res, next) => {
+  upload.single('file')(req, res, err => {
+    if (!err) return next()
+
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File is too large. Please upload a file smaller than 5 MB.' })
+    }
+
+    return res.status(400).json({ error: err.message || 'File upload failed.' })
+  })
+}, async (req, res) => {
   const { url, text, mode } = req.body
 
-  if (!url && !text) {
-    return res.status(400).json({ error: 'Provide either a URL or text to analyse.' })
+  if (mode === 'file' && !req.file) {
+    return res.status(400).json({ error: 'Please upload a PDF or plain text file to analyse.' })
+  }
+
+  if (mode !== 'file' && !url && !text) {
+    return res.status(400).json({ error: 'Provide a URL, pasted text, or uploaded file to analyse.' })
   }
 
   let tncText = text
 
-  if (mode === 'url' || (url && !text)) {
+  if (mode === 'file') {
+    try {
+      tncText = await extractTextFromFile(req.file)
+    } catch (err) {
+      return res.status(err.statusCode || 422).json({ error: err.message || 'Could not read the uploaded file.' })
+    }
+  } else if (mode === 'url' || (url && !text)) {
     try {
       tncText = await scrapeUrl(url)
     } catch (err) {
-      return res.status(422).json({
-        error: `Could not fetch the page: ${err.message} — try pasting the T&C text directly instead.`,
-      })
+      return res.status(422).json({ error: URL_READ_ERROR_MESSAGE })
     }
   }
 
-  if (!tncText || tncText.split(/\s+/).length < 30) {
-    return res.status(422).json({ error: 'Not enough text to analyse. Try pasting the T&C text directly.' })
+  if (!tncText || tncText.split(/\s+/).length < MIN_WORD_COUNT) {
+    const message = mode === 'file'
+      ? 'Not enough readable text was found in the uploaded file. Please upload a text-based PDF or paste the T&C text directly.'
+      : mode === 'url' || (url && !text)
+        ? URL_READ_ERROR_MESSAGE
+        : 'Not enough text to analyse. Please paste more of the T&C text directly.'
+    return res.status(422).json({ error: message })
   }
 
-  tncText = truncateToWords(tncText, 10000)
+  tncText = truncateToWords(tncText)
 
   try {
-    const result = await analyzeWithGemini(tncText)
-    res.json(result)
+    const result = await analyzeWithDO(tncText)
+    res.json(sortFlaggedClausesByRisk(result))
   } catch (err) {
     const status = err.response?.status
     if (status === 429) {

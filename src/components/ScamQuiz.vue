@@ -17,7 +17,7 @@ const sampleQuestion = {
     'Forward the message to friends to see if they got it too',
   ],
   correctIndex: 1,
-  explanation: 'Banks never ask you to verify your account through a text link. Always call your bank directly using the number printed on the back of your card — never the number in the message.',
+  explanation: 'Banks never ask you to verify your account through a text link. Always call your bank directly using the number printed on the back of your card. Never use the number in the message.',
 }
 
 function selectAnswer(index) {
@@ -53,7 +53,7 @@ function restartQuiz() {
           Scam Awareness Quiz
         </h1>
         <p class="text-xl text-white leading-relaxed" style="opacity: 0.92;">
-          Test yourself with real-life scam scenarios. Eight short questions — no tech knowledge needed.
+          Test yourself with real-life scam scenarios. Eight short questions. No tech knowledge needed.
           Learn to spot the warning signs before scammers can exploit them.
         </p>
       </div>
@@ -80,7 +80,7 @@ function restartQuiz() {
             <h2 class="text-3xl font-bold text-slate-900 mb-3">Ready to test your scam radar?</h2>
             <p class="text-xl text-slate-600 mb-8 leading-relaxed">
               8 questions · About 5 minutes · Real scam scenarios<br/>
-              <span class="text-lg text-slate-500">No right or wrong — just learning</span>
+              <span class="text-lg text-slate-500">No judgement. Just learning.</span>
             </p>
 
             <!-- Polished topic tags -->
@@ -106,7 +106,7 @@ function restartQuiz() {
             </button>
           </div>
 
-          <!-- Completion screen — warm and encouraging -->
+          <!-- Completion screen - warm and encouraging -->
           <div v-else-if="completed" class="bg-white border border-slate-200 rounded-2xl p-10 text-center animate-fade-in-up shadow-sm">
             <div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style="background-color: var(--navy-tint);">
               <svg class="w-12 h-12" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,8 +126,8 @@ function restartQuiz() {
                 <li v-for="lesson in [
                   'Banks and government agencies never ask for your details via a text link',
                   'When in doubt, hang up and call back on an official number',
-                  'Scammers always create urgency — slow down and take a breath',
-                  'If a message feels wrong, trust that feeling — check it first',
+                  'Scammers create urgency. Slow down and take a breath',
+                  'If a message feels wrong, trust that feeling and check it first',
                 ]" :key="lesson" class="flex items-start gap-3">
                   <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background-color: var(--navy);">
                     <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,7 +214,7 @@ function restartQuiz() {
               >
                 <p class="text-lg font-bold mb-1"
                   :class="selectedAnswer === sampleQuestion.correctIndex ? 'text-green-800' : 'text-amber-800'">
-                  {{ selectedAnswer === sampleQuestion.correctIndex ? 'Correct! Well done.' : 'Not quite — but now you know what to do:' }}
+                  {{ selectedAnswer === sampleQuestion.correctIndex ? 'Correct! Well done.' : 'Not quite. Here is what to do:' }}
                 </p>
                 <p class="text-lg leading-relaxed"
                   :class="selectedAnswer === sampleQuestion.correctIndex ? 'text-green-700' : 'text-amber-800'">
@@ -246,7 +246,7 @@ function restartQuiz() {
         <!-- Right sidebar -->
         <div class="space-y-5">
 
-          <!-- Score card — hidden until quiz starts -->
+          <!-- Score card - hidden until quiz starts -->
           <div v-if="started" class="bg-white border border-slate-200 rounded-2xl p-6 animate-fade-in-up shadow-sm">
             <p class="text-base font-semibold text-slate-600 uppercase tracking-wide mb-4">Your Score</p>
             <div v-if="!completed">
@@ -270,12 +270,12 @@ function restartQuiz() {
                   :style="{ width: answeredCorrectly ? '100%' : '0%' }"></div>
               </div>
               <p class="text-lg font-medium text-slate-700">
-                {{ answeredCorrectly ? 'Correct answer — great work!' : 'Check the explanation above and you will know for next time.' }}
+                {{ answeredCorrectly ? 'Correct answer. Great work!' : 'Check the explanation above and you will know for next time.' }}
               </p>
             </div>
           </div>
 
-          <!-- Quick tips — always visible -->
+          <!-- Quick tips - always visible -->
           <div class="bg-white border border-slate-200 rounded-2xl p-6 animate-fade-in-up stagger-1 shadow-sm">
             <p class="text-base font-semibold text-slate-600 uppercase tracking-wide mb-4">Quick tips to remember</p>
             <ul class="space-y-4">
@@ -284,7 +284,7 @@ function restartQuiz() {
                   'Never click links in unexpected texts or emails',
                   'Banks never ask for passwords by email or text',
                   'If a prize feels too good to be true, it probably is',
-                  'Scammers create urgency — take a breath before acting',
+                  'Scammers create urgency. Take a breath before acting',
                   'When in doubt, hang up and call back on an official number',
                 ]"
                 :key="tip"
@@ -305,7 +305,7 @@ function restartQuiz() {
             <p class="text-lg font-bold mb-2" style="color: var(--navy);">You are not alone</p>
             <p class="text-base text-slate-600 leading-relaxed">
               Scammers are professionals. Anyone can be targeted. Taking this quiz already puts you
-              ahead of most people — well done for being cautious.
+              ahead of most people. Well done for being cautious.
             </p>
           </div>
 

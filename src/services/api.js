@@ -20,9 +20,18 @@ export async function getOnlineSeniorStats() {
   return response.data
 }
 
-export async function simplifyTnC({ url, text, mode }) {
+export async function simplifyTnC({ url, text, file, mode }) {
   try {
-    const response = await api.post('/tnc-simplify', { url, text, mode })
+    const payload = mode === 'file'
+      ? (() => {
+          const formData = new FormData()
+          formData.append('mode', mode)
+          formData.append('file', file)
+          return formData
+        })()
+      : { url, text, mode }
+
+    const response = await api.post('/tnc-simplify', payload)
     return response.data
   } catch (err) {
     const retryAfterHeader = err?.response?.headers?.['retry-after']

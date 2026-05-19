@@ -1,24 +1,40 @@
 <script setup>
 import { computed } from 'vue'
+import { parseWebsiteInput } from '../../../shared/websiteValidation.js'
+import TrustScoreCard from './TrustScoreCard.vue'
 
 const props = defineProps({
-  url:     { type: String,  default: '' },
-  loading: { type: Boolean, default: false },
-  error:   { type: String,  default: '' },
+  url:                { type: String,  default: '' },
+  loading:            { type: Boolean, default: false },
+  error:              { type: String,  default: '' },
+  result:             { type: Object,  default: null },
+  showScoreBreakdown: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['update:url', 'submit'])
+const emit = defineEmits(['update:url', 'submit', 'toggle-score-breakdown'])
 
 const urlModel = computed({
   get: () => props.url,
   set: value => emit('update:url', value),
 })
+
+const previewDomain = computed(() => {
+  if (!props.url.trim()) {
+    return ''
+  }
+
+  return parseWebsiteInput(props.url)?.hostname || ''
+})
+
+function useExample(value) {
+  emit('update:url', value)
+}
 </script>
 
 <template>
   <div class="space-y-6 animate-fade-in-up">
 
-    <!-- Open form — no card wrapper, content breathes freely on the page -->
+    <!-- Open form - no card wrapper, content breathes freely on the page -->
     <div>
       <label for="url-input" class="block text-xl font-semibold text-slate-800 mb-3">
         Website address
@@ -28,14 +44,40 @@ const urlModel = computed({
         v-model="urlModel"
         @keyup.enter="emit('submit')"
         type="text"
-        placeholder="e.g. example.com or https://example.com"
-        class="w-full border-2 rounded-xl px-5 py-5 text-xl bg-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-transparent mb-3 transition shadow-sm"
+        placeholder="Paste any link or website address here"
+        class="w-full border-2 rounded-xl px-5 py-5 text-xl bg-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-200 focus:border-transparent mb-2 transition shadow-sm"
         :class="props.error ? 'border-red-400' : 'border-slate-200'"
         style="font-size: 1.125rem;"
       />
-      <p class="mb-5 text-lg text-slate-600 leading-relaxed">
-        Type or paste a website address. You do not need to include "https://" — any real web address works.
+      <p v-if="props.url.trim() && previewDomain" class="mb-3 text-[13px] text-slate-500">
+        We will check: {{ previewDomain }}
       </p>
+      <p class="mb-5 text-lg text-slate-600 leading-relaxed">
+        Type or paste a website address. You do not need to include "https://". Any real web address works.
+      </p>
+      <div class="mb-5 flex flex-col gap-2 text-[13px] text-slate-500">
+        <button
+          type="button"
+          class="w-fit text-left hover:text-slate-700 hover:underline focus-visible:outline-none focus-visible:underline"
+          @click="useExample('amazon.com.au')"
+        >
+          Try a safe example: amazon.com.au
+        </button>
+        <button
+          type="button"
+          class="w-fit text-left hover:text-slate-700 hover:underline focus-visible:outline-none focus-visible:underline"
+          @click="useExample('paypa1-secure.com')"
+        >
+          Try a suspicious example: paypa1-secure.com
+        </button>
+      </div>
+      <div
+        v-if="props.loading"
+        class="mb-4 rounded-xl border border-amber-200 px-4 py-3 text-sm font-semibold text-amber-900"
+        style="background-color: #fffbeb;"
+      >
+        Please allow SafeCheck up to 15 seconds to check this website.
+      </div>
       <button
         @click="emit('submit')"
         :disabled="props.loading"
@@ -50,11 +92,18 @@ const urlModel = computed({
       <p v-if="props.error" class="mt-3 text-lg text-red-600 font-medium">{{ props.error }}</p>
     </div>
 
-    <!-- Three reassurance tiles — stacked on mobile, 3-col on sm+ -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <TrustScoreCard
+      v-if="props.result"
+      :result="props.result"
+      :show-score-breakdown="props.showScoreBreakdown"
+      @toggle-breakdown="emit('toggle-score-breakdown')"
+    />
+
+    <!-- Three reassurance tiles - stacked on mobile, 3-col on sm+ -->
+    <div v-if="!props.result" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div
         v-for="badge in [
-          { icon: 'flash', title: 'No account needed', body: 'Start checking right away — nothing to sign up for' },
+          { icon: 'flash', title: 'No account needed', body: 'Start checking right away. Nothing to sign up for' },
           { icon: 'chat',  title: 'Plain English',     body: 'Results explained simply, no technical words' },
           { icon: 'lock',  title: 'Private',           body: 'Nothing you type is saved or stored anywhere' },
         ]"
@@ -79,7 +128,7 @@ const urlModel = computed({
       </div>
     </div>
 
-    <!-- Disclaimer — Item 8: navy left border callout style -->
+    <!-- Disclaimer - Item 8: navy left border callout style -->
     <div
       class="rounded-xl px-5 py-4 flex gap-3 items-start"
       style="background-color: var(--navy-tint); border-left: 4px solid var(--navy); border-top: 1px solid #bfdbfe; border-right: 1px solid #bfdbfe; border-bottom: 1px solid #bfdbfe;"

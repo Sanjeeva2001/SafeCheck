@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { getOnlineSeniorStats } from '../services/api.js'
-import ScamStatsPanel from './verifier/ScamStatsPanel.vue'
+import { scamProofPoints } from '../data/scamAwarenessData.js'
 
 const emit = defineEmits(['navigate'])
 
@@ -9,6 +9,8 @@ const scamStats = ref(null)
 const animated = ref(false)
 const hoveredScamType = ref(null)
 const hoveredAgeGroup = ref(null)
+const flippedProofCards = ref({})
+const flippedVisualisationCards = ref({})
 
 const maxReports = computed(() =>
   scamStats.value?.topScamTypes?.length
@@ -16,8 +18,33 @@ const maxReports = computed(() =>
     : 1
 )
 
+const seniorChartRows = computed(() => scamStats.value?.topScamTypes?.slice(0, 5) || [])
+
+const seniorSummaryCards = computed(() => {
+  const totalLost = Number(scamStats.value?.summary?.total_lost) || 0
+  const totalReports = Number(scamStats.value?.summary?.total_reports) || 0
+
+  return [
+    {
+      label: 'Reported losses',
+      value: `$${(totalLost / 1_000_000).toFixed(1)}M+`,
+      helper: 'from online scams affecting Australians 65+',
+    },
+    {
+      label: 'Senior reports',
+      value: totalReports.toLocaleString('en-AU'),
+      helper: 'online scam reports in the dataset',
+    },
+  ]
+})
+
 onMounted(async () => {
-  setTimeout(() => { animated.value = true }, 150)
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    animated.value = true
+  } else {
+    setTimeout(() => { animated.value = true }, 150)
+  }
+
   try {
     scamStats.value = await getOnlineSeniorStats()
   } catch (e) {
@@ -41,29 +68,39 @@ const ageGroups = [
   { group: 'Under 35', pct: 26,  tooltip: 'Younger Australians face lower average losses but are increasingly targeted through social platforms.' },
 ]
 
-const features = [
-  {
-    page: 'url-verifier',
-    icon: 'link',
-    title: 'Check a Link',
-    desc: 'Not sure if a website is safe to visit? Paste the address and we will check it for warning signs in seconds.',
-    cta: 'Check a link now',
-  },
-  {
-    page: 'tnc-simplifier',
-    icon: 'doc',
-    title: 'Understand T&Cs',
-    desc: 'Confused by the fine print before signing up? We translate legal language into plain English.',
-    cta: 'Simplify the fine print',
-  },
-  {
-    page: 'scam-quiz',
-    icon: 'bulb',
-    title: 'Scam Awareness Quiz',
-    desc: 'Test yourself with real scam scenarios. Eight short questions — no tech knowledge needed.',
-    cta: 'Take the quiz',
-  },
-]
+function toggleProofCard(cardId) {
+  flippedProofCards.value = {
+    ...flippedProofCards.value,
+    [cardId]: !flippedProofCards.value[cardId],
+  }
+}
+
+function handleProofKeydown(event, cardId) {
+  if (event.key !== 'Enter' && event.key !== ' ') return
+  event.preventDefault()
+  toggleProofCard(cardId)
+}
+
+function goToProofPoint(cardId) {
+  emit('navigate', 'awareness', `#proof-${cardId}`)
+}
+
+function toggleVisualisationCard(cardId) {
+  flippedVisualisationCards.value = {
+    ...flippedVisualisationCards.value,
+    [cardId]: !flippedVisualisationCards.value[cardId],
+  }
+}
+
+function handleVisualisationKeydown(event, cardId) {
+  if (event.key !== 'Enter' && event.key !== ' ') return
+  event.preventDefault()
+  toggleVisualisationCard(cardId)
+}
+
+function getSeniorBarWidth(value) {
+  return `${((Number(value) || 0) / Math.max(maxReports.value, 1)) * 100}%`
+}
 </script>
 
 <template>
@@ -72,7 +109,7 @@ const features = [
        HERO
        ============================================================ -->
   <section
-    class="relative overflow-hidden"
+    class="home-hero-section relative overflow-hidden"
     style="background: linear-gradient(135deg, var(--navy) 0%, #1d4ed8 100%);"
   >
     <div class="absolute inset-0 opacity-5" aria-hidden="true">
@@ -86,65 +123,63 @@ const features = [
       </svg>
     </div>
 
-    <div class="relative px-8 sm:px-16 py-16 sm:py-24">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <div class="home-hero-shell relative px-8 sm:px-16 py-16 sm:py-24">
+      <div class="home-hero-layout grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
         <!-- Left: headline + CTAs -->
         <div class="animate-fade-in-up">
 
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-            Protect your identity <br/>
-            & prevent financial fraud with<br/>
-            <span class="text-blue-200">SafeCheck</span>
+            Check suspicious links, understand the fine print, and spot scams before they reach you.
           </h1>
 
-          <p class="text-xl text-white leading-relaxed mb-8 max-w-xl" style="opacity: 0.92;">
-            Stop your personal information from getting leaked, prevent endless scam calls, and protect your hard-earned savings. SafeCheck helps you spot suspicious links and hidden traps instantly.
+          <p class="home-hero-copy">
+            SafeCheck gives you three free, plain-English tools to check a suspicious link, understand what you are agreeing to, and build the instincts to recognise a scam.
           </p>
 
           <!-- Three horizontal CTA buttons -->
-          <div class="grid grid-cols-3 gap-3 sm:gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             <button
               @click="emit('navigate', 'url-verifier')"
-              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="home-hero-cta-icon flex-shrink-0 text-blue-600 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Not sure if a website is safe?</span>
-              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Use Our URL Verifier</span>
+              <span class="home-hero-cta-prompt">Got a suspicious link?</span>
+              <span class="home-cta-label">Check it now</span>
             </button>
             <button
               @click="emit('navigate', 'tnc-simplifier')"
-              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="home-hero-cta-icon flex-shrink-0 text-blue-600 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Confused by the language of terms and conditions?</span>
-              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Simplify T&amp;Cs</span>
+              <span class="home-hero-cta-prompt">Confused by the fine print?</span>
+              <span class="home-cta-label">Explain it to me</span>
             </button>
             <button
               @click="emit('navigate', 'scam-quiz')"
-              class="h-full flex flex-col items-center justify-start gap-1 sm:gap-2 px-3 sm:px-4 py-4 rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
+              class="home-hero-cta h-full flex flex-col items-center justify-start rounded-xl text-center bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white group"
             >
-              <svg class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 text-blue-600 mb-1 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="home-hero-cta-icon flex-shrink-0 text-blue-600 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              <span class="text-xs sm:text-sm font-medium text-slate-600 leading-tight">Want to test your scam knowledge?</span>
-              <span class="text-sm sm:text-base font-bold text-blue-900 group-hover:text-blue-700">Take Scam Quiz</span>
+              <span class="home-hero-cta-prompt">Could you spot a scam?</span>
+              <span class="home-cta-label">Test yourself</span>
             </button>
           </div>
 
-          <div class="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 mt-8">
-            <div v-for="item in ['Free', 'No sign-up required', 'Nothing stored']" :key="item" class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <div class="home-hero-trust flex flex-col sm:flex-row flex-wrap">
+            <div v-for="item in ['Free', 'No sign-up required', 'Nothing stored']" :key="item" class="home-hero-trust-item flex items-center">
+              <svg class="home-hero-trust-icon text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
-              <span class="text-base sm:text-lg font-medium text-white" style="opacity: 0.92;">{{ item }}</span>
+              <span class="home-hero-trust-text">{{ item }}</span>
             </div>
           </div>
         </div>
@@ -205,16 +240,6 @@ const features = [
                   </svg>
                 </span>
                 <span>Malware popup</span>
-              </div>
-
-              <div class="threat-label threat-tech-call" aria-hidden="true">
-                <span class="threat-symbol">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M7 5c.4 6.2 5 10.8 12 12l-2.2 3c-7.4-1.7-11.5-5.9-13.8-13L6 5h1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                    <path d="M16 5h3v3m-.3-2.7-4.4 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                  </svg>
-                </span>
-                <span>Fake support call</span>
               </div>
 
               <div class="threat-label threat-password-request" aria-hidden="true">
@@ -331,16 +356,16 @@ const features = [
                   <circle cx="182" cy="175" r="2.5" fill="rgba(220,150,110,0.28)"/>
                   <ellipse cx="130" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
                   <ellipse cx="190" cy="170" rx="14" ry="9" fill="rgba(255,140,110,0.14)"/>
-                  <path d="M205 238 Q240 248 254 264" stroke="rgba(252,198,158,0.92)" stroke-width="18" stroke-linecap="round" fill="none"/>
-                  <ellipse cx="257" cy="270" rx="14" ry="11" fill="rgba(252,198,158,0.92)"/>
-                  <rect x="246" y="254" width="38" height="64" rx="8" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
-                  <rect x="249" y="258" width="32" height="52" rx="5" fill="rgba(255,255,255,0.09)"/>
-                  <rect x="252" y="262" width="26" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="254" y="269" width="20" height="3" rx="1.5" fill="rgba(255,255,255,0.18)"/>
-                  <circle cx="265" cy="285" r="13" fill="rgba(74,222,128,0.28)" stroke="rgba(74,222,128,0.75)" stroke-width="1.8"/>
-                  <path d="M259 285 l4 4 l9-9" stroke="rgba(74,222,128,1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <rect x="256" y="302" width="18" height="4" rx="2" fill="rgba(74,222,128,0.55)"/>
-                  <path d="M115 238 Q88 250 76 268" stroke="rgba(252,198,158,0.88)" stroke-width="16" stroke-linecap="round" fill="none"/>
+                  <path d="M197 224 Q234 237 254 260" stroke="rgba(252,198,158,0.92)" stroke-width="18" stroke-linecap="round" fill="none"/>
+                  <ellipse cx="257" cy="264" rx="14" ry="11" fill="rgba(252,198,158,0.92)"/>
+                  <rect x="248" y="248" width="38" height="64" rx="8" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
+                  <rect x="251" y="252" width="32" height="52" rx="5" fill="rgba(255,255,255,0.09)"/>
+                  <rect x="254" y="256" width="26" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="256" y="263" width="20" height="3" rx="1.5" fill="rgba(255,255,255,0.18)"/>
+                  <circle cx="267" cy="279" r="13" fill="rgba(74,222,128,0.28)" stroke="rgba(74,222,128,0.75)" stroke-width="1.8"/>
+                  <path d="M261 279 l4 4 l9-9" stroke="rgba(74,222,128,1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <rect x="258" y="296" width="18" height="4" rx="2" fill="rgba(74,222,128,0.55)"/>
+                  <path d="M123 224 Q92 239 76 268" stroke="rgba(252,198,158,0.88)" stroke-width="16" stroke-linecap="round" fill="none"/>
                   <circle cx="264" cy="80" r="26" fill="rgba(74,222,128,0.2)" stroke="rgba(74,222,128,0.55)" stroke-width="1.5"/>
                   <path d="M264 68 Q264 68 254 72 L254 82 Q254 92 264 96 Q274 92 274 82 L274 72 Z" fill="rgba(74,222,128,0.46)"/>
                   <path d="M258 82 l3.5 3.5 l8.5-8.5" stroke="rgba(74,222,128,1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -361,361 +386,1085 @@ const features = [
   </section>
 
   <!-- ============================================================
-       SCAM STATISTICS — combined static + live data
-       (moved directly after hero so users see the stakes first)
+       PROOF POINTS
        ============================================================ -->
-  <section class="py-16 px-8 sm:px-16" style="background-color: var(--bg);">
-
-    <div class="text-center mb-12 animate-fade-in-up">
-      <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">The scale of scams in Australia</h2>
-      <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-        In 2023, Australians reported over $2.74 billion in losses to scams.
-        Seniors aged 65+ are disproportionately targeted — knowing the numbers helps you stay alert.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-      <!-- Animated bar chart: top scam types by loss -->
-      <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up">
-        <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">ACCC Scamwatch 2023</p>
-        <h3 class="text-2xl font-bold text-slate-900 mb-2">Top scam types by financial loss</h3>
-        <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
-        <div class="space-y-5">
-          <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-lg font-medium text-slate-700">{{ type.name }}</span>
-              <span class="text-lg font-bold" style="color: var(--navy);">{{ type.amount }}</span>
-            </div>
-            <div
-              class="w-full bg-slate-100 rounded-full h-4 cursor-pointer"
-              @mouseenter="hoveredScamType = i"
-              @mouseleave="hoveredScamType = null"
-            >
-              <div
-                class="h-4 rounded-full"
-                style="transition: width 0.9s ease-out;"
-                :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
-              ></div>
-            </div>
-            <!-- Tooltip -->
-            <div
-              v-if="hoveredScamType === i"
-              class="absolute z-20 left-0 bg-slate-900 text-white text-sm rounded-xl px-4 py-3 shadow-xl leading-relaxed animate-fade-in pointer-events-none"
-              style="bottom: calc(100% + 8px); max-width: 300px; min-width: 200px;"
-            >
-              <p class="font-semibold mb-1">{{ type.name }} — {{ type.amount }}</p>
-              <p style="opacity: 0.85;">{{ type.tooltip }}</p>
-              <div class="absolute left-4 top-full w-0 h-0" style="border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #0f172a;"></div>
-            </div>
-          </div>
-        </div>
-        <p class="text-sm text-slate-400 mt-6">Source: ACCC Scamwatch 2023 Annual Report</p>
-      </div>
-
-      <!-- Animated age group vulnerability chart -->
-      <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm animate-fade-in-up stagger-1">
-        <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-1">Vulnerability by age</p>
-        <h3 class="text-2xl font-bold text-slate-900 mb-2">Who is most affected?</h3>
-        <p class="text-sm text-slate-500 mb-6">Hover over any bar to learn more</p>
-        <div class="space-y-4">
-          <div v-for="(age, i) in ageGroups" :key="age.group" class="flex items-center gap-4">
-            <span class="text-base font-semibold text-slate-600 w-24 flex-shrink-0">{{ age.group }}</span>
-            <div class="flex-1 relative">
-              <div
-                class="bg-slate-100 rounded-full h-5 cursor-pointer"
-                @mouseenter="hoveredAgeGroup = i"
-                @mouseleave="hoveredAgeGroup = null"
-              >
-                <div
-                  class="h-5 rounded-full"
-                  style="transition: width 0.9s ease-out;"
-                  :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.16})` }"
-                ></div>
-              </div>
-              <!-- Tooltip -->
-              <div
-                v-if="hoveredAgeGroup === i"
-                class="absolute z-20 left-0 bg-slate-900 text-white text-sm rounded-xl px-4 py-3 shadow-xl leading-relaxed animate-fade-in pointer-events-none"
-                style="bottom: calc(100% + 8px); max-width: 280px; min-width: 180px;"
-              >
-                <p class="font-semibold mb-1">Age {{ age.group }} — {{ age.pct }}% risk index</p>
-                <p style="opacity: 0.85;">{{ age.tooltip }}</p>
-                <div class="absolute left-4 top-full w-0 h-0" style="border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #0f172a;"></div>
-              </div>
-            </div>
-            <span class="text-base font-bold w-12 text-right" style="color: var(--navy);">{{ age.pct }}%</span>
-          </div>
-        </div>
-        <p class="text-sm text-slate-400 mt-5">Relative vulnerability index — 65+ face the highest risk per person</p>
-      </div>
-
-      <!-- Live data from our database -->
-      <div class="lg:col-span-2 animate-fade-in-up stagger-2">
-        <ScamStatsPanel :scam-stats="scamStats" :max-reports="maxReports" />
-      </div>
-
-    </div>
-
-    <!-- Why are older Australians targeted — full-width prominent callout -->
-    <div
-      class="mt-10 rounded-3xl overflow-hidden animate-fade-in-up"
-      style="background: linear-gradient(135deg, var(--navy) 0%, #1d4ed8 100%);"
-    >
-      <div class="px-8 sm:px-12 py-10 sm:py-14 text-center">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/15 mb-6">
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
-        </div>
-        <h3 class="text-3xl sm:text-4xl font-bold text-white mb-5">Why are older Australians targeted?</h3>
-        <p class="text-xl sm:text-2xl text-white max-w-3xl mx-auto leading-relaxed mb-10" style="opacity: 0.9;">
-          Scammers specifically target people aged 65+ because they are more likely to have accumulated savings,
-          may be less familiar with digital warning signs, and can be more susceptible to unsolicited contact.
-          Knowledge is the most powerful protection.
+  <section class="home-content-section home-proof-band px-8 sm:px-16">
+    <div class="home-section-inner">
+      <div class="home-section-header animate-fade-in-up">
+        <p class="home-section-kicker">Scam proof points</p>
+        <h2>The risk is real, so the tools stay practical.</h2>
+        <p>
+          These quick numbers explain why SafeCheck exists. Flip a card for the detail, then follow the source if you want to read more.
         </p>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          <div class="bg-white/10 rounded-2xl p-6 text-center">
-            <p class="text-3xl font-bold text-white mb-2">$2.74B</p>
-            <p class="text-base text-blue-200 leading-relaxed">Total losses reported to Scamwatch in 2023 — a record high</p>
-          </div>
-          <div class="bg-white/10 rounded-2xl p-6 text-center">
-            <p class="text-3xl font-bold text-white mb-2">Highest avg</p>
-            <p class="text-base text-blue-200 leading-relaxed">People aged 65+ have the highest average loss per individual report</p>
-          </div>
-          <div class="bg-white/10 rounded-2xl p-6 text-center">
-            <p class="text-3xl font-bold text-white mb-2">Awareness</p>
-            <p class="text-base text-blue-200 leading-relaxed">The single most effective defence against online scams</p>
-          </div>
-        </div>
       </div>
-    </div>
 
-  </section>
+      <svg class="proof-visual-symbols" aria-hidden="true" focusable="false">
+        <symbol id="proof-visual-total-losses" viewBox="0 0 420 230">
+          <rect x="0" y="0" width="420" height="230" rx="18" class="visual-scene-bg"/>
+          <circle cx="316" cy="72" r="70" class="visual-danger-glow"/>
+          <rect x="58" y="48" width="154" height="122" rx="16" class="visual-paper"/>
+          <path d="M188 50 l22 22 h-22z" fill="#dbeafe"/>
+          <rect x="78" y="72" width="82" height="8" rx="4" fill="#1e3a8a" opacity="0.24"/>
+          <rect x="78" y="98" width="104" height="8" rx="4" class="visual-muted-fill"/>
+          <rect x="78" y="118" width="78" height="8" rx="4" class="visual-muted-fill"/>
+          <path d="M104 152 h62" fill="none" stroke="#dc2626" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="292" cy="112" r="52" fill="#fee2e2" stroke="rgba(153,27,27,0.28)" stroke-width="2"/>
+          <text x="292" y="125" text-anchor="middle" fill="#991b1b" font-size="48" font-weight="900">$</text>
+          <path d="M338 150 l22 22M360 150 l-22 22" stroke="#991b1b" stroke-width="8" stroke-linecap="round" opacity="0.76"/>
+        </symbol>
 
-  <!-- ============================================================
-       HOW WE CAN HELP
-       ============================================================ -->
-  <section class="py-16 sm:py-20 px-8 sm:px-16" style="background-color: var(--bg);">
-    <div class="text-center mb-12 animate-fade-in-up">
-      <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">How can we help you today?</h2>
-      <p class="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-        Three free tools — each designed to be simple, no matter your tech experience.
-      </p>
-    </div>
+        <symbol id="proof-visual-investment-losses" viewBox="0 0 420 230">
+          <rect x="0" y="0" width="420" height="230" rx="18" class="visual-scene-bg"/>
+          <circle cx="306" cy="76" r="72" class="visual-danger-glow"/>
+          <rect x="70" y="54" width="280" height="126" rx="18" class="visual-paper"/>
+          <rect x="96" y="82" width="86" height="10" rx="5" fill="#1e3a8a" opacity="0.24"/>
+          <rect x="96" y="104" width="54" height="54" rx="10" fill="#eff6ff" stroke="rgba(30,58,138,0.22)" stroke-width="2"/>
+          <text x="123" y="140" text-anchor="middle" fill="#1e3a8a" font-size="30" font-weight="900">$</text>
+          <path d="M186 146 L220 116 L252 126 L300 82" fill="none" stroke="#dc2626" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M300 82 l-2 30M300 82 l-31 1" fill="none" stroke="#dc2626" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="210" y="150" width="82" height="8" rx="4" class="visual-muted-fill"/>
+          <rect x="306" y="146" width="22" height="22" rx="6" fill="#fee2e2" stroke="rgba(153,27,27,0.35)" stroke-width="2"/>
+          <path d="M317 151v8M317 163v1" stroke="#991b1b" stroke-width="4" stroke-linecap="round"/>
+        </symbol>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <button
-        v-for="(f, index) in features"
-        :key="f.page"
-        @click="emit('navigate', f.page)"
-        class="bg-white rounded-2xl p-8 text-left border-2 border-slate-100 hover:border-blue-900 hover:shadow-xl transition-all duration-200 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900 animate-fade-in-up"
-        :class="index === 0 ? 'stagger-1' : index === 1 ? 'stagger-2' : 'stagger-3'"
-        style="box-shadow: 0 1px 4px rgba(0,0,0,0.06);"
-      >
+        <symbol id="proof-visual-older-australians" viewBox="0 0 420 230">
+          <rect x="0" y="0" width="420" height="230" rx="18" class="visual-scene-bg"/>
+          <circle cx="304" cy="86" r="78" class="visual-danger-glow strong"/>
+          <rect x="76" y="54" width="142" height="122" rx="18" class="visual-paper"/>
+          <text x="147" y="118" text-anchor="middle" fill="#1e3a8a" font-size="48" font-weight="900">65+</text>
+          <rect x="104" y="136" width="84" height="8" rx="4" class="visual-muted-fill"/>
+          <rect x="118" y="154" width="56" height="8" rx="4" class="visual-muted-fill"/>
+          <rect x="246" y="54" width="98" height="122" rx="18" class="visual-phone"/>
+          <rect x="262" y="76" width="66" height="72" rx="9" fill="#fee2e2"/>
+          <path d="M295 92 l19 33 H276 z" class="visual-warning"/>
+          <path d="M295 104v12M295 122v2" class="visual-warning-mark"/>
+          <path d="M284 174h22M312 174h4" class="visual-phone-button"/>
+        </symbol>
+      </svg>
+
+      <div class="proof-points-grid home-card-grid grid grid-cols-1 md:grid-cols-3 gap-5">
         <div
-          class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-105 duration-200"
-          style="background-color: var(--navy-tint);"
+          v-for="card in scamProofPoints"
+          :key="card.id"
+          role="button"
+          tabindex="0"
+          class="proof-flip-card"
+          :class="flippedProofCards[card.id] ? 'is-card-flipped' : ''"
+          :aria-label="`${card.value}: ${card.label}. Click to flip for more detail.`"
+          :aria-pressed="!!flippedProofCards[card.id]"
+          @click="toggleProofCard(card.id)"
+          @keydown="handleProofKeydown($event, card.id)"
         >
-          <svg v-if="f.icon === 'link'" class="w-8 h-8" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-          <svg v-else-if="f.icon === 'doc'" class="w-8 h-8" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <svg v-else class="w-8 h-8" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-        </div>
-        <p class="text-2xl font-bold text-slate-900 mb-3 leading-snug">{{ f.title }}</p>
-        <p class="text-lg text-slate-600 leading-relaxed mb-6">{{ f.desc }}</p>
-        <div class="flex items-center gap-2 text-lg font-semibold group-hover:gap-3 transition-all" style="color: var(--navy);">
-          {{ f.cta }}
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </button>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       WHO IS THIS FOR — illustration + scenario tiles + text
-       ============================================================ -->
-  <section class="py-16 px-8 sm:px-16 bg-white">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
-      <!-- Left: secondary senior lady illustration above scenario tiles -->
-      <div class="animate-fade-in-up">
-        <div class="flex justify-center mb-8">
-          <div class="relative inline-block">
-            <div class="w-56 h-56 rounded-3xl flex items-center justify-center" style="background-color: var(--navy-tint);">
-              <svg viewBox="0 0 200 210" class="w-48 h-48" fill="none" xmlns="http://www.w3.org/2000/svg"
-                aria-label="Illustration of an older Australian woman safely using her phone">
-                <path d="M55 215 Q53 165 72 152 Q87 143 100 140 Q113 143 128 152 Q147 165 145 215Z" fill="rgba(100,130,190,0.65)"/>
-                <path d="M90 140 L100 136 L110 140 L106 158 L100 162 L94 158Z" fill="rgba(220,230,248,0.7)"/>
-                <rect x="94" y="127" width="12" height="16" rx="5" fill="rgba(252,198,158,0.95)"/>
-                <ellipse cx="100" cy="95" rx="36" ry="40" fill="rgba(252,198,158,0.95)"/>
-                <path d="M64 88 Q62 58 84 46 Q100 38 116 46 Q138 58 136 88 Q128 68 100 65 Q72 68 64 88Z" fill="rgba(212,212,222,0.97)"/>
-                <path d="M64 88 Q58 97 60 111 Q65 108 69 100Z" fill="rgba(212,212,222,0.94)"/>
-                <path d="M136 88 Q142 97 140 111 Q135 108 131 100Z" fill="rgba(212,212,222,0.94)"/>
-                <path d="M80 80 Q87 76 93 78" stroke="rgba(160,140,120,0.55)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                <path d="M107 78 Q113 76 120 80" stroke="rgba(160,140,120,0.55)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                <ellipse cx="88" cy="92" rx="6.5" ry="5.5" fill="rgba(88,62,44,0.9)"/>
-                <ellipse cx="112" cy="92" rx="6.5" ry="5.5" fill="rgba(88,62,44,0.9)"/>
-                <circle cx="89" cy="90" r="2" fill="rgba(255,255,255,0.92)"/>
-                <circle cx="113" cy="90" r="2" fill="rgba(255,255,255,0.92)"/>
-                <rect x="80" y="87" width="18" height="12" rx="4" fill="rgba(255,255,255,0.1)" stroke="rgba(80,82,106,0.88)" stroke-width="2"/>
-                <rect x="102" y="87" width="18" height="12" rx="4" fill="rgba(255,255,255,0.1)" stroke="rgba(80,82,106,0.88)" stroke-width="2"/>
-                <path d="M98 93 L102 93" stroke="rgba(80,82,106,0.88)" stroke-width="1.8"/>
-                <path d="M80 93 Q73 92 71 89" stroke="rgba(80,82,106,0.85)" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-                <path d="M120 93 Q127 92 129 89" stroke="rgba(80,82,106,0.85)" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-                <path d="M87 113 Q100 128 113 113" stroke="rgba(190,110,65,0.78)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <ellipse cx="81" cy="108" rx="10" ry="6" fill="rgba(255,140,110,0.13)"/>
-                <ellipse cx="119" cy="108" rx="10" ry="6" fill="rgba(255,140,110,0.13)"/>
-                <path d="M128 158 Q152 166 162 178" stroke="rgba(252,198,158,0.92)" stroke-width="12" stroke-linecap="round" fill="none"/>
-                <ellipse cx="164" cy="183" rx="9" ry="7" fill="rgba(252,198,158,0.92)"/>
-                <rect x="158" y="172" width="24" height="40" rx="5" fill="rgba(255,255,255,0.9)" stroke="rgba(30,58,138,0.35)" stroke-width="1.5"/>
-                <rect x="161" y="175" width="18" height="30" rx="3" fill="rgba(239,246,255,0.8)"/>
-                <rect x="163" y="178" width="14" height="3" rx="1.5" fill="rgba(30,58,138,0.3)"/>
-                <circle cx="170" cy="194" r="8" fill="rgba(74,222,128,0.28)" stroke="rgba(74,222,128,0.75)" stroke-width="1.5"/>
-                <path d="M166 194 l3 3 l6-6" stroke="rgba(74,222,128,1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M72 158 Q52 167 44 180" stroke="rgba(252,198,158,0.88)" stroke-width="11" stroke-linecap="round" fill="none"/>
-              </svg>
-            </div>
-            <div class="absolute -bottom-3 -right-3 bg-white rounded-xl px-3 py-2 shadow-lg flex items-center gap-2 border border-slate-100">
-              <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
-                <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+          <div class="proof-flip-card-inner" :class="flippedProofCards[card.id] ? 'is-flipped' : ''">
+            <div class="proof-flip-face proof-flip-front">
+              <div class="proof-card-visual" :class="`proof-card-visual-${card.id}`" aria-hidden="true">
+                <svg viewBox="0 0 420 230" role="img">
+                  <use :href="`#proof-visual-${card.id}`" />
                 </svg>
               </div>
-              <span class="text-sm font-bold text-slate-800">Scam detected — stay safe!</span>
+
+              <div class="proof-front-copy">
+                <p class="proof-card-value">{{ card.value }}</p>
+                <p class="proof-card-label">{{ card.label }}</p>
+                <p class="proof-card-flip-hint">Click to flip</p>
+              </div>
+            </div>
+
+            <div class="proof-flip-face proof-flip-back">
+              <div class="proof-card-visual proof-card-visual-back" :class="`proof-card-visual-${card.id}`" aria-hidden="true">
+                <svg viewBox="0 0 420 230" role="img">
+                  <use :href="`#proof-visual-${card.id}`" />
+                </svg>
+              </div>
+
+              <div class="proof-back-copy">
+                <p class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-2">{{ card.source }}</p>
+                <h3 class="text-xl font-bold text-slate-900 leading-snug mb-2">{{ card.detailTitle }}</h3>
+                <p class="text-base text-slate-700 leading-relaxed">{{ card.detail }}</p>
+                <button
+                  type="button"
+                  class="readable-cta-pill mt-4 inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900"
+                  @click.stop="goToProofPoint(card.id)"
+                >
+                  Know more
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
-        <!-- Scenario tiles -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="col-span-2 rounded-2xl p-8 flex items-center gap-6" style="background-color: var(--navy-tint); border: 1px solid #bfdbfe;">
-            <div class="flex-shrink-0">
-              <svg viewBox="0 0 120 120" class="w-24 h-24" fill="none">
-                <rect x="38" y="25" width="44" height="72" rx="7" fill="#1e3a8a" />
-                <rect x="42" y="31" width="36" height="58" rx="4" fill="#e8f4fd" />
-                <rect x="46" y="36" width="28" height="3" rx="1.5" fill="#1e3a8a" opacity="0.5"/>
-                <rect x="46" y="42" width="24" height="3" rx="1.5" fill="#93c5fd" opacity="0.7"/>
-                <rect x="46" y="48" width="28" height="3" rx="1.5" fill="#93c5fd" opacity="0.5"/>
-                <circle cx="60" cy="68" r="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-                <path d="M55 68 l3 3 l7-7" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="60" cy="92" r="4" fill="#374151" opacity="0.3"/>
-                <circle cx="22" cy="50" r="14" fill="#fde68a" opacity="0.9"/>
-                <path d="M10 50 Q10 36 22 36 Q34 36 34 50" fill="#d1d5db"/>
-                <path d="M17 54 Q22 59 27 54" stroke="#92400e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-                <rect x="15" y="48" width="6" height="4" rx="2" fill="none" stroke="#374151" stroke-width="1.2"/>
-                <rect x="23" y="48" width="6" height="4" rx="2" fill="none" stroke="#374151" stroke-width="1.2"/>
-                <path d="M21 50 L23 50" stroke="#374151" stroke-width="1.2"/>
-                <path d="M30 60 Q36 65 38 72" stroke="#fde68a" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.9"/>
-              </svg>
-            </div>
-            <div>
-              <p class="text-xl font-bold text-slate-900 mb-2">Received a suspicious link by text?</p>
-              <p class="text-lg text-slate-600 leading-relaxed">Paste it into SafeCheck before you tap. Takes just a few seconds.</p>
-            </div>
-          </div>
-
-          <div class="rounded-2xl p-6 flex flex-col items-center text-center" style="background-color: var(--navy-tint); border: 1px solid #bfdbfe;">
-            <svg viewBox="0 0 100 80" class="w-20 h-16 mb-3" fill="none">
-              <rect x="15" y="30" width="70" height="40" rx="4" fill="#1e3a8a"/>
-              <rect x="19" y="34" width="62" height="32" rx="2" fill="#bfdbfe"/>
-              <rect x="23" y="38" width="40" height="3" rx="1.5" fill="#1e3a8a" opacity="0.4"/>
-              <rect x="23" y="44" width="30" height="3" rx="1.5" fill="#93c5fd" opacity="0.6"/>
-              <rect x="10" y="70" width="80" height="6" rx="3" fill="#374151" opacity="0.5"/>
-              <circle cx="50" cy="18" r="12" fill="#fde68a" opacity="0.9"/>
-              <path d="M38 18 Q38 6 50 6 Q62 6 62 18" fill="#d1d5db"/>
-            </svg>
-            <p class="text-base font-bold text-slate-900">Confused by fine print?</p>
-            <p class="text-sm text-slate-600 mt-1">We translate it for you</p>
-          </div>
-
-          <div class="rounded-2xl p-6 flex flex-col items-center text-center" style="background-color: var(--navy);">
-            <div class="w-14 h-14 rounded-full mb-3 flex items-center justify-center bg-white/10">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
-            <p class="text-base font-bold text-white">Test your scam radar</p>
-            <p class="text-sm text-blue-200 mt-1">8 quick questions</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: text content -->
-      <div class="animate-fade-in-up stagger-2">
-        <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color: var(--navy);">Designed for everyday Australians</p>
-        <h2 class="text-4xl font-bold text-slate-900 mb-6 leading-tight">
-          You shouldn't need to be a tech expert to stay safe online
-        </h2>
-        <p class="text-xl text-slate-600 leading-relaxed mb-6">
-          Online scams cost Australians over 65 more than a billion dollars every year.
-          SafeCheck gives you the same tools the experts use — in language everyone can understand.
-        </p>
-        <div class="space-y-4">
-          <div v-for="point in [
-            'Results in plain English — no technical jargon',
-            'No account, no password, no personal details needed',
-            'Works on phones, tablets, and computers',
-            'Completely free — always',
-          ]" :key="point" class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background-color: var(--navy);">
-              <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <p class="text-lg text-slate-700">{{ point }}</p>
-          </div>
-        </div>
-        <button @click="emit('navigate', 'url-verifier')" class="btn-navy mt-8 text-xl px-8 py-4">
-          Get started — it's free
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       TRUST STATS
+       VISUALISATIONS
        ============================================================ -->
-  <section class="py-12 px-8 sm:px-16 border-t border-slate-100" style="background-color: var(--bg);">
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-      <div v-for="stat in [
-        { value: 'Free',  label: 'Always free to use'        },
-        { value: '3',     label: 'Tools in one place'        },
-        { value: '0',     label: 'Personal details needed'   },
-        { value: '24/7',  label: 'Available any time'        },
-      ]" :key="stat.label" class="flex flex-col items-center gap-1">
-        <span class="text-4xl font-bold" style="color: var(--navy);">{{ stat.value }}</span>
-        <span class="text-base text-slate-600">{{ stat.label }}</span>
+  <section class="home-content-section home-visualisation-band px-8 sm:px-16">
+    <div class="home-section-inner">
+      <div class="home-section-header animate-fade-in-up">
+        <p class="home-section-kicker">Scam visualisations</p>
+        <h2>See the patterns behind the scam risk.</h2>
+        <p>
+          The numbers behind why SafeCheck exists.
+        </p>
+      </div>
+
+      <div class="visualisation-card-grid home-card-grid grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div
+        role="button"
+        tabindex="0"
+        class="visualisation-flip-card animate-fade-in-up"
+        :class="flippedVisualisationCards.losses ? 'is-card-flipped' : ''"
+        aria-label="Top scam types by financial loss. Click to flip and see the chart."
+        :aria-pressed="!!flippedVisualisationCards.losses"
+        @click="toggleVisualisationCard('losses')"
+        @keydown="handleVisualisationKeydown($event, 'losses')"
+      >
+        <div class="visualisation-flip-card-inner" :class="flippedVisualisationCards.losses ? 'is-flipped' : ''">
+          <div class="visualisation-flip-face visualisation-flip-front">
+            <div class="visualisation-card-visual visualisation-card-visual-losses" aria-hidden="true">
+              <svg viewBox="0 0 420 230" role="img">
+                <rect x="0" y="0" width="420" height="230" rx="18" class="visual-scene-bg"/>
+                <circle cx="318" cy="70" r="74" class="visual-danger-glow"/>
+                <rect x="58" y="48" width="304" height="132" rx="18" class="visual-paper"/>
+                <rect x="86" y="138" width="44" height="18" rx="6" fill="#1e3a8a" opacity="0.34"/>
+                <rect x="146" y="108" width="44" height="48" rx="6" fill="#1e3a8a" opacity="0.5"/>
+                <rect x="206" y="82" width="44" height="74" rx="6" fill="#1e3a8a" opacity="0.72"/>
+                <rect x="266" y="60" width="44" height="96" rx="6" fill="#dc2626" opacity="0.86"/>
+                <path d="M82 166h246" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" opacity="0.38"/>
+                <circle cx="330" cy="150" r="18" fill="#fee2e2" stroke="rgba(153,27,27,0.38)" stroke-width="2"/>
+                <text x="330" y="158" text-anchor="middle" fill="#991b1b" font-size="22" font-weight="900">$</text>
+              </svg>
+            </div>
+            <div class="visualisation-front-copy">
+              <p class="visualisation-card-kicker">ACCC Scamwatch 2023</p>
+              <h3 class="visualisation-card-title">Top scam types by financial loss</h3>
+              <p class="visualisation-card-description">
+                Investment scams caused the largest reported losses in 2023, followed by remote access and payment redirection scams.
+              </p>
+              <p class="flip-card-cta-text">Click to view chart</p>
+            </div>
+          </div>
+
+          <div class="visualisation-flip-face visualisation-flip-back">
+            <p class="visualisation-back-heading">Financial loss by scam type</p>
+            <div class="visualisation-chart-stack">
+              <div v-for="(type, i) in scamTypes" :key="type.name" class="relative">
+                <div class="visualisation-chart-row-label">
+                  <span>{{ type.name }}</span>
+                  <span class="visualisation-chart-value">{{ type.amount }}</span>
+                </div>
+                <div
+                  class="visualisation-chart-track cursor-pointer"
+                  @mouseenter="hoveredScamType = i"
+                  @mouseleave="hoveredScamType = null"
+                >
+                  <div
+                    class="visualisation-chart-fill"
+                    style="transition: width 0.9s ease-out;"
+                    :style="{ width: animated ? type.pct + '%' : '0%', backgroundColor: 'var(--navy)' }"
+                  ></div>
+                </div>
+                <p v-if="hoveredScamType === i" class="visualisation-chart-tooltip animate-fade-in">
+                  {{ type.tooltip }}
+                </p>
+              </div>
+            </div>
+            <p class="visualisation-source-note">Source: ACCC Scamwatch 2023 Annual Report</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        role="button"
+        tabindex="0"
+        class="visualisation-flip-card animate-fade-in-up stagger-1"
+        :class="flippedVisualisationCards.age ? 'is-card-flipped' : ''"
+        aria-label="Age group scam risk comparison. Click to flip and see the chart."
+        :aria-pressed="!!flippedVisualisationCards.age"
+        @click="toggleVisualisationCard('age')"
+        @keydown="handleVisualisationKeydown($event, 'age')"
+      >
+        <div class="visualisation-flip-card-inner" :class="flippedVisualisationCards.age ? 'is-flipped' : ''">
+          <div class="visualisation-flip-face visualisation-flip-front">
+            <div class="visualisation-card-visual visualisation-card-visual-age" aria-hidden="true">
+              <svg viewBox="0 0 420 230" role="img">
+                <rect x="0" y="0" width="420" height="230" rx="18" class="visual-scene-bg"/>
+                <circle cx="306" cy="82" r="76" class="visual-danger-glow strong"/>
+                <rect x="66" y="52" width="132" height="126" rx="18" class="visual-paper"/>
+                <text x="132" y="122" text-anchor="middle" fill="#1e3a8a" font-size="50" font-weight="900">65+</text>
+                <rect x="96" y="142" width="72" height="8" rx="4" class="visual-muted-fill"/>
+                <rect x="252" y="52" width="92" height="126" rx="18" class="visual-phone"/>
+                <rect x="266" y="76" width="64" height="64" rx="9" fill="#eff6ff"/>
+                <path d="M284 108 l10 10 22-26" fill="none" stroke="#1e3a8a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M290 174h18M314 174h4" class="visual-phone-button"/>
+                <path d="M202 114h38" stroke="#dc2626" stroke-width="7" stroke-linecap="round"/>
+                <path d="M230 98l16 16-16 16" fill="none" stroke="#dc2626" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="visualisation-front-copy">
+              <p class="visualisation-card-kicker">Older Australians</p>
+              <h3 class="visualisation-card-title">Why checking links matters for people over 65</h3>
+              <p class="visualisation-card-description">
+                Australians aged 65+ show the highest risk in this comparison, with awareness and link checking acting as practical first steps.
+              </p>
+              <p class="flip-card-cta-text">Click to view chart</p>
+            </div>
+          </div>
+
+          <div class="visualisation-flip-face visualisation-flip-back">
+            <p class="visualisation-back-heading">Relative risk by age group</p>
+            <div class="visualisation-chart-stack">
+              <div v-for="(age, i) in ageGroups" :key="age.group" class="grid gap-2">
+                <div class="visualisation-chart-row-label">
+                  <span>{{ age.group }}</span>
+                  <span class="visualisation-chart-value">{{ age.pct }}%</span>
+                </div>
+                <div class="relative">
+                  <div
+                    class="visualisation-chart-track cursor-pointer overflow-hidden"
+                    @mouseenter="hoveredAgeGroup = i"
+                    @mouseleave="hoveredAgeGroup = null"
+                  >
+                    <div
+                      class="visualisation-chart-fill"
+                      style="transition: width 0.9s ease-out;"
+                      :style="{ width: animated ? age.pct + '%' : '0%', backgroundColor: `rgba(30,58,138,${1 - i * 0.12})` }"
+                    ></div>
+                  </div>
+                  <p v-if="hoveredAgeGroup === i" class="visualisation-chart-tooltip animate-fade-in">
+                    {{ age.tooltip }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p class="visualisation-source-note">Source: ACCC Targeting Scams 2023 and Scamwatch guidance</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        role="button"
+        tabindex="0"
+        class="visualisation-flip-card animate-fade-in-up stagger-2"
+        :class="flippedVisualisationCards.seniors ? 'is-card-flipped' : ''"
+        aria-label="Online scams affecting people over 65. Click to flip and see the chart."
+        :aria-pressed="!!flippedVisualisationCards.seniors"
+        @click="toggleVisualisationCard('seniors')"
+        @keydown="handleVisualisationKeydown($event, 'seniors')"
+      >
+        <div class="visualisation-flip-card-inner" :class="flippedVisualisationCards.seniors ? 'is-flipped' : ''">
+          <div class="visualisation-flip-face visualisation-flip-front">
+            <div class="visualisation-card-visual visualisation-card-visual-seniors" aria-hidden="true">
+              <svg viewBox="0 0 420 230" role="img">
+                <rect x="0" y="0" width="420" height="230" rx="18" class="visual-scene-bg"/>
+                <circle cx="318" cy="78" r="76" class="visual-danger-glow"/>
+                <rect x="58" y="54" width="168" height="126" rx="18" class="visual-paper"/>
+                <rect x="82" y="78" width="70" height="9" rx="4.5" fill="#1e3a8a" opacity="0.24"/>
+                <rect x="82" y="106" width="108" height="12" rx="6" fill="#dc2626" opacity="0.75"/>
+                <rect x="82" y="132" width="82" height="12" rx="6" fill="#1e3a8a" opacity="0.42"/>
+                <rect x="82" y="158" width="124" height="12" rx="6" fill="#1e3a8a" opacity="0.58"/>
+                <rect x="258" y="52" width="104" height="128" rx="18" class="visual-phone"/>
+                <rect x="274" y="76" width="72" height="68" rx="10" fill="#fee2e2"/>
+                <path d="M310 91 l17 30 H293 z" class="visual-warning"/>
+                <path d="M310 102v11M310 118v2" class="visual-warning-mark"/>
+                <path d="M298 178h22M326 178h4" class="visual-phone-button"/>
+              </svg>
+            </div>
+            <div class="visualisation-front-copy">
+              <p class="visualisation-card-kicker">Scamwatch &amp; NASC</p>
+              <h3 class="visualisation-card-title">Online scams affecting people over 65</h3>
+              <p class="visualisation-card-description">
+                This view uses the senior online scam dataset to show reported losses, report volume, and the most reported scam types.
+              </p>
+              <p class="flip-card-cta-text">Click to view chart</p>
+            </div>
+          </div>
+
+          <div class="visualisation-flip-face visualisation-flip-back">
+            <p class="visualisation-back-heading">65+ online scam reports</p>
+            <div v-if="scamStats" class="visualisation-senior-back-content">
+              <div class="visualisation-summary-grid grid grid-cols-2 gap-3">
+                <div
+                  v-for="stat in seniorSummaryCards"
+                  :key="stat.label"
+                  class="visualisation-summary-tile"
+                >
+                  <p class="visualisation-summary-label">{{ stat.label }}</p>
+                  <p class="visualisation-summary-value">{{ stat.value }}</p>
+                  <p class="visualisation-summary-helper">{{ stat.helper }}</p>
+                </div>
+              </div>
+
+              <div class="visualisation-senior-chart-stack">
+                <div v-for="row in seniorChartRows" :key="row.scam_type" class="grid gap-2">
+                  <div class="visualisation-chart-row-label">
+                    <span>{{ row.scam_type }}</span>
+                    <span class="visualisation-chart-value">
+                      {{ Number(row.total_reports || 0).toLocaleString('en-AU') }}
+                    </span>
+                  </div>
+                  <div class="visualisation-chart-track">
+                    <div
+                      class="visualisation-chart-fill transition-all duration-700"
+                      style="background-color: var(--navy);"
+                      :style="{ width: getSeniorBarWidth(row.total_reports) }"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="visualisation-source-note">Source: Scamwatch &amp; NASC dataset, 65+ online reports.</p>
+            </div>
+
+            <div v-else class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div v-for="i in 2" :key="i" class="h-24 bg-slate-100 rounded-xl animate-pulse"></div>
+              </div>
+              <div v-for="i in 5" :key="`senior-bar-${i}`" class="grid gap-2">
+                <div class="w-2/3 h-4 bg-slate-100 rounded animate-pulse"></div>
+                <div class="h-3 bg-slate-100 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+    </div>
+
   </section>
 
 </template>
 
 <style scoped>
+.home-content-section,
+.proof-flip-card,
+.proof-flip-card-inner,
+.proof-flip-face,
+.visualisation-flip-card,
+.visualisation-flip-card-inner,
+.visualisation-flip-face {
+  --home-section-card-height: 29rem;
+}
+
+.home-content-section {
+  padding-top: 3.35rem;
+  padding-bottom: 3.35rem;
+}
+
+.home-proof-band {
+  background: var(--bg);
+  border-top: 1px solid rgb(226, 232, 240);
+}
+
+.home-visualisation-band {
+  background: #ffffff;
+  border-top: 1px solid rgb(219, 234, 254);
+  border-bottom: 1px solid rgb(219, 234, 254);
+}
+
+.home-visualisation-band .home-section-kicker {
+  font-size: 0.92rem;
+  font-weight: 950;
+}
+
+.home-visualisation-band .home-section-header h2 {
+  max-width: 52rem;
+  font-size: clamp(2.05rem, 3.4vw, 2.85rem);
+  font-weight: 950;
+}
+
+.home-visualisation-band .home-section-header p {
+  max-width: 52rem;
+  font-size: clamp(1.02rem, 1.2vw, 1.16rem);
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.home-section-inner {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+}
+
+.home-section-header {
+  max-width: 47rem;
+  margin-bottom: 1.85rem;
+}
+
+.home-section-kicker {
+  margin-bottom: 0.55rem;
+  color: var(--navy);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.home-section-header h2 {
+  margin-bottom: 0.65rem;
+  color: rgb(15, 23, 42);
+  font-size: clamp(1.75rem, 3vw, 2.45rem);
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.home-section-header p {
+  color: rgb(71, 85, 105);
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+.home-hero-shell {
+  padding-top: clamp(2.75rem, 4.8vw, 4rem);
+  padding-bottom: clamp(2.75rem, 4.8vw, 4rem);
+}
+
+.home-hero-layout {
+  gap: clamp(2.25rem, 4vw, 3.25rem);
+}
+
+.home-hero-section h1 {
+  margin-bottom: 1.15rem;
+  font-size: clamp(2rem, 3vw, 2.85rem);
+  line-height: 1.12;
+}
+
+.home-hero-copy {
+  max-width: 40rem;
+  margin-bottom: 1.45rem;
+  color: #ffffff;
+  font-size: clamp(1.02rem, 1.25vw, 1.18rem);
+  font-weight: 500;
+  line-height: 1.62;
+  opacity: 0.94;
+}
+
+
+.home-hero-cta {
+  min-height: 9.6rem;
+  gap: 0.55rem;
+  padding: 0.95rem 0.85rem;
+  border-left: 3px solid transparent;
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+}
+
+.home-hero-cta:hover {
+  border-left-color: #0D9488;
+  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
+}
+
+.home-hero-cta-icon {
+  width: 2.1rem;
+  height: 2.1rem;
+  margin-bottom: 0.1rem;
+}
+
+.home-hero-cta-prompt {
+  color: rgb(51, 65, 85);
+  font-size: clamp(0.9rem, 0.98vw, 1rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.home-cta-label,
+.readable-cta-pill,
+.flip-card-cta-text {
+  background: var(--navy);
+  color: #ffffff;
+  border: 2px solid var(--navy-dark);
+  box-shadow: 0 8px 18px rgba(23, 37, 84, 0.16);
+}
+
+.home-cta-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.95rem;
+  margin-top: auto;
+  padding: 0.62rem 0.78rem;
+  border-radius: 0.85rem;
+  font-size: clamp(0.94rem, 1.08vw, 1.08rem);
+  line-height: 1.18;
+  font-weight: 900;
+}
+
+@media (min-width: 768px) {
+  .home-hero-cta {
+    min-width: 11.5rem;
+  }
+
+  .home-cta-label {
+    white-space: nowrap;
+  }
+}
+
+.home-hero-trust {
+  gap: 0.9rem 1.45rem;
+  margin-top: 1.35rem;
+}
+
+.home-hero-trust-item {
+  gap: 0.55rem;
+}
+
+.home-hero-trust-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.home-hero-trust-text {
+  color: #ffffff;
+  font-size: clamp(0.94rem, 1.04vw, 1.06rem);
+  font-weight: 750;
+  line-height: 1.25;
+  opacity: 0.94;
+}
+
+.readable-cta-pill {
+  border-radius: 999px;
+  padding: 0.62rem 0.92rem;
+  font-size: 0.98rem;
+  line-height: 1.2;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.flip-card-cta-text {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.64rem 0.92rem;
+  font-size: 0.96rem;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (min-width: 640px) {
+  .home-cta-label {
+    font-size: clamp(0.94rem, 1.04vw, 1.06rem);
+  }
+}
+
 .hero-visual-column {
-  min-height: 24rem;
+  min-height: 18rem;
+}
+
+.proof-flip-card {
+  min-height: var(--home-section-card-height);
+  position: relative;
+  perspective: 1000px;
+  cursor: pointer;
+  outline: none;
+}
+
+.proof-flip-card:focus-visible .proof-flip-card-inner {
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.28);
+}
+
+.proof-points-grid,
+.visualisation-card-grid {
+  position: relative;
+}
+
+.proof-points-grid {
+  z-index: 2;
+}
+
+.visualisation-card-grid {
+  z-index: 1;
+}
+
+.proof-flip-card.is-card-flipped,
+.visualisation-flip-card.is-card-flipped {
+  z-index: 10;
+}
+
+.proof-flip-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: var(--home-section-card-height);
+  transform-style: preserve-3d;
+  transition: transform 0.55s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.proof-flip-card:hover .proof-flip-card-inner {
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+.proof-flip-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.proof-flip-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--home-section-card-height);
+  padding: 1.18rem;
+  border: 1px solid rgb(226, 232, 240);
+  border-radius: 1rem;
+  background: white;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.proof-flip-front {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
+  overflow: hidden;
+}
+
+.proof-flip-back {
+  transform: rotateY(180deg);
+  justify-content: space-between;
+  gap: 0.85rem;
+  overflow: hidden;
+}
+
+.proof-flip-card-inner:not(.is-flipped) .proof-flip-back,
+.proof-flip-card-inner.is-flipped .proof-flip-front {
+  pointer-events: none;
+}
+
+.proof-visual-symbols {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.proof-card-visual {
+  width: 100%;
+  aspect-ratio: 420 / 230;
+  min-height: 9.6rem;
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.76)),
+    #f8fafc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.proof-card-visual svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.proof-front-copy {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.proof-card-value {
+  margin-bottom: 0.35rem;
+  color: var(--navy);
+  font-size: clamp(2.05rem, 3.1vw, 3.15rem);
+  font-weight: 950;
+  line-height: 0.98;
+}
+
+.proof-card-label {
+  color: rgb(71, 85, 105);
+  font-size: clamp(0.96rem, 1.05vw, 1.08rem);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.proof-card-flip-hint {
+  margin-top: 0.75rem;
+  color: rgb(100, 116, 139);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.proof-back-copy {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.proof-card-visual-back {
+  min-height: 9rem;
+}
+
+.proof-card-visual-total-losses {
+  background:
+    linear-gradient(145deg, rgba(254, 242, 242, 0.94), rgba(239, 246, 255, 0.78) 58%, rgba(248, 250, 252, 0.94)),
+    #f8fafc;
+}
+
+.proof-card-visual-investment-losses {
+  background:
+    linear-gradient(145deg, rgba(240, 249, 255, 0.96), rgba(254, 242, 242, 0.82) 62%, rgba(248, 250, 252, 0.92)),
+    #f8fafc;
+}
+
+.proof-card-visual-older-australians {
+  background:
+    linear-gradient(145deg, rgba(239, 246, 255, 0.96), rgba(254, 242, 242, 0.9) 66%, rgba(248, 250, 252, 0.94)),
+    #f8fafc;
+}
+
+.visual-scene-bg {
+  fill: rgba(255, 255, 255, 0.18);
+}
+
+.visual-danger-glow {
+  fill: rgba(220, 38, 38, 0.18);
+}
+
+.visual-danger-glow.strong {
+  fill: rgba(220, 38, 38, 0.24);
+}
+
+.visual-paper {
+  fill: rgba(255, 255, 255, 0.94);
+  stroke: rgba(148, 163, 184, 0.7);
+  stroke-width: 1.5;
+}
+
+.visual-warning {
+  fill: #dc2626;
+}
+
+.visual-warning-mark {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.visual-muted-fill {
+  fill: #64748b;
+  opacity: 0.24;
+}
+
+.visual-bill {
+  fill: #fee2e2;
+  stroke: rgba(153, 27, 27, 0.45);
+  stroke-width: 1.5;
+}
+
+.visual-money-hole {
+  fill: rgba(15, 23, 42, 0.54);
+}
+
+.visual-phone {
+  fill: #1e293b;
+  stroke: rgba(15, 23, 42, 0.18);
+  stroke-width: 1.5;
+}
+
+.visual-chart-loss {
+  fill: none;
+  stroke: #dc2626;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.visual-phone-button {
+  fill: none;
+  stroke: rgba(226, 232, 240, 0.92);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.visual-coin {
+  fill: #facc15;
+  stroke: rgba(180, 83, 9, 0.6);
+  stroke-width: 1.5;
+}
+
+.visual-coin.lost {
+  filter: drop-shadow(0 4px 5px rgba(15, 23, 42, 0.2));
+}
+
+.visualisation-flip-card {
+  min-height: var(--home-section-card-height);
+  position: relative;
+  perspective: 1000px;
+  cursor: pointer;
+  outline: none;
+}
+
+.visualisation-flip-card:focus-visible .visualisation-flip-card-inner {
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.28);
+}
+
+.visualisation-flip-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: var(--home-section-card-height);
+  transform-style: preserve-3d;
+  transition: transform 0.55s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.visualisation-flip-card:hover .visualisation-flip-card-inner {
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+.visualisation-flip-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.visualisation-flip-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: var(--home-section-card-height);
+  padding: 1.18rem;
+  border: 1px solid rgb(226, 232, 240);
+  border-radius: 1rem;
+  background: white;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.visualisation-flip-front {
+  justify-content: space-between;
+  gap: 0.85rem;
+  overflow: hidden;
+}
+
+.visualisation-flip-back {
+  transform: rotateY(180deg);
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.visualisation-flip-card-inner:not(.is-flipped) .visualisation-flip-back,
+.visualisation-flip-card-inner.is-flipped .visualisation-flip-front {
+  pointer-events: none;
+}
+
+.visualisation-card-visual {
+  width: 100%;
+  aspect-ratio: 420 / 230;
+  min-height: 9.5rem;
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(239, 246, 255, 0.76)),
+    #f8fafc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.visualisation-card-visual svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.visualisation-card-visual-losses {
+  background:
+    linear-gradient(145deg, rgba(239, 246, 255, 0.96), rgba(254, 242, 242, 0.84) 64%, rgba(248, 250, 252, 0.94)),
+    #f8fafc;
+}
+
+.visualisation-card-visual-age {
+  background:
+    linear-gradient(145deg, rgba(239, 246, 255, 0.96), rgba(240, 249, 255, 0.88) 50%, rgba(254, 242, 242, 0.82)),
+    #f8fafc;
+}
+
+.visualisation-card-visual-seniors {
+  background:
+    linear-gradient(145deg, rgba(248, 250, 252, 0.96), rgba(239, 246, 255, 0.86) 48%, rgba(254, 242, 242, 0.84)),
+    #f8fafc;
+}
+
+.visualisation-front-copy {
+  width: 100%;
+}
+
+.visualisation-card-kicker {
+  margin-bottom: 0.42rem;
+  color: rgb(100, 116, 139);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.visualisation-card-title {
+  margin-bottom: 0.55rem;
+  color: rgb(15, 23, 42);
+  font-family: var(--font-heading);
+  font-size: clamp(1.28rem, 1.45vw, 1.58rem);
+  font-weight: 950;
+  line-height: 1.14;
+}
+
+.visualisation-card-description {
+  margin-bottom: 0.85rem;
+  color: rgb(71, 85, 105);
+  font-size: clamp(0.95rem, 1.04vw, 1.08rem);
+  font-weight: 500;
+  line-height: 1.48;
+}
+
+.visualisation-back-heading {
+  margin-bottom: 0.88rem;
+  color: rgb(100, 116, 139);
+  font-size: 0.84rem;
+  font-weight: 950;
+  letter-spacing: 0.11em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.visualisation-chart-stack {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.visualisation-senior-chart-stack {
+  display: grid;
+  gap: 0.64rem;
+}
+
+.visualisation-chart-row-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.38rem;
+  color: rgb(15, 23, 42);
+  font-size: 0.96rem;
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.visualisation-chart-value {
+  flex-shrink: 0;
+  color: var(--navy);
+  font-size: 0.98rem;
+  font-weight: 950;
+}
+
+.visualisation-chart-track {
+  width: 100%;
+  height: 0.66rem;
+  border-radius: 999px;
+  background: rgb(241, 245, 249);
+  overflow: hidden;
+}
+
+.visualisation-chart-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.visualisation-chart-tooltip {
+  margin-top: 0.42rem;
+  color: rgb(71, 85, 105);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.visualisation-source-note {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  color: rgb(100, 116, 139);
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.visualisation-senior-back-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.visualisation-summary-grid {
+  margin-bottom: 0.72rem;
+}
+
+.visualisation-senior-back-content .visualisation-senior-chart-stack {
+  gap: 0.52rem;
+}
+
+.visualisation-senior-back-content .visualisation-chart-row-label {
+  margin-bottom: 0.24rem;
+  font-size: 0.9rem;
+}
+
+.visualisation-senior-back-content .visualisation-chart-value {
+  font-size: 0.9rem;
+}
+
+.visualisation-senior-back-content .visualisation-chart-track {
+  height: 0.54rem;
+}
+
+.visualisation-senior-back-content .visualisation-source-note {
+  padding-top: 0.52rem;
+  font-size: 0.74rem;
+  line-height: 1.25;
+}
+
+.visualisation-summary-tile {
+  border: 1px solid rgb(226, 232, 240);
+  border-radius: 0.75rem;
+  background: rgb(248, 250, 252);
+  padding: 0.62rem;
+}
+
+.visualisation-summary-label {
+  color: rgb(100, 116, 139);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.visualisation-summary-value {
+  margin-top: 0.2rem;
+  color: var(--navy);
+  font-size: 1.24rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.visualisation-summary-helper {
+  margin-top: 0.28rem;
+  color: rgb(71, 85, 105);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.28;
 }
 
 .senior-shield-stage {
   position: relative;
-  width: clamp(20rem, 28vw, 24rem);
-  height: clamp(20rem, 28vw, 24rem);
+  width: clamp(16rem, 22vw, 19rem);
+  height: clamp(16rem, 22vw, 19rem);
   overflow: visible;
   isolation: isolate;
 }
@@ -878,55 +1627,47 @@ const features = [
 }
 
 .threat-suspicious-link {
-  left: -2.8rem;
-  top: 5.2rem;
+  left: -2.2rem;
+  top: 4.1rem;
   background: rgba(194, 65, 12, 0.84);
   animation-name: suspiciousLinkApproach;
 }
 
 .threat-unknown-tnc {
-  right: -4.2rem;
-  top: 10.2rem;
+  right: -3.3rem;
+  top: 8.1rem;
   background: rgba(185, 28, 28, 0.8);
   animation-name: unknownTncApproach;
   animation-delay: 2.2s;
 }
 
 .threat-phishing-email {
-  left: -2.8rem;
-  top: 16.8rem;
+  left: -2.2rem;
+  top: 13.3rem;
   background: rgba(180, 83, 9, 0.84);
   animation-name: phishingEmailApproach;
   animation-delay: 4.4s;
 }
 
 .threat-malware-popup {
-  left: 8.3rem;
-  top: -2.6rem;
+  left: 6.6rem;
+  top: -2.1rem;
   background: rgba(190, 75, 12, 0.82);
   animation-name: malwarePopupApproach;
   animation-delay: 6.6s;
 }
 
-.threat-tech-call {
-  right: -4.2rem;
-  top: 4.2rem;
-  background: rgba(153, 27, 27, 0.82);
-  animation-name: techCallApproach;
-  animation-delay: 8.8s;
-}
-
 .threat-password-request {
-  left: -3.4rem;
-  top: 11rem;
+  left: -2.7rem;
+  top: 8.7rem;
   background: rgba(180, 83, 9, 0.84);
   animation-name: passwordRequestApproach;
   animation-delay: 11s;
 }
 
 .threat-fake-prize {
-  right: -3.6rem;
-  top: 19rem;
+  right: -2.85rem;
+  top: 15rem;
   background: rgba(194, 65, 12, 0.82);
   animation-name: fakePrizeApproach;
   animation-delay: 13.2s;
@@ -959,43 +1700,43 @@ const features = [
 }
 
 .blocked-top-left {
-  left: -2rem;
-  top: 5.1rem;
+  left: -1.6rem;
+  top: 4rem;
 }
 
 .blocked-right {
-  right: -4rem;
-  top: 10.2rem;
+  right: -3.15rem;
+  top: 8.1rem;
   animation-delay: 2.2s;
 }
 
 .blocked-bottom-left {
-  left: -2rem;
-  top: 16.7rem;
+  left: -1.6rem;
+  top: 13.2rem;
   animation-delay: 4.4s;
 }
 
 .blocked-top {
-  left: 8.6rem;
-  top: -2.7rem;
+  left: 6.8rem;
+  top: -2.15rem;
   animation-delay: 6.6s;
 }
 
 .blocked-upper-right {
-  right: -4rem;
-  top: 4rem;
+  right: -3.15rem;
+  top: 3.15rem;
   animation-delay: 8.8s;
 }
 
 .blocked-left {
-  left: -4.8rem;
-  top: 11rem;
+  left: -3.8rem;
+  top: 8.7rem;
   animation-delay: 11s;
 }
 
 .blocked-bottom-right {
-  right: -3.8rem;
-  top: 19rem;
+  right: -3rem;
+  top: 15rem;
   animation-delay: 13.2s;
 }
 
@@ -1131,39 +1872,6 @@ const features = [
   }
 }
 
-@keyframes techCallApproach {
-  0%,
-  5%,
-  40%,
-  100% {
-    transform: translate(6.4rem, -4.6rem) rotate(5deg) scale(1);
-    opacity: 0;
-  }
-
-  9%,
-  19% {
-    opacity: 0.9;
-  }
-
-  24% {
-    transform: translate(0, 0) rotate(3deg) scale(1);
-  }
-
-  27% {
-    transform: translate(-0.24rem, 0.2rem) rotate(3deg) scaleX(0.9) scaleY(1.06);
-  }
-
-  31% {
-    transform: translate(1.25rem, -1rem) rotate(5deg) scale(1.02);
-    opacity: 0.88;
-  }
-
-  38% {
-    transform: translate(6rem, -4.2rem) rotate(5deg) scale(1);
-    opacity: 0;
-  }
-}
-
 @keyframes passwordRequestApproach {
   0%,
   5%,
@@ -1271,38 +1979,111 @@ const features = [
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .proof-flip-card-inner,
+  .visualisation-flip-card-inner,
+  .visualisation-chart-fill,
+  .home-hero-cta,
+  .home-hero-cta-icon {
+    transition: none !important;
+  }
+
+  .protective-bubble,
   .senior-shield-stage::before,
   .bubble-ripple,
   .threat-label,
   .blocked-badge {
-    animation: none;
+    animation: none !important;
+    transition: none !important;
   }
 
-  .bubble-ripple,
-  .blocked-badge {
+  .protective-bubble {
+    background: rgba(219, 234, 254, 0.13);
+    box-shadow:
+      inset 0 0 38px rgba(255, 255, 255, 0.12),
+      0 0 34px rgba(147, 197, 253, 0.16);
+  }
+
+  .bubble-ripple {
     display: none;
+  }
+
+  .threat-label,
+  .blocked-badge {
+    display: inline-flex;
+    opacity: 0.94;
+    transform: none;
+    will-change: auto;
   }
 
   .threat-suspicious-link {
-    transform: translate(-9.25rem, 0.45rem) rotate(-4deg);
-    opacity: 0.9;
+    left: -5.2rem;
+    top: 3rem;
+    transform: rotate(-4deg);
   }
 
   .threat-unknown-tnc {
-    transform: translate(8rem, 0) rotate(3deg);
-    opacity: 0.9;
+    right: -5.2rem;
+    top: 6.5rem;
+    transform: rotate(3deg);
   }
 
   .threat-phishing-email {
-    transform: translate(-9.05rem, -0.25rem) rotate(4deg);
-    opacity: 0.9;
+    left: -5.3rem;
+    top: 14.5rem;
+    transform: rotate(4deg);
   }
 
-  .threat-malware-popup,
-  .threat-tech-call,
-  .threat-password-request,
+  .threat-malware-popup {
+    left: 3.8rem;
+    top: -2.2rem;
+    transform: rotate(-1deg);
+  }
+
+  .threat-password-request {
+    left: -5.4rem;
+    top: 9.4rem;
+    transform: rotate(-2deg);
+  }
+
   .threat-fake-prize {
-    display: none;
+    right: -4.8rem;
+    top: 14.4rem;
+    transform: rotate(4deg);
+  }
+
+  .blocked-top-left {
+    left: -3.4rem;
+    top: 5.4rem;
+  }
+
+  .blocked-right {
+    right: -4rem;
+    top: 8.6rem;
+  }
+
+  .blocked-bottom-left {
+    left: -3.2rem;
+    top: 16.9rem;
+  }
+
+  .blocked-top {
+    left: 9.4rem;
+    top: -0.75rem;
+  }
+
+  .blocked-upper-right {
+    right: -3.9rem;
+    top: 4.2rem;
+  }
+
+  .blocked-left {
+    left: -4rem;
+    top: 11.6rem;
+  }
+
+  .blocked-bottom-right {
+    right: -3.4rem;
+    top: 17rem;
   }
 }
 </style>

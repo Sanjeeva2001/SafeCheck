@@ -15,6 +15,25 @@ const { WEBSITE_INPUT_ERROR, parseWebsiteInput } = await import(sharedModuleUrl)
 
 const router = express.Router()
 
+const SHARED_HOSTING_HOSTS = new Set([
+  'storage.googleapis.com',
+  'ipfs.io',
+  'cloudflare-ipfs.com',
+  'gateway.pinata.cloud',
+  'sites.google.com',
+])
+
+const SHARED_HOSTING_SUFFIXES = [
+  '.netlify.app',
+  '.framer.app',
+  '.pages.dev',
+  '.vercel.app',
+  '.web.app',
+  '.firebaseapp.com',
+  '.github.io',
+  '.gitlab.io',
+]
+
 router.post('/check-url', async (req, res) => {
   const { url } = req.body
 
@@ -27,14 +46,14 @@ router.post('/check-url', async (req, res) => {
     return res.status(400).json({ error: WEBSITE_INPUT_ERROR })
   }
 
-  const { normalized, hostname } = parsed
+  const { normalized, hostname, registrableDomain } = parsed
 
   // All 5 checks run in parallel. If one throws, the others still complete.
   const [apiResult, httpResult, sslResult, dnsResult, contentResult] = await Promise.allSettled([
     checkApiAggregation(normalized, hostname),
     checkHttpSecurity(normalized),
     checkSslCertificate(hostname),
-    checkDnsAnalysis(hostname),
+    checkDnsAnalysis(registrableDomain),
     summarisePageContent(normalized),
   ])
 
@@ -48,10 +67,27 @@ router.post('/check-url', async (req, res) => {
 
   const trustScore = api.score + http.score + ssl.score + dnsCheck.score
 
-  // Unregistered and brand new domains are automatically unsafe regardless of total score.
+  const sharedHostingRisk = getSharedHostingRisk(normalized, hostname)
+  const hasHardDangerSignal = [
+    api.status === 'danger',
+    http.details?.https?.status === 'danger',
+    ssl.details?.validity?.status === 'danger',
+    ssl.details?.expiry?.status === 'danger',
+    dnsCheck.status === 'danger',
+  ].some(Boolean)
+  const hasWarningSignal = [
+    api.status === 'warn',
+    http.status === 'warn',
+    ssl.status === 'warn',
+    dnsCheck.status === 'warn',
+    contentCheck?.status === 'warn',
+    Boolean(sharedHostingRisk),
+  ].some(Boolean)
+
+  // Hard danger signals should not be averaged away by good HTTPS/SSL points.
   const domainStatus = dnsCheck.domainStatus || 'established'
-  const isDefinitelyUnsafe = trustScore < 40 || domainStatus === 'unregistered' || domainStatus === 'brand_new'
-  const hasWarnings = !isDefinitelyUnsafe && trustScore < 70
+  const isDefinitelyUnsafe = trustScore < 40 || domainStatus === 'unregistered' || domainStatus === 'brand_new' || hasHardDangerSignal
+  const hasWarnings = !isDefinitelyUnsafe && (trustScore < 70 || domainStatus !== 'established' || hasWarningSignal)
 
   const verdict = isDefinitelyUnsafe ? 'unsafe' : hasWarnings ? 'warning' : 'safe'
 
@@ -70,7 +106,7 @@ router.post('/check-url', async (req, res) => {
   const checkGroups = buildCheckGroups(api.details, http.details, ssl.details, dnsCheck.details)
 
   // riskFactors: shown in VerdictBanner.vue
-  const riskFactors = buildRiskFactors(api.details, http.details, ssl.details, dnsCheck.details, domainStatus)
+  const riskFactors = buildRiskFactors(api.details, http.details, ssl.details, dnsCheck.details, domainStatus, contentCheck, sharedHostingRisk)
 
   res.json({
     hostname,
@@ -302,14 +338,17 @@ function buildCheckGroups(apiDetails, httpDetails, sslDetails, dnsDetails) {
   }
 
   if (dnsDetails.blocklist) {
+    const blocklistWasListed = Boolean(dnsDetails.blocklist.listedOn)
     ageItems.push({
-      label: 'Known scam and harmful website lists',
+      label: 'Network spam and malware blocklists',
       status: dnsDetails.blocklist.status,
       detail: dnsDetails.blocklist.status === 'pass'
-        ? "The website's internet address was not found on any list of known scam or harmful websites."
+        ? "The website's current IP address was not found on the network blocklists we checked."
+        : dnsDetails.blocklist.status === 'warn' && blocklistWasListed
+        ? 'The website uses an IP address with a network reputation warning. This can happen with shared hosting or content delivery networks.'
         : dnsDetails.blocklist.status === 'warn'
-        ? 'We could not check the known scam and harmful website lists right now.'
-        : "The website's internet address was found on a known harmful list.",
+        ? 'We could not check the network spam and malware blocklists right now.'
+        : "The website's current IP address was found on a network spam or malware blocklist.",
     })
   }
 
@@ -334,31 +373,103 @@ function buildCheckGroups(apiDetails, httpDetails, sslDetails, dnsDetails) {
   }
 
   const ageStatus = worstStatus(ageItems)
+  const domainExistsStatus = dnsDetails.domainExists?.status
+  const domainAgeStatus = dnsDetails.domainAge?.status
+  const blocklistStatus = dnsDetails.blocklist?.status
+
+  let ageGroupCopy
+  if (domainExistsStatus === 'danger') {
+    ageGroupCopy = {
+      badge: 'Not found',
+      summary: 'This website address could not be found',
+      detail: 'We could not find this address in the internet records websites need in order to work.',
+    }
+  } else if (domainAgeStatus === 'danger') {
+    ageGroupCopy = {
+      badge: 'Brand new',
+      summary: 'This website was created very recently',
+      detail: 'Scammers often create brand new websites to trick people. This site was created very recently.',
+    }
+  } else if (blocklistStatus === 'danger') {
+    ageGroupCopy = {
+      badge: 'Listed IP',
+      summary: "This website's internet address is on a network blocklist",
+      detail: 'The domain itself is not brand new, but its current IP address appears on a spam or malware blocklist.',
+    }
+  } else if (ageStatus === 'danger') {
+    ageGroupCopy = {
+      badge: 'Setup issue',
+      summary: 'This website has a serious setup warning',
+      detail: 'One of the website setup checks found a serious warning sign. See the details below.',
+    }
+  } else if (domainAgeStatus === 'warn') {
+    const ageUnknown = dnsDetails.domainAge?.domainStatus === 'unknown_age'
+    ageGroupCopy = {
+      badge: ageUnknown ? 'Age unknown' : 'Fairly new',
+      summary: ageUnknown ? 'We could not confirm when this website was created' : 'This website is relatively new',
+      detail: ageUnknown
+        ? 'The registration record exists, but the creation date was not available.'
+        : 'Newer websites are not always unsafe, but it is worth being careful.',
+    }
+  } else if (blocklistStatus === 'warn' && dnsDetails.blocklist?.listedOn) {
+    ageGroupCopy = {
+      badge: 'Network note',
+      summary: 'This website has a network reputation note',
+      detail: 'The website age and setup look okay, but its current IP address has a network reputation warning.',
+    }
+  } else if (ageStatus === 'warn') {
+    ageGroupCopy = {
+      badge: 'Setup note',
+      summary: 'Some website setup checks need attention',
+      detail: 'The website age looks fine, but one or more setup checks could not be fully confirmed.',
+    }
+  } else {
+    ageGroupCopy = {
+      badge: 'Established',
+      summary: 'This website has been around for a long time',
+      detail: 'Scam sites are usually brand new. This one is not.',
+    }
+  }
+
   const ageGroup = {
     id: 'website-age',
     status: ageStatus,
-    badge:   ageStatus === 'pass' ? 'Established' : ageStatus === 'warn' ? 'Fairly new' : 'Brand new',
-    summary: ageStatus === 'pass'
-      ? 'This website has been around for a long time'
-      : ageStatus === 'warn'
-      ? 'This website is relatively new'
-      : 'This website was created very recently',
-    detail: ageStatus === 'pass'
-      ? 'Scam sites are usually brand new. This one is not.'
-      : ageStatus === 'warn'
-      ? 'Newer websites are not always unsafe, but it is worth being careful.'
-      : 'Scammers often create brand new websites to trick people. This site was created very recently.',
+    ...ageGroupCopy,
     items: ageItems,
   }
 
   return [threatGroup, connectionGroup, ageGroup]
 }
 
-function buildRiskFactors(apiDetails, httpDetails, sslDetails, dnsDetails, domainStatus) {
+function getSharedHostingRisk(normalizedUrl, hostname) {
+  let parsedUrl
+  try {
+    parsedUrl = new URL(normalizedUrl)
+  } catch {
+    return ''
+  }
+
+  const isSharedHost = SHARED_HOSTING_HOSTS.has(hostname)
+    || SHARED_HOSTING_SUFFIXES.some(suffix => hostname.endsWith(suffix))
+
+  if (!isSharedHost) return ''
+
+  const hasSpecificPath = parsedUrl.pathname && parsedUrl.pathname !== '/'
+  const hasQuery = Boolean(parsedUrl.search)
+  const isSubdomainHostedApp = SHARED_HOSTING_SUFFIXES.some(suffix => hostname.endsWith(suffix))
+
+  if (!hasSpecificPath && !hasQuery && !isSubdomainHostedApp) return ''
+
+  return 'This link is hosted on a public hosting or storage platform; scammers often use trusted platforms to hide phishing pages'
+}
+
+function buildRiskFactors(apiDetails, httpDetails, sslDetails, dnsDetails, domainStatus, contentCheck, sharedHostingRisk) {
   const factors = []
 
   if (domainStatus === 'unregistered')              factors.push('This website address does not exist anywhere on the internet')
   if (domainStatus === 'brand_new')                 factors.push('This website was only just created -- brand new sites are a common scammer tactic')
+  if (domainStatus === 'new')                       factors.push('This website is very new -- scammers often use recently registered domains')
+  if (domainStatus === 'recent')                    factors.push('This website is fairly new, so it deserves extra caution')
   if (apiDetails.google?.status     === 'danger')  factors.push('Google has flagged this site as unsafe')
   if (apiDetails.virusTotal?.status === 'danger')  factors.push(`${apiDetails.virusTotal.malicious} antivirus tools detected threats on this site`)
   if (apiDetails.urlhaus?.status    === 'danger')  factors.push('This site is on a known malware distribution list')
@@ -366,8 +477,8 @@ function buildRiskFactors(apiDetails, httpDetails, sslDetails, dnsDetails, domai
   if (httpDetails.https?.status     === 'danger')  factors.push('Site does not use HTTPS -- your connection is not secure')
   if (sslDetails.validity?.status   === 'danger')  factors.push('The SSL certificate is invalid or not trusted')
   if (sslDetails.expiry?.status     === 'danger')  factors.push('The SSL certificate has expired')
-  if (dnsDetails.blocklist?.status  === 'danger')  factors.push("The site's IP address is on a security blocklist")
-
+  if (contentCheck?.status === 'warn')              factors.push(contentCheck.detail)
+  if (sharedHostingRisk)                            factors.push(sharedHostingRisk)
   return factors
 }
 
