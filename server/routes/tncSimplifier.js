@@ -90,6 +90,7 @@ async function extractTextFromFile(file) {
     throw error
   }
 
+<<<<<<< HEAD
   if (file.mimetype === 'application/pdf') {
     const parser = new PDFParse({ data: file.buffer })
     try {
@@ -139,6 +140,24 @@ Include 3 to 7 flaggedClauses. Focus on: data collection, third-party sharing, A
 Return flaggedClauses in descending severity order: danger first, then warn, then pass.
 
 T&Cs text:
+=======
+  const prompt = `You are an expert privacy analyst helping everyday consumers understand Terms & Conditions documents.
+
+Analyze the T&Cs below and produce a structured assessment with these rules:
+
+overallRisk: "low", "medium", or "high" based on how much users should be concerned.
+summary: 2-3 plain-English sentences covering the main risks or reassurances.
+flaggedClauses: 3 to 7 clauses, each with:
+  - category: short label (e.g. Data collection, Data sharing, AI training, Cancellation trap, Data retention, Arbitration)
+  - severity: "danger" (users would strongly object), "warn" (common but worth knowing), or "pass" (actually user-friendly)
+  - clause: the actual or paraphrased clause text (1-2 sentences)
+  - consequence: concrete plain-English explanation of what this means for the user
+  - realCase: a real-world example { name, detail } or null if none is relevant
+
+Focus on: data collection, third-party data sharing, AI training use, cancellation/auto-renewal traps, data retention, arbitration clauses, liability waivers.
+
+T&Cs text to analyze:
+>>>>>>> 08b3c96e2b6c33cb83dd5c463745fc3ea6bffbd3
 ${text}`
 
   let lastError
