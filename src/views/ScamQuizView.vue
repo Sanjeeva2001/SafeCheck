@@ -8,6 +8,7 @@ const finalScoreRef = ref(null)
 const currentQuestionIndex = ref(0)
 const selectedAnswer = ref(null)
 const showFeedback = ref(false)
+const answersByQuestionIndex = ref({})
 const score = ref(0)
 const quizFinished = ref(false)
 
@@ -124,9 +125,28 @@ const scoreMessage = computed(() => {
   return 'Great work. You recognised most warning signs. Keep pausing before you click, pay, or share any details.'
 })
 
-function selectAnswer(index) {
-  if (showFeedback.value || !currentQuestion.value) return
+function hasStoredAnswer(questionIndex) {
+  return Object.prototype.hasOwnProperty.call(answersByQuestionIndex.value, questionIndex)
+}
 
+function syncCurrentQuestionState() {
+  if (hasStoredAnswer(currentQuestionIndex.value)) {
+    selectedAnswer.value = answersByQuestionIndex.value[currentQuestionIndex.value]
+    showFeedback.value = true
+    return
+  }
+
+  selectedAnswer.value = null
+  showFeedback.value = false
+}
+
+function selectAnswer(index) {
+  if (showFeedback.value || !currentQuestion.value || hasStoredAnswer(currentQuestionIndex.value)) return
+
+  answersByQuestionIndex.value = {
+    ...answersByQuestionIndex.value,
+    [currentQuestionIndex.value]: index,
+  }
   selectedAnswer.value = index
   showFeedback.value = true
 
@@ -140,6 +160,7 @@ function resetQuiz(categoryId = selectedCategory.value) {
   currentQuestionIndex.value = 0
   selectedAnswer.value = null
   showFeedback.value = false
+  answersByQuestionIndex.value = {}
   score.value = 0
   quizFinished.value = false
 }
@@ -162,17 +183,29 @@ function selectCategory(categoryId) {
   })
 }
 
+function goToQuestion(questionIndex) {
+  currentQuestionIndex.value = questionIndex
+  syncCurrentQuestionState()
+}
+
+function previousQuestion() {
+  if (currentQuestionIndex.value === 0) return
+  goToQuestion(currentQuestionIndex.value - 1)
+}
+
+function finishQuiz() {
+  quizFinished.value = true
+
+  nextTick(() => {
+    scrollElementIntoView(finalScoreRef.value || quizPanelRef.value, 'center')
+  })
+}
+
 function nextQuestion() {
   if (currentQuestionIndex.value < totalQuestions.value - 1) {
-    currentQuestionIndex.value += 1
-    selectedAnswer.value = null
-    showFeedback.value = false
+    goToQuestion(currentQuestionIndex.value + 1)
   } else {
-    quizFinished.value = true
-
-    nextTick(() => {
-      scrollElementIntoView(finalScoreRef.value || quizPanelRef.value, 'center')
-    })
+    finishQuiz()
   }
 }
 
