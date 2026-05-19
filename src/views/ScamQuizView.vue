@@ -8,6 +8,7 @@ const finalScoreRef = ref(null)
 const currentQuestionIndex = ref(0)
 const selectedAnswer = ref(null)
 const showFeedback = ref(false)
+const answersByQuestionIndex = ref({})
 const score = ref(0)
 const quizFinished = ref(false)
 
@@ -23,21 +24,49 @@ function getQuestionsForCategory(categoryId) {
   return scamQuizQuestions.filter(question => question.category === categoryId)
 }
 
+function shuffleArray(items) {
+  const shuffled = [...items]
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+
+  return shuffled
+}
+
+function randomItem(items) {
+  return items[Math.floor(Math.random() * items.length)]
+}
+
+function shuffleQuestionOptions(question, previousCorrectIndex) {
+  const correctOption = question.options[question.correctIndex]
+  const incorrectOptions = question.options.filter((_, index) => index !== question.correctIndex)
+  const optionCount = question.options.length
+  const allowedCorrectIndexes = Array.from({ length: optionCount }, (_, index) => index)
+    .filter(index => index !== previousCorrectIndex)
+  const correctIndex = randomItem(allowedCorrectIndexes.length ? allowedCorrectIndexes : [question.correctIndex])
+  const shuffledIncorrectOptions = shuffleArray(incorrectOptions)
+  const options = []
+
+  for (let index = 0; index < optionCount; index += 1) {
+    options[index] = index === correctIndex ? correctOption : shuffledIncorrectOptions.shift()
+  }
+
+  return {
+    ...question,
+    options,
+    correctIndex,
+  }
+}
+
 function buildShuffledQuestions(categoryId = selectedCategory.value) {
-  return getQuestionsForCategory(categoryId).map((question) => {
-    const optionsWithCorrectFlag = question.options.map((option, index) => ({
-      text: option,
-      isCorrect: index === question.correctIndex,
-    }))
+  let previousCorrectIndex = null
 
-    const shuffledOptions = [...optionsWithCorrectFlag].sort(() => Math.random() - 0.5)
-    const correctIndex = shuffledOptions.findIndex((option) => option.isCorrect)
-
-    return {
-      ...question,
-      options: shuffledOptions.map((option) => option.text),
-      correctIndex,
-    }
+  return shuffleArray(getQuestionsForCategory(categoryId)).map((question) => {
+    const shuffledQuestion = shuffleQuestionOptions(question, previousCorrectIndex)
+    previousCorrectIndex = shuffledQuestion.correctIndex
+    return shuffledQuestion
   })
 }
 
@@ -96,9 +125,28 @@ const scoreMessage = computed(() => {
   return 'Great work. You recognised most warning signs. Keep pausing before you click, pay, or share any details.'
 })
 
-function selectAnswer(index) {
-  if (showFeedback.value || !currentQuestion.value) return
+function hasStoredAnswer(questionIndex) {
+  return Object.prototype.hasOwnProperty.call(answersByQuestionIndex.value, questionIndex)
+}
 
+function syncCurrentQuestionState() {
+  if (hasStoredAnswer(currentQuestionIndex.value)) {
+    selectedAnswer.value = answersByQuestionIndex.value[currentQuestionIndex.value]
+    showFeedback.value = true
+    return
+  }
+
+  selectedAnswer.value = null
+  showFeedback.value = false
+}
+
+function selectAnswer(index) {
+  if (showFeedback.value || !currentQuestion.value || hasStoredAnswer(currentQuestionIndex.value)) return
+
+  answersByQuestionIndex.value = {
+    ...answersByQuestionIndex.value,
+    [currentQuestionIndex.value]: index,
+  }
   selectedAnswer.value = index
   showFeedback.value = true
 
@@ -112,6 +160,7 @@ function resetQuiz(categoryId = selectedCategory.value) {
   currentQuestionIndex.value = 0
   selectedAnswer.value = null
   showFeedback.value = false
+  answersByQuestionIndex.value = {}
   score.value = 0
   quizFinished.value = false
 }
@@ -134,17 +183,29 @@ function selectCategory(categoryId) {
   })
 }
 
+function goToQuestion(questionIndex) {
+  currentQuestionIndex.value = questionIndex
+  syncCurrentQuestionState()
+}
+
+function previousQuestion() {
+  if (currentQuestionIndex.value === 0) return
+  goToQuestion(currentQuestionIndex.value - 1)
+}
+
+function finishQuiz() {
+  quizFinished.value = true
+
+  nextTick(() => {
+    scrollElementIntoView(finalScoreRef.value || quizPanelRef.value, 'center')
+  })
+}
+
 function nextQuestion() {
   if (currentQuestionIndex.value < totalQuestions.value - 1) {
-    currentQuestionIndex.value += 1
-    selectedAnswer.value = null
-    showFeedback.value = false
+    goToQuestion(currentQuestionIndex.value + 1)
   } else {
-    quizFinished.value = true
-
-    nextTick(() => {
-      scrollElementIntoView(finalScoreRef.value || quizPanelRef.value, 'center')
-    })
+    finishQuiz()
   }
 }
 
@@ -248,9 +309,13 @@ function tryAgain() {
               <p class="text-lg font-semibold" style="color: var(--navy);">
                 {{ selectedCategoryLabel }} · Question {{ currentQuestionIndex + 1 }} of {{ totalQuestions }}
               </p>
-              <p class="text-lg font-semibold text-slate-600">
-                Score: {{ score }} / {{ totalQuestions }}
-              </p>
+              <button
+                type="button"
+                class="rounded-xl border-2 border-slate-200 px-4 py-2 text-base font-bold text-slate-700 transition hover:border-blue-900 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+                @click="finishQuiz"
+              >
+                End this quiz
+              </button>
             </div>
             <div class="w-full bg-blue-100 rounded-full h-3">
               <div
@@ -313,10 +378,26 @@ function tryAgain() {
             </div>
           </div>
 
-          <div class="mt-8 flex justify-end">
+          <div class="mt-8 flex flex-col gap-4 sm:grid sm:grid-cols-3 sm:items-center">
             <button
               type="button"
-              class="btn-navy text-lg px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="rounded-xl border-2 border-slate-200 px-8 py-3 text-lg font-bold text-slate-700 transition hover:border-blue-900 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="currentQuestionIndex === 0"
+              @click="previousQuestion"
+            >
+              <svg class="w-5 h-5 inline-block mr-2 align-text-bottom" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous Question
+            </button>
+
+            <p class="text-center text-xl font-black" style="color: var(--navy);">
+              Score: {{ score }} / {{ totalQuestions }}
+            </p>
+
+            <button
+              type="button"
+              class="btn-navy justify-self-end text-lg px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
               :disabled="!showFeedback"
               @click="nextQuestion"
             >

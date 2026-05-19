@@ -68,30 +68,6 @@ const ageGroups = [
   { group: 'Under 35', pct: 26,  tooltip: 'Younger Australians face lower average losses but are increasingly targeted through social platforms.' },
 ]
 
-const features = [
-  {
-    page: 'url-verifier',
-    icon: 'link',
-    title: 'Check a Link',
-    desc: 'Not sure if a website is safe to visit? Paste the address and we will check it for warning signs in seconds.',
-    cta: 'Check a link now',
-  },
-  {
-    page: 'tnc-simplifier',
-    icon: 'doc',
-    title: 'Explain my Terms',
-    desc: 'Confused by the fine print before signing up? We translate legal language into plain English.',
-    cta: 'Simplify the fine print',
-  },
-  {
-    page: 'scam-quiz',
-    icon: 'bulb',
-    title: 'Scam Awareness Quiz',
-    desc: 'Test yourself with real scam scenarios. Eight short questions. No tech knowledge needed.',
-    cta: 'Take the quiz',
-  },
-]
-
 function toggleProofCard(cardId) {
   flippedProofCards.value = {
     ...flippedProofCards.value,
@@ -761,58 +737,6 @@ function getSeniorBarWidth(value) {
 
   </section>
 
-  <!-- ============================================================
-       HOW WE CAN HELP
-       ============================================================ -->
-  <section class="home-content-section home-tools-band px-8 sm:px-16">
-    <div class="home-section-inner">
-      <div class="home-section-header animate-fade-in-up">
-        <p class="home-section-kicker">Choose your next step</p>
-        <h2>How can we help you today?</h2>
-        <p>
-          Three free tools designed to be simple, no matter your tech experience.
-        </p>
-      </div>
-
-    <div class="home-card-grid grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <button
-        v-for="(f, index) in features"
-        :key="f.page"
-        @click="emit('navigate', f.page)"
-        class="tool-card bg-white rounded-2xl p-8 text-left border-2 border-slate-100 hover:border-blue-900 hover:shadow-xl transition-all duration-200 group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-900 animate-fade-in-up"
-        :class="index === 0 ? 'stagger-1' : index === 1 ? 'stagger-2' : 'stagger-3'"
-        style="box-shadow: 0 1px 4px rgba(0,0,0,0.06);"
-      >
-        <div
-          class="tool-card-icon rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 duration-200"
-          style="background-color: var(--navy-tint);"
-        >
-          <svg v-if="f.icon === 'link'" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-          <svg v-else-if="f.icon === 'doc'" style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <svg v-else style="color: var(--navy);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-        </div>
-        <p class="tool-card-title">{{ f.title }}</p>
-        <p class="tool-card-desc">{{ f.desc }}</p>
-        <div class="readable-cta-pill feature-card-cta inline-flex items-center gap-2 group-hover:gap-3 transition-all">
-          {{ f.cta }}
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </button>
-    </div>
-    </div>
-  </section>
-
 </template>
 
 <style scoped>
@@ -822,8 +746,7 @@ function getSeniorBarWidth(value) {
 .proof-flip-face,
 .visualisation-flip-card,
 .visualisation-flip-card-inner,
-.visualisation-flip-face,
-.tool-card {
+.visualisation-flip-face {
   --home-section-card-height: 29rem;
 }
 
@@ -858,28 +781,6 @@ function getSeniorBarWidth(value) {
   max-width: 52rem;
   font-size: clamp(1.02rem, 1.2vw, 1.16rem);
   font-weight: 500;
-  line-height: 1.55;
-}
-
-.home-tools-band {
-  background: var(--navy-tint);
-}
-
-.home-tools-band .home-section-kicker {
-  font-size: 0.92rem;
-  font-weight: 950;
-}
-
-.home-tools-band .home-section-header h2 {
-  max-width: 52rem;
-  font-size: clamp(2rem, 3.25vw, 2.75rem);
-  font-weight: 950;
-}
-
-.home-tools-band .home-section-header p {
-  max-width: 52rem;
-  font-size: clamp(1.02rem, 1.15vw, 1.14rem);
-  font-weight: 550;
   line-height: 1.55;
 }
 
@@ -942,44 +843,6 @@ function getSeniorBarWidth(value) {
   opacity: 0.94;
 }
 
-.home-card-grid {
-  align-items: stretch;
-}
-
-.tool-card {
-  min-height: var(--home-section-card-height);
-  display: flex;
-  flex-direction: column;
-  padding: 1.6rem;
-}
-
-.tool-card-icon {
-  width: 3.35rem;
-  height: 3.35rem;
-  margin-bottom: 1.35rem;
-}
-
-.tool-card-icon svg {
-  width: 1.75rem;
-  height: 1.75rem;
-}
-
-.tool-card-title {
-  margin-bottom: 0.75rem;
-  color: rgb(15, 23, 42);
-  font-family: var(--font-heading);
-  font-size: clamp(1.28rem, 1.45vw, 1.58rem);
-  font-weight: 950;
-  line-height: 1.18;
-}
-
-.tool-card-desc {
-  margin-bottom: 1.3rem;
-  color: rgb(71, 85, 105);
-  font-size: clamp(0.98rem, 1.12vw, 1.12rem);
-  font-weight: 500;
-  line-height: 1.55;
-}
 
 .home-hero-cta {
   min-height: 9.6rem;
@@ -1069,14 +932,6 @@ function getSeniorBarWidth(value) {
   line-height: 1.2;
   font-weight: 900;
   text-decoration: none;
-}
-
-.feature-card-cta {
-  width: fit-content;
-  margin-top: auto;
-  padding: 0.78rem 1rem;
-  font-size: 1rem;
-  font-weight: 950;
 }
 
 .flip-card-cta-text {
@@ -2128,10 +1983,7 @@ function getSeniorBarWidth(value) {
   .visualisation-flip-card-inner,
   .visualisation-chart-fill,
   .home-hero-cta,
-  .home-hero-cta-icon,
-  .tool-card,
-  .tool-card-icon,
-  .feature-card-cta {
+  .home-hero-cta-icon {
     transition: none !important;
   }
 
